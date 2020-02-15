@@ -24,4 +24,5 @@ qrcode-generator = "1.0.2"
 image = "0.20"
 
 [build-dependencies]
+autotools = "0.2"
 pkg-config = "0.3.14"

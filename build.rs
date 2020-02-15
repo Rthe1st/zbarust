@@ -1,5 +1,7 @@
+extern crate autotools;
 extern crate pkg_config;
 
+use autotools::Config;
 use std::collections::HashSet;
 use std::env;
 use std::path::PathBuf;
@@ -9,6 +11,26 @@ const MIN_VERSION: &'static str = "0.10";
 const MAX_VERSION: &'static str = "0.20";
 
 fn main() {
+    if env::var("USE_PREBUILT_ZBAR").is_ok() {
+        // inside your copy of the $source (zbar source code directory):
+        // autoreconf -vfi
+        // ./configure \
+        // --without-gtk --without-python --without-qt --without-java \
+        // --without-imagemagick --with-jpeg=no --with-x=no --enable-video=no
+        // make
+
+        // cd ..
+        // export ZBAR_LIB_DIRS=$source_dir/zbar/.libs
+        // export ZBAR_INCLUDE_DIRS=$source_dir/include
+        // export ZBAR_LIBS=zbar
+        // export ZBAR_STATIC=1
+        link_to_prebuilt();
+    } else {
+        build_from_submodule();
+    }
+}
+
+fn link_to_prebuilt() {
     if cfg!(target_os = "freebsd") {
         env_var_set_default("ZBAR_INCLUDE_DIRS", "/usr/include");
         env_var_set_default("ZBAR_LIB_DIRS", "/usr/lib");
@@ -61,6 +83,24 @@ fn main() {
         Ok(_) => println!("cargo:rustc-link-lib=dylib=stdc++"),
         Err(_) => (),
     }
+}
+
+fn build_from_submodule() {
+    let dst = Config::new("zbar")
+        .reconf("-ivf")
+        .without("gtk", None)
+        .without("python", None)
+        .without("qt", None)
+        .without("java", None)
+        .without("imagemagick", None)
+        .with("jpeg", Some("no"))
+        .with("x", Some("no"))
+        .enable("video", Some("no"))
+        .build();
+
+    println!("cargo:rustc-link-search=native={}", format!("{}/lib", dst.display()));
+    println!("cargo:rustc-link-lib=static=zbar");
+    println!("cargo:include={}", "/home/mehow/Dropbox/code_backups/zbar-rust/zbar/include");
 }
 
 fn env_var_set_default(name: &str, value: &str) {
