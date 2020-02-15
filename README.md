@@ -1,25 +1,33 @@
 ZBar Rust
 ====================
 
-[![Build Status](https://travis-ci.org/magiclen/zbar-rust.svg?branch=master)](https://travis-ci.org/magiclen/zbar-rust)
+A for of [magiclen's project](https://github.com/magiclen/zbar-rust) to provide high-level and low-level ZBar binding for the Rust language.
 
-High-level and low-level ZBar binding for the Rust language.
+This fork aims to eventually remove the need for bindings to the Zbar library by rewriting it in rust.
+
+The plan is to do that by rewriting it binding-by-binding so that we can maintain a functional project the whole time.
 
 ## Compilation
 
-To compile this crate, you need to compile the ZBar library first. You can install ZBar in your operating system, or in somewhere in your file system. As for the latter, you need to set the following environment variables to link the ZBar library:
+To compile this crate, you need to compile the ZBar library first. 
+
+By default the build script will compile and link to version of ZBar in the project submodule,
+
+However you can install ZBar in your operating system, or in somewhere in your file system. As for the latter, you need to set the following environment variables to link the ZBar library:
 
 * `ZBAR_LIB_DIRS`: The directories of library files, like `-L`. Use `:` to separate.
 * `ZBAR_LIBS`: The library names that you want to link, like `-l`. Use `:` to separate. Typically, it is **iconv:zbar**.
 * `ZBAR_INCLUDE_DIRS`: The directories of header files, like `-i`. Use `:` to separate.
 
+Note: Only ZBar version 0.10-0.20 are supported.
+
 ## Examples
 
 ```rust
-extern crate zbar_rust;
+extern crate zbarust;
 extern crate image;
 
-use zbar_rust::ZBarImageScanner;
+use zbarust::ZBarImageScanner;
 
 use image::GenericImageView;
 
@@ -41,14 +49,6 @@ for result in results {
 ```
 
 More examples are in the `examples` folder.
-
-## Crates.io
-
-https://crates.io/crates/zbar-rust
-
-## Documentation
-
-https://docs.rs/zbar-rust
 
 ## License
 

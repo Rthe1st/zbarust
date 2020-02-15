@@ -1,6 +1,6 @@
-extern crate zbar_rust;
+extern crate zbarust;
 
-use zbar_rust::ZBarImage;
+use zbarust::ZBarImage;
 
 #[test]
 fn image_create_destroy() {

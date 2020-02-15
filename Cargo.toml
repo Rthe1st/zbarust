@@ -1,19 +1,14 @@
 [package]
-name = "zbar-rust"
+name = "zbarust"
 version = "0.0.7"
-authors = ["Magic Len <len@magiclen.org>"]
+authors = ["Mehow"]
 edition = "2018"
-repository = "https://github.com/magiclen/zbar-rust"
-homepage = "https://magiclen.org/zbar-rust"
+repository = "https://github.com/Rthe1st/zbarust"
 keywords = ["zbar", "qrcode", "scanner", "barcode", "scan"]
 categories = ["external-ffi-bindings", "encoding"]
 description= "High-level and low-level ZBar binding for the Rust language."
 readme = "README.md"
 license = "LGPL-2.1"
-
-[badges.travis-ci]
-repository = "magiclen/zbar-rust"
-branch = "master"
 
 [dependencies]
 libc = "0.2.43"

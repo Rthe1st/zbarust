@@ -12,10 +12,10 @@ To compile this crate, you need to compile the ZBar library first. You can insta
 ## Examples
 
 ```rust,ignore
-extern crate zbar_rust;
+extern crate zbarust;
 extern crate image;
 
-use zbar_rust::ZBarImageScanner;
+use zbarust::ZBarImageScanner;
 
 use image::GenericImageView;
 
