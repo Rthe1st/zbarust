@@ -1,11 +1,10 @@
-ZBar Rust
-====================
+# ZBar Rust
 
-A for of [magiclen's project](https://github.com/magiclen/zbar-rust) to provide high-level and low-level ZBar binding for the Rust language.
+A fork of [magiclen's project](https://github.com/magiclen/zbar-rust) to provide high-level and low-level ZBar binding for the Rust language.
 
-This fork aims to eventually remove the need for bindings to the Zbar library by rewriting it in rust.
+This fork aims to eventually remove the need for bindings to the ZBar library by gradually rewriting it in rust.
 
-The plan is to do that by rewriting it binding-by-binding so that we can maintain a functional project the whole time.
+This whole thing is revenge for the fact that I spent several dozen hours of my life trying to get libzbar and rust to build on windows. Root cause of blame may or may not lie in my own incompetency.
 
 ## Compilation
 
