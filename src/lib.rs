@@ -146,99 +146,117 @@ extern {
 // TODO: ----- Image Interface START-----
 
 extern {
-    pub fn zbar_image_create() -> *mut c_void;
-    pub fn zbar_image_destroy(image: *mut c_void);
-    pub fn zbar_image_ref(image: *mut c_void, refs: c_int);
-    pub fn zbar_image_convert(image: *const c_void, format: c_ulong) -> *mut c_void;
+    pub fn zbar_image_create() -> *mut ZBarImage;
+    pub fn zbar_image_destroy(image: *mut ZBarImage);
+    pub fn zbar_image_ref(image: *mut ZBarImage, refs: c_int);
+    pub fn zbar_image_convert(image: *const ZBarImage, format: c_ulong) -> *mut c_void;
     pub fn zbar_image_convert_resize(
-        image: *const c_void,
+        image: *const ZBarImage,
         format: c_ulong,
         width: c_uint,
         height: c_int,
     ) -> *mut c_void;
-    pub fn zbar_image_get_format(image: *const c_void) -> c_ulong;
-    pub fn zbar_image_get_sequence(image: *const c_void) -> c_uint;
-    pub fn zbar_image_get_width(image: *const c_void) -> c_uint;
-    pub fn zbar_image_get_height(image: *const c_void) -> c_uint;
-    pub fn zbar_image_get_size(image: *const c_void, width: *mut c_uint, height: *mut c_uint);
+    pub fn zbar_image_get_format(image: *const ZBarImage) -> c_ulong;
+    pub fn zbar_image_get_sequence(image: *const ZBarImage) -> c_uint;
+    pub fn zbar_image_get_width(image: *const ZBarImage) -> c_uint;
+    pub fn zbar_image_get_height(image: *const ZBarImage) -> c_uint;
+    pub fn zbar_image_get_size(image: *const ZBarImage, width: *mut c_uint, height: *mut c_uint);
     pub fn zbar_image_get_crop(
-        image: *const c_void,
+        image: *const ZBarImage,
         x: *mut c_uint,
         y: *mut c_uint,
         width: *mut c_uint,
         height: *mut c_uint,
     );
-    pub fn zbar_image_get_data(image: *const c_void) -> *const c_void;
-    pub fn zbar_image_get_data_length(image: *const c_void) -> c_ulong;
-    pub fn zbar_image_get_symbols(image: *const c_void) -> *const c_void;
-    pub fn zbar_image_set_symbols(image: *mut c_void, symbols: *const c_void);
-    pub fn zbar_image_first_symbol(image: *const c_void) -> *const c_void;
-    pub fn zbar_image_set_format(image: *mut c_void, format: c_ulong);
-    pub fn zbar_image_set_sequence(image: *mut c_void, sequence_num: c_ulong);
-    pub fn zbar_image_set_size(image: *mut c_void, width: c_ulong, height: c_ulong);
+    pub fn zbar_image_get_data(image: *const ZBarImage) -> *const c_void;
+    pub fn zbar_image_get_data_length(image: *const ZBarImage) -> c_ulong;
+    pub fn zbar_image_get_symbols(image: *const ZBarImage) -> *const c_void;
+    pub fn zbar_image_set_symbols(image: *mut ZBarImage, symbols: *const c_void);
+    pub fn zbar_image_first_symbol(image: *const ZBarImage) -> *const c_void;
+    pub fn zbar_image_set_format(image: *mut ZBarImage, format: c_ulong);
+    pub fn zbar_image_set_sequence(image: *mut ZBarImage, sequence_num: c_ulong);
+    pub fn zbar_image_set_size(image: *mut ZBarImage, width: c_ulong, height: c_ulong);
     pub fn zbar_image_set_crop(
-        image: *mut c_void,
+        image: *mut ZBarImage,
         x: c_ulong,
         y: c_ulong,
         width: c_ulong,
         height: c_ulong,
     );
     pub fn zbar_image_set_data(
-        image: *mut c_void,
+        image: *mut ZBarImage,
         data: *const c_void,
         data_byte_length: c_ulong,
         handler: *mut c_void,
     );
-    pub fn zbar_image_free_data(image: *mut c_void);
-    pub fn zbar_image_set_userdata(image: *mut c_void, userdata: *const c_void);
-    pub fn zbar_image_get_userdata(image: *const c_void) -> *const c_void;
-    pub fn zbar_image_write(image: *const c_void, filebase: *const c_char) -> c_uint;
+    pub fn zbar_image_free_data(image: *mut ZBarImage);
+    pub fn zbar_image_set_userdata(image: *mut ZBarImage, userdata: *const c_void);
+    pub fn zbar_image_get_userdata(image: *const ZBarImage) -> *const c_void;
+    pub fn zbar_image_write(image: *const ZBarImage, filebase: *const c_char) -> c_uint;
     pub fn zbar_image_read(filename: *mut c_char) -> *const c_void;
 }
 
+#[repr(C)]
 pub struct ZBarImage {
-    image: *mut c_void,
+    /* fourcc image format code */
+    format: u32,
+    /* image size */
+    width: u32,
+    height: u32,
+    /* image sample data */
+    data: *mut c_void,
+    /* allocated/mapped size of data */
+    datalen: u64,
+    /* crop rectangle */
+    crop_x: u32,
+    crop_y: u32,
+    crop_w: u32,
+    crop_h: u32,
+    /* user specified data associated w/image */
+    userdata: *mut c_void,
+    /* cleanup handler */
+    zbar_image_cleanup_handler_t: *mut c_void,
+    /* reference count */
+    refcnt: u32,
+    /* originator */
+    src: *mut c_void,
+    /* index used by originator */
+    srcidx: u32,
+    /* internal image lists */
+    next: *mut c_void,
+    /* page/frame sequence number */
+    seq: u32,
+    /* decoded result set */
+    syms: *mut c_void,
 }
 
 impl ZBarImage {
-    pub fn new() -> ZBarImage {
-        let image = unsafe { zbar_image_create() };
-
-        ZBarImage {
-            image,
-        }
+    pub fn new() -> *mut ZBarImage {
+        unsafe { zbar_image_create() }
     }
 
     pub fn set_format(&mut self, format: u32) {
         unsafe {
-            zbar_image_set_format(self.image, c_ulong::from(format));
+            zbar_image_set_format(self, c_ulong::from(format));
         }
     }
 
     pub fn set_size(&mut self, width: u32, height: u32) {
         unsafe {
-            zbar_image_set_size(self.image, c_ulong::from(width), c_ulong::from(height));
+            zbar_image_set_size(self, c_ulong::from(width), c_ulong::from(height));
         }
     }
 
     pub fn set_ref(&mut self, r: isize) {
         unsafe {
-            zbar_image_ref(self.image, r as c_int);
+            zbar_image_ref(self, r as c_int);
         }
     }
 
     pub fn destroy(mut self) {
         unsafe {
-            zbar_image_destroy(self.image);
-            self.image = ptr::null_mut();
+            zbar_image_destroy(&mut self);
         }
-    }
-}
-
-impl Default for ZBarImage {
-    #[inline]
-    fn default() -> Self {
-        ZBarImage::new()
     }
 }
 
@@ -292,9 +310,9 @@ extern {
         config_string: *const c_char,
     ) -> c_int;
     pub fn zbar_image_scanner_enable_cache(scanner: *mut c_void, enable: c_int);
-    pub fn zbar_image_scanner_recycle_image(scanner: *mut c_void, image: *mut c_void);
+    pub fn zbar_image_scanner_recycle_image(scanner: *mut c_void, image: *mut ZBarImage);
     pub fn zbar_image_scanner_get_results(scanner: *const c_void) -> *const c_void;
-    pub fn zbar_scan_image(scanner: *mut c_void, image: *mut c_void) -> c_int;
+    pub fn zbar_scan_image(scanner: *mut c_void, image: *mut ZBarImage) -> c_int;
 }
 
 #[derive(Debug)]
@@ -373,21 +391,20 @@ impl ZBarImageScanner {
     ) -> Result<Vec<ZBarImageScanResult>, &'static str> {
         let data = data.as_ref();
 
-        let mut image = ZBarImage::new();
-
-        image.set_size(width, height);
-        image.set_format(format);
+        let image: *mut ZBarImage = ZBarImage::new();
 
         unsafe {
+            (*image).set_size(width, height);
+            (*image).set_format(format);
             zbar_image_set_data(
-                image.image,
+                image,
                 data.as_ptr() as *const c_void,
                 data.len() as c_ulong,
                 zbar_image_free_data as *mut c_void,
             );
         }
 
-        let n = unsafe { zbar_scan_image(self.scanner, image.image) };
+        let n = unsafe { zbar_scan_image(self.scanner, image) };
 
         if n < 0 {
             return Err("incorrect image");
@@ -395,7 +412,7 @@ impl ZBarImageScanner {
 
         let mut result_array = Vec::with_capacity(n as usize);
 
-        let mut symbol = unsafe { zbar_image_first_symbol(image.image) };
+        let mut symbol = unsafe { zbar_image_first_symbol(image) };
 
         while !symbol.is_null() {
             let symbol_type = unsafe { zbar_symbol_get_type(symbol) };
@@ -426,6 +443,7 @@ impl Default for ZBarImageScanner {
         ZBarImageScanner::new()
     }
 }
+
 
 impl Drop for ZBarImageScanner {
     fn drop(&mut self) {
