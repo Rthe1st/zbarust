@@ -1,5 +1,7 @@
 # ZBar Rust
 
+![Rust](https://github.com/Rthe1st/zbarust/workflows/Rust/badge.svg?branch=master)
+
 A fork of [magiclen's project](https://github.com/magiclen/zbar-rust) to provide high-level and low-level ZBar binding for the Rust language.
 
 This fork aims to eventually remove the need for bindings to the ZBar library by gradually rewriting it in rust.
