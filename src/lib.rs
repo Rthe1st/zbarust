@@ -39,7 +39,7 @@ for result in results {
 More examples are in the `examples` folder.
 */
 
-#![allow(clippy::enum_clike_unportable_variant)]
+#![allow(clippy::missing_safety_doc)]
 
 #[macro_use]
 extern crate enum_ordinalize;
@@ -282,7 +282,7 @@ extern {
     pub fn zbar_symbol_first_component(symbol: *const c_void) -> *const c_void;
     pub fn zbar_symbol_xml(
         symbol: *const c_void,
-        buffer: *mut (*mut c_char),
+        buffer: *mut *mut c_char,
         buflen: *mut c_uint,
     ) -> *mut c_char;
 }
@@ -443,7 +443,6 @@ impl Default for ZBarImageScanner {
         ZBarImageScanner::new()
     }
 }
-
 
 impl Drop for ZBarImageScanner {
     fn drop(&mut self) {
