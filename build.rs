@@ -7,9 +7,8 @@ use std::env;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-
-const MIN_VERSION: &'static str = "0.10";
-const MAX_VERSION: &'static str = "0.20";
+const MIN_VERSION: &str = "0.10";
+const MAX_VERSION: &str = "0.20";
 
 fn main() {
     if env::var("USE_PREBUILT_ZBAR").is_ok() {
@@ -60,12 +59,10 @@ fn link_to_prebuilt() {
     let libs_env = env::var("ZBAR_LIBS").ok();
 
     let libs = match libs_env {
-        Some(ref v) => v.split(":").map(|x| x.to_owned()).collect(),
+        Some(ref v) => v.split(':').map(|x| x.to_owned()).collect(),
         None => {
-            if target.contains("windows") {
+            if target.contains("windows") || target.contains("freebsd") {
                 vec!["zbar".to_string()] // TODO: not sure
-            } else if target.contains("freebsd") {
-                vec!["zbar".to_string()]
             } else {
                 run_pkg_config().libs
             }
@@ -87,11 +84,8 @@ fn link_to_prebuilt() {
 }
 
 fn build_from_submodule() {
-
     if !Path::new("zbar/.git").exists() {
-        let _ = Command::new("git")
-            .args(&["submodule", "update", "--init"])
-            .status();
+        let _ = Command::new("git").args(&["submodule", "update", "--init"]).status();
     }
 
     let dst = Config::new("zbar")
@@ -108,7 +102,7 @@ fn build_from_submodule() {
 
     println!("cargo:rustc-link-search=native={}", format!("{}/lib", dst.display()));
     println!("cargo:rustc-link-lib=static=zbar");
-    println!("cargo:include={}", "/home/mehow/Dropbox/code_backups/zbar-rust/zbar/include");
+    println!("cargo:include=/home/mehow/Dropbox/code_backups/zbar-rust/zbar/include");
 }
 
 fn env_var_set_default(name: &str, value: &str) {
@@ -120,7 +114,7 @@ fn env_var_set_default(name: &str, value: &str) {
 fn find_zbar_lib_dirs() -> Vec<PathBuf> {
     println!("cargo:rerun-if-env-changed=ZBAR_LIB_DIRS");
     env::var("ZBAR_LIB_DIRS")
-        .map(|x| x.split(":").map(PathBuf::from).collect::<Vec<PathBuf>>())
+        .map(|x| x.split(':').map(PathBuf::from).collect::<Vec<PathBuf>>())
         .or_else(|_| Ok(vec![find_zbar_dir()?.join("lib")]))
         .or_else(|_: env::VarError| -> Result<_, env::VarError> { Ok(run_pkg_config().link_paths) })
         .expect("Couldn't find ZBar library directory")
@@ -129,7 +123,7 @@ fn find_zbar_lib_dirs() -> Vec<PathBuf> {
 fn find_zbar_include_dirs() -> Vec<PathBuf> {
     println!("cargo:rerun-if-env-changed=ZBAR_INCLUDE_DIRS");
     env::var("ZBAR_INCLUDE_DIRS")
-        .map(|x| x.split(":").map(PathBuf::from).collect::<Vec<PathBuf>>())
+        .map(|x| x.split(':').map(PathBuf::from).collect::<Vec<PathBuf>>())
         .or_else(|_| Ok(vec![find_zbar_dir()?.join("include")]))
         .or_else(|_: env::VarError| -> Result<_, env::VarError> {
             Ok(run_pkg_config().include_paths)
@@ -142,7 +136,7 @@ fn find_zbar_dir() -> Result<PathBuf, env::VarError> {
     env::var("ZBAR_DIR").map(PathBuf::from)
 }
 
-fn determine_mode<T: AsRef<str>>(libdirs: &Vec<PathBuf>, libs: &[T]) -> &'static str {
+fn determine_mode<T: AsRef<str>>(libdirs: &[PathBuf], libs: &[T]) -> &'static str {
     println!("cargo:rerun-if-env-changed=ZBAR_STATIC");
     let kind = env::var("ZBAR_STATIC").ok();
     match kind.as_ref().map(|s| &s[..]) {
@@ -152,7 +146,7 @@ fn determine_mode<T: AsRef<str>>(libdirs: &Vec<PathBuf>, libs: &[T]) -> &'static
     }
 
     let files = libdirs
-        .into_iter()
+        .iter()
         .flat_map(|d| d.read_dir().unwrap())
         .map(|e| e.unwrap())
         .map(|e| e.file_name())
