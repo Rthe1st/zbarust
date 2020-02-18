@@ -14,14 +14,16 @@ fn image_create_destroy() {
 
 #[test]
 fn set_config() {
-    let mut scanner = ZBarImageScanner::new();
-    scanner.set_config(ZBarSymbolType::ZBarNone, ZBarConfig::ZBarCfgEnable, 0).unwrap();
-    scanner.set_config(ZBarSymbolType::ZBarQRCode, ZBarConfig::ZBarCfgEnable, 1).unwrap();
+    let scanner = ZBarImageScanner::new();
+    unsafe {
+        (*scanner).set_config(ZBarSymbolType::ZBarNone, ZBarConfig::ZBarCfgEnable, 0).unwrap();
+        (*scanner).set_config(ZBarSymbolType::ZBarQRCode, ZBarConfig::ZBarCfgEnable, 1).unwrap();
+    }
 }
 
 #[test]
 fn decode_qrcode() {
-    let mut scanner = ZBarImageScanner::new();
+    let scanner = ZBarImageScanner::new();
 
     let url = "https://magiclen.org";
 
@@ -29,7 +31,10 @@ fn decode_qrcode() {
 
     let data = qrcode_generator::to_image(url, QrCodeEcc::Low, size).unwrap();
 
-    let mut result = scanner.scan_y800(&data, size as u32, size as u32).unwrap();
+    let mut result;
+    unsafe {
+        result = (*scanner).scan_y800(&data, size as u32, size as u32).unwrap();
+    }
 
     assert_eq!(1, result.len());
     assert_eq!(ZBarSymbolType::ZBarQRCode, result[0].symbol_type);

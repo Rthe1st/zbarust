@@ -20,9 +20,9 @@ fn main() {
 
     let luma_img_data: Vec<u8> = luma_img.to_vec();
 
-    let mut scanner = ZBarImageScanner::new();
+    let scanner = ZBarImageScanner::new();
 
-    let mut results = scanner.scan_y800(&luma_img_data, width, height).unwrap();
+    let mut results = unsafe { (*scanner).scan_y800(&luma_img_data, width, height).unwrap() };
 
     assert_eq!(1, results.len());
 

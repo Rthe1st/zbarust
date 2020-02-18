@@ -1,21 +1,19 @@
-use libc::{c_char, c_int, c_ulong, c_void};
+use libc::{c_char, c_int, c_uint, c_ulong, c_void};
 
 use crate::symbol;
 use crate::zbar;
 use crate::zbar_image;
 
-use std::ptr;
-
 extern {
-    pub fn zbar_image_scanner_create() -> *mut c_void;
-    pub fn zbar_image_scanner_destroy(scanner: *mut c_void);
+    pub fn zbar_image_scanner_create() -> *mut ZBarImageScanner;
+    pub fn zbar_image_scanner_destroy(scanner: *mut ZBarImageScanner);
     pub fn zbar_image_scanner_set_data_handler(
         scanner: *mut c_void,
         handler: *const c_void,
         userdata: *const c_void,
     );
     pub fn zbar_image_scanner_set_config(
-        scanner: *mut c_void,
+        scanner: *mut ZBarImageScanner,
         symbology: c_int,
         config: c_int,
         value: c_int,
@@ -30,7 +28,10 @@ extern {
         image: *mut zbar_image::ZBarImage,
     );
     pub fn zbar_image_scanner_get_results(scanner: *const c_void) -> *const c_void;
-    pub fn zbar_scan_image(scanner: *mut c_void, image: *mut zbar_image::ZBarImage) -> c_int;
+    pub fn zbar_scan_image(
+        scanner: *mut ZBarImageScanner,
+        image: *mut zbar_image::ZBarImage,
+    ) -> c_int;
 }
 
 #[derive(Debug)]
@@ -39,17 +40,76 @@ pub struct ZBarImageScanResult {
     pub data: Vec<u8>,
 }
 
+#[repr(C)]
+#[derive(Debug)]
+struct RecycleBucket {
+    nsyms: c_int,
+    head: *mut zbar::ZBarSymbolType,
+}
+
+const RECYCLE_BUCKETS: usize = 5;
+// this will be 2
+// I'm confused if this is right
+// because ZBAR_CFG_X_DENSITY and ZBAR_CFG_Y_DENSITY start out as 0x100 and 0x101
+// but are then changed to 1 and 1 by a CFG call when scanner is made?
+const NUM_SCN_CFGS: usize =
+    zbar::ZBarConfig::ZBarCfgYDensity as usize - zbar::ZBarConfig::ZBarCfgXDensity as usize + 1;
+
+const NUM_SYMS: usize = 20;
+
+#[repr(C)]
+#[derive(Debug)]
 pub struct ZBarImageScanner {
+    /* associated linear intensity scanner */
     scanner: *mut c_void,
+    /* associated symbol decoder */
+    decoder: *mut c_void,
+    /* QR Code 2D reader */
+    // todo: with a macro, hide behind ENABLE_QRCODE flag
+    qr_reader: *mut c_void,
+    /* application data */
+    userdata: *mut c_void,
+    handler: *mut c_void,
+    /* scan start time */
+    time: c_ulong,
+    /* currently scanning image *root* */
+    img: *mut c_void,
+    /* current scan direction */
+    dx: c_int,
+    dy: c_int,
+    du: c_int,
+    dumin: c_int,
+    v: c_int,
+    /* previous decode results */
+    syms: *mut c_void,
+    /* recycled symbols in 4^n size buckets */
+    recycle: [RecycleBucket; RECYCLE_BUCKETS],
+    /* current result cache state */
+    enable_cache: c_int,
+    /* inter-image result cache entries */
+    cache: *mut c_void,
+    /* configuration settings
+    config flags */
+    config: c_uint,
+    ean_config: c_uint,
+    /* int valued configurations */
+    configs: [c_int; NUM_SCN_CFGS],
+    /* per-symbology configurations */
+    sym_configs: [[c_int; NUM_SYMS]; 1],
+
+    // todo: with macro hide behind NO_STATS flag
+    stat_syms_new: c_int,
+    stat_iscn_syms_inuse: c_int,
+    stat_iscn_syms_recycle: c_int,
+    stat_img_syms_inuse: c_int,
+    stat_img_syms_recycle: c_int,
+    stat_sym_new: c_int,
+    stat_sym_recycle: [c_int; RECYCLE_BUCKETS],
 }
 
 impl ZBarImageScanner {
-    pub fn new() -> ZBarImageScanner {
-        let scanner = unsafe { zbar_image_scanner_create() };
-
-        ZBarImageScanner {
-            scanner,
-        }
+    pub fn new() -> *mut ZBarImageScanner {
+        unsafe { zbar_image_scanner_create() }
     }
 
     pub fn set_config(
@@ -60,7 +120,7 @@ impl ZBarImageScanner {
     ) -> Result<(), &'static str> {
         let result = unsafe {
             zbar_image_scanner_set_config(
-                self.scanner,
+                self,
                 symbology.ordinal() as c_int,
                 config.ordinal() as c_int,
                 value as c_int,
@@ -73,10 +133,11 @@ impl ZBarImageScanner {
         }
     }
 
-    pub fn destroy(mut self) {
+    pub fn destroy(&mut self) {
+        //todo: this should be in a wrapper that also
+        // nulls the thing pointing to self
         unsafe {
-            zbar_image_scanner_destroy(self.scanner);
-            self.scanner = ptr::null_mut();
+            zbar_image_scanner_destroy(self);
         }
     }
 
@@ -122,7 +183,7 @@ impl ZBarImageScanner {
             );
         }
 
-        let n = unsafe { zbar_scan_image(self.scanner, image) };
+        let n = unsafe { zbar_scan_image(self, image) };
 
         if n < 0 {
             return Err("incorrect image");
@@ -156,19 +217,10 @@ impl ZBarImageScanner {
     }
 }
 
-impl Default for ZBarImageScanner {
-    #[inline]
-    fn default() -> Self {
-        ZBarImageScanner::new()
-    }
-}
-
 impl Drop for ZBarImageScanner {
     fn drop(&mut self) {
-        if !self.scanner.is_null() {
-            unsafe {
-                zbar_image_scanner_destroy(self.scanner);
-            }
+        unsafe {
+            zbar_image_scanner_destroy(self);
         }
     }
 }
