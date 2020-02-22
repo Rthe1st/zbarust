@@ -11,7 +11,7 @@ To compile this crate, you need to compile the ZBar library first. You can insta
 
 ## Examples
 
-```rust,ignore
+```rust
 extern crate zbarust;
 extern crate image;
 
@@ -19,7 +19,7 @@ use zbarust::ZBarImageScanner;
 
 use image::GenericImageView;
 
-let img = image::open(INPUT_IMAGE_PATH).unwrap();
+let img = image::open("examples/data/magiclen.org.png").unwrap();
 
 let (width, height) = img.dimensions();
 
@@ -27,9 +27,13 @@ let luma_img = img.to_luma();
 
 let luma_img_data: Vec<u8> = luma_img.to_vec();
 
-let mut scanner = ZBarImageScanner::new();
+let scanner = ZBarImageScanner::new();
 
-let results = scanner.scan_y800(&luma_img_data, width, height).unwrap();
+let results;
+
+unsafe{
+    results = (*scanner).scan_y800(&luma_img_data, width, height).unwrap();
+}
 
 for result in results {
     println!("{}", String::from_utf8(result.data).unwrap())
