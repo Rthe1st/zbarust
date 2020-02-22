@@ -102,7 +102,6 @@ fn build_from_submodule() {
 
     println!("cargo:rustc-link-search=native={}", format!("{}/lib", dst.display()));
     println!("cargo:rustc-link-lib=static=zbar");
-    println!("cargo:include=/home/mehow/Dropbox/code_backups/zbar-rust/zbar/include");
 }
 
 fn env_var_set_default(name: &str, value: &str) {
