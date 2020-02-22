@@ -15,3 +15,7 @@ clippy:
 .PHONY: format
 format:
 	cargo fmt
+
+.PHONY: format-check
+format-check:
+	cargo fmt -- --check
