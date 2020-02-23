@@ -21,4 +21,5 @@ extern {
         buffer: *mut *mut c_char,
         buflen: *mut c_uint,
     ) -> *mut c_char;
+    pub fn zbar_symbol_set_ref(syms: *const c_void, delta: c_int);
 }

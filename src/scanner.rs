@@ -170,20 +170,20 @@ impl ZBarImageScanner {
     ) -> Result<Vec<ZBarImageScanResult>, &'static str> {
         let data = data.as_ref();
 
-        let image: *mut zbar_image::ZBarImage = zbar_image::ZBarImage::new();
+        let mut image = zbar_image::ZBarImage::new();
 
         unsafe {
-            (*image).set_size(width, height);
-            (*image).set_format(format);
+            image.set_size(width, height);
+            image.set_format(format);
             zbar_image::zbar_image_set_data(
-                image,
+                &mut image,
                 data.as_ptr() as *const c_void,
                 data.len() as c_ulong,
                 zbar_image::zbar_image_free_data as *mut c_void,
             );
         }
 
-        let n = unsafe { zbar_scan_image(self, image) };
+        let n = unsafe { zbar_scan_image(self, &mut image) };
 
         if n < 0 {
             return Err("incorrect image");
@@ -191,7 +191,7 @@ impl ZBarImageScanner {
 
         let mut result_array = Vec::with_capacity(n as usize);
 
-        let mut symbol = unsafe { zbar_image::zbar_image_first_symbol(image) };
+        let mut symbol = unsafe { zbar_image::zbar_image_first_symbol(&image) };
 
         while !symbol.is_null() {
             let symbol_type = unsafe { symbol::zbar_symbol_get_type(symbol) };

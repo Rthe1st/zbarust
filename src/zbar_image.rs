@@ -1,5 +1,9 @@
 use libc::{c_char, c_int, c_uint, c_ulong, c_void};
 
+use crate::symbol;
+use crate::threads;
+use std::ptr;
+
 extern {
     pub fn zbar_image_create() -> *mut ZBarImage;
     pub fn zbar_image_destroy(image: *mut ZBarImage);
@@ -54,40 +58,92 @@ extern {
 #[repr(C)]
 pub struct ZBarImage {
     /* fourcc image format code */
-    format: u32,
+    format: c_int,
     /* image size */
-    width: u32,
-    height: u32,
+    width: c_int,
+    height: c_int,
     /* image sample data */
     data: *mut c_void,
     /* allocated/mapped size of data */
     datalen: u64,
     /* crop rectangle */
-    crop_x: u32,
-    crop_y: u32,
-    crop_w: u32,
-    crop_h: u32,
+    crop_x: c_int,
+    crop_y: c_int,
+    crop_w: c_int,
+    crop_h: c_int,
     /* user specified data associated w/image */
     userdata: *mut c_void,
     /* cleanup handler */
-    zbar_image_cleanup_handler_t: *mut c_void,
+    cleanup: Option<Cleanup>,
     /* reference count */
-    refcnt: u32,
+    refcnt: c_int,
     /* originator */
     src: *mut c_void,
     /* index used by originator */
-    srcidx: u32,
+    srcidx: c_int,
     /* internal image lists */
     next: *mut c_void,
     /* page/frame sequence number */
-    seq: u32,
+    seq: c_int,
     /* decoded result set */
     syms: *mut c_void,
 }
 
+type Cleanup = extern fn(*mut ZBarImage);
+
 impl ZBarImage {
-    pub fn new() -> *mut ZBarImage {
-        unsafe { zbar_image_create() }
+    pub fn new() -> ZBarImage {
+        let mut image = ZBarImage {
+            format: 0,
+            width: 0,
+            height: 0,
+            data: ptr::null_mut(),
+            datalen: 0,
+            crop_x: 0,
+            crop_y: 0,
+            crop_w: 0,
+            crop_h: 0,
+            userdata: ptr::null_mut(),
+            cleanup: None,
+            refcnt: 0,
+            src: ptr::null_mut(),
+            srcidx: -1,
+            next: ptr::null_mut(),
+            seq: 0,
+            syms: ptr::null_mut(),
+        };
+
+        unsafe {
+            threads::_zbar_refcnt_init();
+        }
+
+        image.refcnt(1);
+
+        image
+    }
+
+    fn refcnt(&mut self, delta: c_int) {
+        let refcnt_res;
+        unsafe { refcnt_res = threads::_zbar_refcnt(&mut (self.refcnt), delta) }
+        if refcnt_res == 0 && delta <= 0 {
+            if self.cleanup.is_some() {
+                (self.cleanup.unwrap())(self as *mut ZBarImage);
+            }
+            if !self.src.is_null() {
+                self.zbar_image_free();
+            }
+        }
+    }
+
+    fn zbar_image_free(&mut self) {
+        if !self.syms.is_null() {
+            unsafe {
+                symbol::zbar_symbol_set_ref(self.syms, -1);
+            }
+            self.syms = ptr::null_mut();
+        }
+        //this shouldn't be need because we create the memory in rust now
+        //free(img);
     }
 
     pub fn set_format(&mut self, format: u32) {
@@ -111,6 +167,36 @@ impl ZBarImage {
     pub fn destroy(mut self) {
         unsafe {
             zbar_image_destroy(&mut self);
+        }
+    }
+}
+
+impl Default for ZBarImage {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    static mut CLEANUP_EXECUTED: bool = false;
+
+    extern fn cleanup_dummy(_img: *mut ZBarImage) {
+        unsafe {
+            CLEANUP_EXECUTED = true;
+        }
+    }
+
+    #[test]
+    fn test_refcnt_cleanup() {
+        let mut img = ZBarImage::new();
+        img.cleanup = Some(cleanup_dummy);
+        img.refcnt(-1);
+        unsafe {
+            assert!(CLEANUP_EXECUTED);
         }
     }
 }
