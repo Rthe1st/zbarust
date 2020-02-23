@@ -50,6 +50,7 @@ extern crate libc;
 
 mod scanner;
 mod symbol;
+mod threads;
 mod zbar;
 mod zbar_image;
 
