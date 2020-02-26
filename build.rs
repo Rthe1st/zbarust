@@ -4,7 +4,7 @@ extern crate pkg_config;
 use autotools::Config;
 use std::collections::HashSet;
 use std::env;
-use std::path::{Path, PathBuf};
+use std::path::{PathBuf};
 use std::process::Command;
 
 const MIN_VERSION: &str = "0.10";
@@ -26,7 +26,7 @@ fn main() {
         // export ZBAR_STATIC=1
         link_to_prebuilt();
     } else {
-        build_from_submodule();
+        build_from_repo();
     }
 }
 
@@ -83,10 +83,7 @@ fn link_to_prebuilt() {
     }
 }
 
-fn build_from_submodule() {
-    if !Path::new("zbar/.git").exists() {
-        let _ = Command::new("git").args(&["submodule", "update", "--init"]).status();
-    }
+fn build_from_repo() {
 
     let dst = Config::new("zbar")
         .reconf("-ivf")
