@@ -1,4 +1,4 @@
-all: build test clippy fmt
+all: build test clippy format
 
 .PHONY: build
 build:
