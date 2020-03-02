@@ -172,9 +172,10 @@ impl ZBarImageScanner {
 
         let mut image = zbar_image::ZBarImage::new();
 
+        image.set_size(width, height);
+        image.set_format(format);
+
         unsafe {
-            image.set_size(width, height);
-            image.set_format(format);
             zbar_image::zbar_image_set_data(
                 &mut image,
                 data.as_ptr() as *const c_void,
