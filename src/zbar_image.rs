@@ -33,7 +33,6 @@ extern {
     pub fn zbar_image_set_symbols(image: *mut ZBarImage, symbols: *const c_void);
     pub fn zbar_image_first_symbol(image: *const ZBarImage) -> *const c_void;
     pub fn zbar_image_set_sequence(image: *mut ZBarImage, sequence_num: c_ulong);
-    pub fn zbar_image_set_size(image: *mut ZBarImage, width: c_ulong, height: c_ulong);
     pub fn zbar_image_set_crop(
         image: *mut ZBarImage,
         x: c_ulong,
@@ -59,17 +58,17 @@ pub struct ZBarImage {
     /* fourcc image format code */
     format: c_uint,
     /* image size */
-    width: c_int,
-    height: c_int,
+    width: c_uint,
+    height: c_uint,
     /* image sample data */
     data: *mut c_void,
     /* allocated/mapped size of data */
     datalen: u64,
     /* crop rectangle */
-    crop_x: c_int,
-    crop_y: c_int,
-    crop_w: c_int,
-    crop_h: c_int,
+    crop_x: c_uint,
+    crop_y: c_uint,
+    crop_w: c_uint,
+    crop_h: c_uint,
     /* user specified data associated w/image */
     userdata: *mut c_void,
     /* cleanup handler */
@@ -150,9 +149,12 @@ impl ZBarImage {
     }
 
     pub fn set_size(&mut self, width: u32, height: u32) {
-        unsafe {
-            zbar_image_set_size(self, c_ulong::from(width), c_ulong::from(height));
-        }
+        self.crop_x = 0;
+        self.crop_y = 0;
+        self.crop_h = height;
+        self.crop_w = width;
+        self.width = width;
+        self.height = height;
     }
 
     pub fn set_ref(&mut self, r: isize) {
