@@ -32,7 +32,6 @@ extern {
     pub fn zbar_image_get_symbols(image: *const ZBarImage) -> *const c_void;
     pub fn zbar_image_set_symbols(image: *mut ZBarImage, symbols: *const c_void);
     pub fn zbar_image_first_symbol(image: *const ZBarImage) -> *const c_void;
-    pub fn zbar_image_set_format(image: *mut ZBarImage, format: c_ulong);
     pub fn zbar_image_set_sequence(image: *mut ZBarImage, sequence_num: c_ulong);
     pub fn zbar_image_set_size(image: *mut ZBarImage, width: c_ulong, height: c_ulong);
     pub fn zbar_image_set_crop(
@@ -58,7 +57,7 @@ extern {
 #[repr(C)]
 pub struct ZBarImage {
     /* fourcc image format code */
-    format: c_int,
+    format: c_uint,
     /* image size */
     width: c_int,
     height: c_int,
@@ -147,9 +146,7 @@ impl ZBarImage {
     }
 
     pub fn set_format(&mut self, format: u32) {
-        unsafe {
-            zbar_image_set_format(self, c_ulong::from(format));
-        }
+        self.format = format;
     }
 
     pub fn set_size(&mut self, width: u32, height: u32) {
