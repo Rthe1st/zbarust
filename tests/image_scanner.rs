@@ -29,11 +29,11 @@ fn decode_qrcode() {
 
     let size = 512;
 
-    let data = qrcode_generator::to_image(url, QrCodeEcc::Low, size).unwrap();
+    let mut data = qrcode_generator::to_image(url, QrCodeEcc::Low, size).unwrap();
 
     let mut result;
     unsafe {
-        result = (*scanner).scan_y800(&data, size as u32, size as u32).unwrap();
+        result = (*scanner).scan_y800(&mut data, size as u32, size as u32).unwrap();
     }
 
     assert_eq!(1, result.len());

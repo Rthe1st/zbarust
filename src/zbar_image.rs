@@ -40,12 +40,6 @@ extern {
         width: c_ulong,
         height: c_ulong,
     );
-    pub fn zbar_image_set_data(
-        image: *mut ZBarImage,
-        data: *const c_void,
-        data_byte_length: c_ulong,
-        handler: *mut c_void,
-    );
     pub fn zbar_image_free_data(image: *mut ZBarImage);
     pub fn zbar_image_set_userdata(image: *mut ZBarImage, userdata: *const c_void);
     pub fn zbar_image_get_userdata(image: *const ZBarImage) -> *const c_void;
@@ -63,7 +57,7 @@ pub struct ZBarImage {
     /* image sample data */
     data: *mut c_void,
     /* allocated/mapped size of data */
-    datalen: u64,
+    datalen: c_ulong,
     /* crop rectangle */
     crop_x: c_uint,
     crop_y: c_uint,
@@ -87,7 +81,7 @@ pub struct ZBarImage {
     syms: *mut c_void,
 }
 
-type Cleanup = extern fn(*mut ZBarImage);
+type Cleanup = unsafe extern fn(*mut ZBarImage);
 
 impl ZBarImage {
     pub fn new() -> ZBarImage {
@@ -125,7 +119,9 @@ impl ZBarImage {
         unsafe { refcnt_res = threads::_zbar_refcnt(&mut (self.refcnt), delta) }
         if refcnt_res == 0 && delta <= 0 {
             if self.cleanup.is_some() {
-                (self.cleanup.unwrap())(self as *mut ZBarImage);
+                unsafe {
+                    (self.cleanup.unwrap())(self as *mut ZBarImage);
+                }
             }
             if !self.src.is_null() {
                 self.zbar_image_free();
@@ -155,6 +151,15 @@ impl ZBarImage {
         self.crop_w = width;
         self.width = width;
         self.height = height;
+    }
+
+    pub fn set_data<D: AsMut<[u8]>>(&mut self, mut data: D, handler: Cleanup) {
+        unsafe {
+            zbar_image_free_data(self as *mut ZBarImage);
+        }
+        self.data = (data.as_mut().as_ptr()) as *mut c_void;
+        self.datalen = data.as_mut().len() as c_ulong;
+        self.cleanup = Some(handler);
     }
 
     pub fn set_ref(&mut self, r: isize) {
