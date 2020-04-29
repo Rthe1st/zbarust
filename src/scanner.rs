@@ -141,7 +141,7 @@ impl ZBarImageScanner {
         }
     }
 
-    pub fn scan_y800<D: AsRef<[u8]>>(
+    pub fn scan_y800<D: AsMut<[u8]>>(
         &mut self,
         data: D,
         width: u32,
@@ -151,7 +151,7 @@ impl ZBarImageScanner {
         self.scan(data, width, height, 808_466_521)
     }
 
-    pub fn scan_gray<D: AsRef<[u8]>>(
+    pub fn scan_gray<D: AsMut<[u8]>>(
         &mut self,
         data: D,
         width: u32,
@@ -161,28 +161,18 @@ impl ZBarImageScanner {
         self.scan(data, width, height, 1_497_453_127)
     }
 
-    pub fn scan<D: AsRef<[u8]>>(
+    pub fn scan<D: AsMut<[u8]>>(
         &mut self,
         data: D,
         width: u32,
         height: u32,
         format: u32,
     ) -> Result<Vec<ZBarImageScanResult>, &'static str> {
-        let data = data.as_ref();
-
         let mut image = zbar_image::ZBarImage::new();
 
         image.set_size(width, height);
         image.set_format(format);
-
-        unsafe {
-            zbar_image::zbar_image_set_data(
-                &mut image,
-                data.as_ptr() as *const c_void,
-                data.len() as c_ulong,
-                zbar_image::zbar_image_free_data as *mut c_void,
-            );
-        }
+        image.set_data(data, zbar_image::zbar_image_free_data);
 
         let n = unsafe { zbar_scan_image(self, &mut image) };
 

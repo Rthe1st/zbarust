@@ -25,14 +25,14 @@ let (width, height) = img.dimensions();
 
 let luma_img = img.to_luma();
 
-let luma_img_data: Vec<u8> = luma_img.to_vec();
+let mut luma_img_data: Vec<u8> = luma_img.to_vec();
 
 let scanner = ZBarImageScanner::new();
 
 let results;
 
 unsafe{
-    results = (*scanner).scan_y800(&luma_img_data, width, height).unwrap();
+    results = (*scanner).scan_y800(&mut luma_img_data, width, height).unwrap();
 }
 
 for result in results {
