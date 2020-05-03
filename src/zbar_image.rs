@@ -1,7 +1,7 @@
 use libc::{c_char, c_int, c_uint, c_ulong, c_void};
 
+use crate::refcnt;
 use crate::symbol;
-use crate::threads;
 use std::ptr;
 
 extern {
@@ -106,7 +106,7 @@ impl ZBarImage {
         };
 
         unsafe {
-            threads::_zbar_refcnt_init();
+            refcnt::_zbar_refcnt_init();
         }
 
         image.refcnt(1);
@@ -116,7 +116,7 @@ impl ZBarImage {
 
     fn refcnt(&mut self, delta: c_int) {
         let refcnt_res;
-        unsafe { refcnt_res = threads::_zbar_refcnt(&mut (self.refcnt), delta) }
+        unsafe { refcnt_res = refcnt::_zbar_refcnt(&mut (self.refcnt), delta) }
         if refcnt_res == 0 && delta <= 0 {
             if self.cleanup.is_some() {
                 unsafe {

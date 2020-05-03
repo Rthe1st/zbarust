@@ -48,9 +48,9 @@ extern crate enum_ordinalize;
 
 extern crate libc;
 
+mod refcnt;
 mod scanner;
 mod symbol;
-mod threads;
 mod zbar;
 mod zbar_image;
 
