@@ -3,6 +3,7 @@ use libc::{c_char, c_int, c_uint, c_ulong, c_void};
 use crate::symbol;
 use crate::zbar;
 use crate::zbar_image;
+use std::mem;
 
 extern {
     pub fn zbar_image_scanner_create() -> *mut ZBarImageScanner;
@@ -53,7 +54,7 @@ const RECYCLE_BUCKETS: usize = 5;
 // because ZBAR_CFG_X_DENSITY and ZBAR_CFG_Y_DENSITY start out as 0x100 and 0x101
 // but are then changed to 1 and 1 by a CFG call when scanner is made?
 const NUM_SCN_CFGS: usize =
-    zbar::ZBarConfig::ZBarCfgYDensity as usize - zbar::ZBarConfig::ZBarCfgXDensity as usize + 1;
+    zbar::ZBarConfig::CfgYDensity as usize - zbar::ZBarConfig::CfgXDensity as usize + 1;
 
 const NUM_SYMS: usize = 20;
 
@@ -119,12 +120,7 @@ impl ZBarImageScanner {
         value: isize,
     ) -> Result<(), &'static str> {
         let result = unsafe {
-            zbar_image_scanner_set_config(
-                self,
-                symbology.ordinal() as c_int,
-                config.ordinal() as c_int,
-                value as c_int,
-            )
+            zbar_image_scanner_set_config(self, symbology as c_int, config as c_int, value as c_int)
         };
         if result == 0 {
             Ok(())
@@ -186,8 +182,7 @@ impl ZBarImageScanner {
 
         while !symbol.is_null() {
             let symbol_type = unsafe { symbol::zbar_symbol_get_type(symbol) };
-            let symbol_type =
-                unsafe { zbar::ZBarSymbolType::from_ordinal_unsafe(symbol_type as isize) };
+            let symbol_type = unsafe { mem::transmute::<i32, zbar::ZBarSymbolType>(symbol_type) };
             let data = unsafe {
                 let data = symbol::zbar_symbol_get_data(symbol);
                 let data_length = symbol::zbar_symbol_get_data_length(symbol) as usize;

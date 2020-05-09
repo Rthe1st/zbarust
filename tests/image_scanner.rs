@@ -16,8 +16,8 @@ fn image_create_destroy() {
 fn set_config() {
     let scanner = ZBarImageScanner::new();
     unsafe {
-        (*scanner).set_config(ZBarSymbolType::ZBarNone, ZBarConfig::ZBarCfgEnable, 0).unwrap();
-        (*scanner).set_config(ZBarSymbolType::ZBarQRCode, ZBarConfig::ZBarCfgEnable, 1).unwrap();
+        (*scanner).set_config(ZBarSymbolType::None, ZBarConfig::CfgEnable, 0).unwrap();
+        (*scanner).set_config(ZBarSymbolType::Qrcode, ZBarConfig::CfgEnable, 1).unwrap();
     }
 }
 
@@ -37,6 +37,6 @@ fn decode_qrcode() {
     }
 
     assert_eq!(1, result.len());
-    assert_eq!(ZBarSymbolType::ZBarQRCode, result[0].symbol_type);
+    assert_eq!(ZBarSymbolType::Qrcode, result[0].symbol_type);
     assert_eq!(url, unsafe { String::from_utf8_unchecked(result.remove(0).data) });
 }
