@@ -12,7 +12,6 @@ license = "LGPL-2.1"
 
 [dependencies]
 libc = "0.2.43"
-enum-ordinalize = "2.0.5"
 
 [dev-dependencies]
 qrcode-generator = "1.0.2"

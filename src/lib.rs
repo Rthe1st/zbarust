@@ -43,9 +43,6 @@ for result in results {
 More examples are in the `examples` folder.
 */
 
-#[macro_use]
-extern crate enum_ordinalize;
-
 extern crate libc;
 
 mod refcnt;

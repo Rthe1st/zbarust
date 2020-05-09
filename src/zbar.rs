@@ -1,91 +1,105 @@
 #![allow(clippy::missing_safety_doc)]
 
-use enum_ordinalize::create_ordinalized_enum;
 use libc::{c_int, c_uint};
 
-create_ordinalized_enum!(pub ZBarColor,
-    ZBarSpace = 0,
-    ZBarBar = 1,
-);
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum ZBarColor {
+    Space = 0,
+    Bar = 1,
+}
 
-create_ordinalized_enum!(pub ZBarSymbolType,
-    ZBarNone = 0,
-    ZBarPartial = 1,
-    ZBarEAN2 = 2,
-    ZBarEAN5 = 5,
-    ZBarEAN8 = 8,
-    ZBarUPCE = 9,
-    ZBarISBN10 = 10,
-    ZBarUPCA = 12,
-    ZBarEAN13 = 13,
-    ZBarISBN13 = 14,
-    ZBarComposite = 15,
-    ZBarI25 = 25,
-    ZBarDataBar = 34,
-    ZBarDataBarExp = 35,
-    ZBarCodeBar = 38,
-    ZBarCode39 = 39,
-    ZBarPDF417 = 57,
-    ZBarQRCode = 64,
-    ZBarCode93 = 93,
-    ZBarCode128 = 128,
-    ZBarSymbol = 0x00ff,
-    ZBarAddOn2 = 0x0200,
-    ZBarAddOn5 = 0x0500,
-    ZBarAddOn = 0x0700,
-);
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum ZBarSymbolType {
+    None = 0,
+    Partial = 1,
+    Ean2 = 2,
+    Ean5 = 5,
+    Ean8 = 8,
+    Upce = 9,
+    Isbn10 = 10,
+    Upca = 12,
+    Ean13 = 13,
+    Isbn13 = 14,
+    Composite = 15,
+    I25 = 25,
+    Databar = 34,
+    DatabarExp = 35,
+    Codabar = 38,
+    Code39 = 39,
+    Pdf417 = 57,
+    Qrcode = 64,
+    Code93 = 93,
+    Code128 = 128,
+    Symbol = 255,
+    Addon2 = 512,
+    Addon5 = 1280,
+    Addon = 1792,
+}
 
-create_ordinalized_enum!(pub ZBarOrientation,
-    ZBarOrientUnknown = -1,
-    ZBarOrientUp = 0,
-    ZBarOrientRight = 1,
-    ZBarOrientDown = 2,
-    ZBarOrientLeft = 3
-);
+#[repr(i32)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum ZBarOrientation {
+    OrientUnknown = -1,
+    OrientUp = 0,
+    OrientRight = 1,
+    OrientDown = 2,
+    OrientLeft = 3,
+}
 
-create_ordinalized_enum!(pub ZBarError,
-    ZBarOK,
-    ZBarErrNoMem,
-    ZBarErrInternal,
-    ZBarErrUnsupported,
-    ZBarErrInvalid,
-    ZBarErrSystem,
-    ZBarErrLocking,
-    ZBarErrBudy,
-    ZBarErrXDisplay,
-    ZBarErrXProto,
-    ZBarErrClosed,
-    ZBarErrWinAPI,
-    ZBarErrNum
-);
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum ZBarError {
+    Ok = 0,
+    ErrNomem = 1,
+    ErrInternal = 2,
+    ErrUnsupported = 3,
+    ErrInvalid = 4,
+    ErrSystem = 5,
+    ErrLocking = 6,
+    ErrBusy = 7,
+    ErrXdisplay = 8,
+    ErrXproto = 9,
+    ErrClosed = 10,
+    ErrWinapi = 11,
+    ErrNum = 12,
+}
 
-create_ordinalized_enum!(pub ZBarConfig,
-    ZBarCfgEnable = 0,
-    ZBarCfgAddCheck = 1,
-    ZBarCfgEmitCheck = 2,
-    ZBarCfgASCII = 3,
-    ZBarCfgNum = 4,
-    ZBarCfgMinLen = 0x20,
-    ZBarCfgMaxLen = 0x21,
-    ZBarCfgPosition = 0x80,
-    ZBarCfgXDensity = 0x100,
-    ZBarCfgYDensity = 0x101
-);
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum ZBarConfig {
+    CfgEnable = 0,
+    CfgAddCheck = 1,
+    CfgEmitCheck = 2,
+    CfgAscii = 3,
+    CfgNum = 4,
+    CfgMinLen = 32,
+    CfgMaxLen = 33,
+    CfgUncertainty = 64,
+    CfgPosition = 128,
+    CfgXDensity = 256,
+    CfgYDensity = 257,
+}
 
-create_ordinalized_enum!(pub ZBarModifier,
-    ZBarModGS1,
-    ZBarModAIM,
-    ZBarModNum
-);
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum ZBarModifier {
+    ModGs1 = 0,
+    ModAim = 1,
+    ModNum = 2,
+}
 
-create_ordinalized_enum!(pub VideoControlType,
+#[repr(u32)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum VideoControlType {
     VideoCntlInteger = 1,
     VideoCntlMenu = 2,
     VideoCntlButton = 3,
     VideoCntlInteger64 = 4,
     VideoCntlString = 5,
     VideoCntlBoolean = 6,
-);
+}
 
 extern {
     pub fn zbar_version(major: *mut c_uint, minor: *mut c_uint) -> c_int;
