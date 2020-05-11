@@ -1,24 +1,23 @@
 use ::libc;
-extern "C" {
+extern {
     pub type _IO_wide_data;
     pub type _IO_codecvt;
     pub type _IO_marker;
     pub type PyMemberDef;
-    /*@}*/
-    /*------------------------------------------------------------*/
-/* * @name Processor interface
- * @anchor c-processor
- * high-level self-contained image processor.
- * processes video and images for barcodes, optionally displaying
- * images to a library owned output window
- */
-/*@{*/
+    /* @} */
+    /* ------------------------------------------------------------ */
+    /* * @name Processor interface
+     * @anchor c-processor
+     * high-level self-contained image processor.
+     * processes video and images for barcodes, optionally displaying
+     * images to a library owned output window
+     */
+    /* @{ */
     pub type zbar_processor_s;
     /* access macro to the members which are floating "behind" the object */
     /* Generic type check */
     #[no_mangle]
-    fn PyType_IsSubtype(_: *mut PyTypeObject, _: *mut PyTypeObject)
-     -> libc::c_int;
+    fn PyType_IsSubtype(_: *mut PyTypeObject, _: *mut PyTypeObject) -> libc::c_int;
     #[no_mangle]
     static mut zbar_exc: [*mut PyObject; 12];
     #[no_mangle]
@@ -32,11 +31,12 @@ extern "C" {
     #[no_mangle]
     fn PyErr_NoMemory() -> *mut PyObject;
     #[no_mangle]
-    fn _PyArg_NoKeywords(funcname: *const libc::c_char, kw: *mut PyObject)
-     -> libc::c_int;
+    fn _PyArg_NoKeywords(funcname: *const libc::c_char, kw: *mut PyObject) -> libc::c_int;
     #[no_mangle]
-    fn _zbar_error_string(object: *const libc::c_void, verbosity: libc::c_int)
-     -> *const libc::c_char;
+    fn _zbar_error_string(
+        object: *const libc::c_void,
+        verbosity: libc::c_int,
+    ) -> *const libc::c_char;
     #[no_mangle]
     fn _zbar_get_error_code(object: *const libc::c_void) -> zbar_error_t;
     #[no_mangle]
@@ -84,7 +84,7 @@ pub type FILE = _IO_FILE;
 pub type ssize_t = __ssize_t;
 /* include for defines */
 /* Some versions of HP-UX & Solaris need inttypes.h for int32_t,
-   INT32_MAX, etc. */
+INT32_MAX, etc. */
 /* *************************************************************************
 Symbols and macros to supply platform-independent interfaces to basic
 C language & library operations whose spellings vary across platforms.
@@ -139,8 +139,8 @@ Used in:  PY_LONG_LONG
  */
 /* Signed variants of the above */
 /* If PYLONG_BITS_IN_DIGIT is not defined then we'll use 30-bit digits if all
-   the necessary integer types are available, and we're on a 64-bit platform
-   (as determined by SIZEOF_VOID_P); otherwise we use 15-bit digits. */
+the necessary integer types are available, and we're on a 64-bit platform
+(as determined by SIZEOF_VOID_P); otherwise we use 15-bit digits. */
 /* uintptr_t is the C9X name for an unsigned integral type such that a
  * legitimate void* can be cast to uintptr_t and then back to void* again
  * without loss of information.  Similarly for intptr_t, wrt a signed
@@ -289,50 +289,38 @@ method blocks.
 /* Py3k buffer interface */
 /* owned reference */
 /* This is Py_ssize_t so it can be
-                             pointed to by strides in simple case.*/
+pointed to by strides in simple case.*/
 /* static store for shape and strides of
-                                  mono-dimensional buffers. */
+mono-dimensional buffers. */
 /* Flags for getting buffers */
-/*  we used to include an E, backwards compatible alias  */
+/* we used to include an E, backwards compatible alias */
 /* end Py3k buffer interface */
 /* For numbers without flag bit Py_TPFLAGS_CHECKTYPES set, all
-       arguments are guaranteed to be of the object's type (modulo
-       coercion hacks -- i.e. if the type's coercion function
-       returns other types, then these are allowed as well).  Numbers that
-       have the Py_TPFLAGS_CHECKTYPES flag bit set should check *both*
-       arguments for proper type and implement the necessary conversions
-       in the slot functions themselves. */
+arguments are guaranteed to be of the object's type (modulo
+coercion hacks -- i.e. if the type's coercion function
+returns other types, then these are allowed as well).  Numbers that
+have the Py_TPFLAGS_CHECKTYPES flag bit set should check *both*
+arguments for proper type and implement the necessary conversions
+in the slot functions themselves. */
 /* Added in release 2.0 */
 /* Added in release 2.2 */
-    /* The following require the Py_TPFLAGS_HAVE_CLASS flag */
+/* The following require the Py_TPFLAGS_HAVE_CLASS flag */
 /* Added in release 2.5 */
 /* Added in release 2.0 */
-pub type destructor = Option<unsafe extern "C" fn(_: *mut PyObject) -> ()>;
+pub type destructor = Option<unsafe extern fn(_: *mut PyObject) -> ()>;
 pub type PyObject = _object;
-pub type inquiry
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> libc::c_int>;
-pub type freefunc = Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>;
-pub type newfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut _typeobject, _: *mut PyObject,
-                                _: *mut PyObject) -> *mut PyObject>;
-pub type allocfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut _typeobject, _: Py_ssize_t)
-               -> *mut PyObject>;
-pub type initproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type descrsetfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type descrgetfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> *mut PyObject>;
+pub type inquiry = Option<unsafe extern fn(_: *mut PyObject) -> libc::c_int>;
+pub type freefunc = Option<unsafe extern fn(_: *mut libc::c_void) -> ()>;
+pub type newfunc = Option<
+    unsafe extern fn(_: *mut _typeobject, _: *mut PyObject, _: *mut PyObject) -> *mut PyObject,
+>;
+pub type allocfunc = Option<unsafe extern fn(_: *mut _typeobject, _: Py_ssize_t) -> *mut PyObject>;
+pub type initproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type descrsetfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type descrgetfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyGetSetDef {
@@ -343,14 +331,10 @@ pub struct PyGetSetDef {
     pub closure: *mut libc::c_void,
 }
 /* Descriptors */
-pub type setter
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut libc::c_void) -> libc::c_int>;
-pub type getter
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut libc::c_void)
-               -> *mut PyObject>;
+pub type setter = Option<
+    unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut libc::c_void) -> libc::c_int,
+>;
+pub type getter = Option<unsafe extern fn(_: *mut PyObject, _: *mut libc::c_void) -> *mut PyObject>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyMethodDef {
@@ -361,30 +345,18 @@ pub struct PyMethodDef {
 }
 /* Method object interface */
 /* This is about the type 'builtin_function_or_method',
-   not Python methods in user-defined classes.  See classobject.h
-   for the latter. */
-pub type PyCFunction
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> *mut PyObject>;
-pub type iternextfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> *mut PyObject>;
-pub type getiterfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> *mut PyObject>;
-pub type richcmpfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: libc::c_int) -> *mut PyObject>;
-pub type traverseproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: visitproc,
-                                _: *mut libc::c_void) -> libc::c_int>;
-pub type visitproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut libc::c_void)
-               -> libc::c_int>;
+not Python methods in user-defined classes.  See classobject.h
+for the latter. */
+pub type PyCFunction =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
+pub type iternextfunc = Option<unsafe extern fn(_: *mut PyObject) -> *mut PyObject>;
+pub type getiterfunc = Option<unsafe extern fn(_: *mut PyObject) -> *mut PyObject>;
+pub type richcmpfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: libc::c_int) -> *mut PyObject>;
+pub type traverseproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: visitproc, _: *mut libc::c_void) -> libc::c_int>;
+pub type visitproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut libc::c_void) -> libc::c_int>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyBufferProcs {
@@ -395,9 +367,7 @@ pub struct PyBufferProcs {
     pub bf_getbuffer: getbufferproc,
     pub bf_releasebuffer: releasebufferproc,
 }
-pub type releasebufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut Py_buffer) -> ()>;
+pub type releasebufferproc = Option<unsafe extern fn(_: *mut PyObject, _: *mut Py_buffer) -> ()>;
 pub type Py_buffer = bufferinfo;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -415,44 +385,27 @@ pub struct bufferinfo {
     pub smalltable: [Py_ssize_t; 2],
     pub internal: *mut libc::c_void,
 }
-pub type getbufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut Py_buffer,
-                                _: libc::c_int) -> libc::c_int>;
-pub type charbufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: *mut *mut libc::c_char) -> Py_ssize_t>;
-pub type segcountproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut Py_ssize_t)
-               -> Py_ssize_t>;
-pub type writebufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: *mut *mut libc::c_void) -> Py_ssize_t>;
-pub type readbufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: *mut *mut libc::c_void) -> Py_ssize_t>;
-pub type setattrofunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type getattrofunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> *mut PyObject>;
-pub type reprfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> *mut PyObject>;
-pub type ternaryfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> *mut PyObject>;
-pub type hashfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> libc::c_long>;
+pub type getbufferproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut Py_buffer, _: libc::c_int) -> libc::c_int>;
+pub type charbufferproc = Option<
+    unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: *mut *mut libc::c_char) -> Py_ssize_t,
+>;
+pub type segcountproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut Py_ssize_t) -> Py_ssize_t>;
+pub type writebufferproc = Option<
+    unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: *mut *mut libc::c_void) -> Py_ssize_t,
+>;
+pub type readbufferproc = Option<
+    unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: *mut *mut libc::c_void) -> Py_ssize_t,
+>;
+pub type setattrofunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type getattrofunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
+pub type reprfunc = Option<unsafe extern fn(_: *mut PyObject) -> *mut PyObject>;
+pub type ternaryfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
+pub type hashfunc = Option<unsafe extern fn(_: *mut PyObject) -> libc::c_long>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyMappingMethods {
@@ -460,17 +413,10 @@ pub struct PyMappingMethods {
     pub mp_subscript: binaryfunc,
     pub mp_ass_subscript: objobjargproc,
 }
-pub type objobjargproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type binaryfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> *mut PyObject>;
-pub type lenfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> Py_ssize_t>;
+pub type objobjargproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type binaryfunc = Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
+pub type lenfunc = Option<unsafe extern fn(_: *mut PyObject) -> Py_ssize_t>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PySequenceMethods {
@@ -485,27 +431,20 @@ pub struct PySequenceMethods {
     pub sq_inplace_concat: binaryfunc,
     pub sq_inplace_repeat: ssizeargfunc,
 }
-pub type ssizeargfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t)
-               -> *mut PyObject>;
-pub type objobjproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> libc::c_int>;
-pub type ssizessizeobjargproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: Py_ssize_t, _: *mut PyObject)
-               -> libc::c_int>;
-pub type ssizeobjargproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type ssizessizeargfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: Py_ssize_t) -> *mut PyObject>;
+pub type ssizeargfunc = Option<unsafe extern fn(_: *mut PyObject, _: Py_ssize_t) -> *mut PyObject>;
+pub type objobjproc = Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type ssizessizeobjargproc = Option<
+    unsafe extern fn(
+        _: *mut PyObject,
+        _: Py_ssize_t,
+        _: Py_ssize_t,
+        _: *mut PyObject,
+    ) -> libc::c_int,
+>;
+pub type ssizeobjargproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: *mut PyObject) -> libc::c_int>;
+pub type ssizessizeargfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: Py_ssize_t) -> *mut PyObject>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyNumberMethods {
@@ -549,29 +488,17 @@ pub struct PyNumberMethods {
     pub nb_inplace_true_divide: binaryfunc,
     pub nb_index: unaryfunc,
 }
-pub type unaryfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> *mut PyObject>;
-pub type coercion
-    =
-    Option<unsafe extern "C" fn(_: *mut *mut PyObject, _: *mut *mut PyObject)
-               -> libc::c_int>;
-pub type cmpfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> libc::c_int>;
-pub type setattrfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut libc::c_char,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type getattrfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut libc::c_char)
-               -> *mut PyObject>;
-pub type printfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut FILE,
-                                _: libc::c_int) -> libc::c_int>;
+pub type unaryfunc = Option<unsafe extern fn(_: *mut PyObject) -> *mut PyObject>;
+pub type coercion =
+    Option<unsafe extern fn(_: *mut *mut PyObject, _: *mut *mut PyObject) -> libc::c_int>;
+pub type cmpfunc = Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type setattrfunc = Option<
+    unsafe extern fn(_: *mut PyObject, _: *mut libc::c_char, _: *mut PyObject) -> libc::c_int,
+>;
+pub type getattrfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut libc::c_char) -> *mut PyObject>;
+pub type printfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut FILE, _: libc::c_int) -> libc::c_int>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyVarObject {
@@ -679,359 +606,308 @@ pub struct zbarProcessor {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 #[inline]
-unsafe extern "C" fn exc_get_message(mut self_0: *mut zbarException,
-                                     mut closure: *mut libc::c_void)
- -> *mut PyObject {
-    let mut super_0: *mut PyBaseExceptionObject =
-        self_0 as *mut PyBaseExceptionObject;
+unsafe extern fn exc_get_message(
+    mut self_0: *mut zbarException,
+    mut closure: *mut libc::c_void,
+) -> *mut PyObject {
+    let mut super_0: *mut PyBaseExceptionObject = self_0 as *mut PyBaseExceptionObject;
     if PyString_Size((*super_0).message) == 0 {
         if !(*super_0).message.is_null() {
             let mut _py_tmp: *mut PyObject = (*super_0).message;
             (*super_0).message = 0 as *mut PyObject;
             (*_py_tmp).ob_refcnt -= 1;
             if !((*_py_tmp).ob_refcnt != 0 as libc::c_int as libc::c_long) {
-                Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(_py_tmp);
+                Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer"))
+                    .expect("non-null function pointer")(_py_tmp);
             }
         }
-        if (*self_0).obj.is_null() ||
-               !((*(*self_0).obj).ob_type ==
-                     &mut zbarProcessor_Type as *mut PyTypeObject ||
-                     PyType_IsSubtype((*(*self_0).obj).ob_type,
-                                      &mut zbarProcessor_Type) != 0) {
+        if (*self_0).obj.is_null()
+            || !((*(*self_0).obj).ob_type == &mut zbarProcessor_Type as *mut PyTypeObject
+                || PyType_IsSubtype((*(*self_0).obj).ob_type, &mut zbarProcessor_Type) != 0)
+        {
             (*super_0).message =
-                PyString_FromString(b"unknown zbar error\x00" as *const u8 as
-                                        *const libc::c_char)
+                PyString_FromString(b"unknown zbar error\x00" as *const u8 as *const libc::c_char)
         } else {
             let mut zobj: *const libc::c_void =
-                (*((*self_0).obj as *mut zbarProcessor)).zproc as
-                    *const libc::c_void;
-            (*super_0).message =
-                PyString_FromString(_zbar_error_string(zobj,
-                                                       1 as libc::c_int))
+                (*((*self_0).obj as *mut zbarProcessor)).zproc as *const libc::c_void;
+            (*super_0).message = PyString_FromString(_zbar_error_string(zobj, 1 as libc::c_int))
         }
     }
     (*(*super_0).message).ob_refcnt += 1;
     return (*super_0).message;
 }
-unsafe extern "C" fn exc_init(mut self_0: *mut zbarException,
-                              mut args: *mut PyObject,
-                              mut kwds: *mut PyObject) -> libc::c_int {
+unsafe extern fn exc_init(
+    mut self_0: *mut zbarException,
+    mut args: *mut PyObject,
+    mut kwds: *mut PyObject,
+) -> libc::c_int {
     if _PyArg_NoKeywords((*(*self_0).base.ob_type).tp_name, kwds) == 0 {
-        return -(1 as libc::c_int)
+        return -(1 as libc::c_int);
     }
-    let mut super_0: *mut PyBaseExceptionObject =
-        self_0 as *mut PyBaseExceptionObject;
+    let mut super_0: *mut PyBaseExceptionObject = self_0 as *mut PyBaseExceptionObject;
     if !(*super_0).args.is_null() {
         let mut _py_tmp: *mut PyObject = (*super_0).args;
         (*super_0).args = 0 as *mut PyObject;
         (*_py_tmp).ob_refcnt -= 1;
         if !((*_py_tmp).ob_refcnt != 0 as libc::c_int as libc::c_long) {
-            Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(_py_tmp);
+            Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer"))
+                .expect("non-null function pointer")(_py_tmp);
         }
     }
     (*args).ob_refcnt += 1;
     (*super_0).args = args;
-    if (*(args as *mut PyVarObject)).ob_size ==
-           1 as libc::c_int as libc::c_long {
+    if (*(args as *mut PyVarObject)).ob_size == 1 as libc::c_int as libc::c_long {
         if !(*self_0).obj.is_null() {
             let mut _py_tmp_0: *mut PyObject = (*self_0).obj;
             (*self_0).obj = 0 as *mut PyObject;
             (*_py_tmp_0).ob_refcnt -= 1;
             if !((*_py_tmp_0).ob_refcnt != 0 as libc::c_int as libc::c_long) {
-                Some((*(*_py_tmp_0).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(_py_tmp_0);
+                Some((*(*_py_tmp_0).ob_type).tp_dealloc.expect("non-null function pointer"))
+                    .expect("non-null function pointer")(_py_tmp_0);
             }
         }
         (*self_0).obj =
-            *(*(args as
-                    *mut PyTupleObject)).ob_item.as_mut_ptr().offset(0 as
-                                                                         libc::c_int
-                                                                         as
-                                                                         isize);
+            *(*(args as *mut PyTupleObject)).ob_item.as_mut_ptr().offset(0 as libc::c_int as isize);
         (*(*self_0).obj).ob_refcnt += 1
     }
     return 0 as libc::c_int;
 }
-unsafe extern "C" fn exc_traverse(mut self_0: *mut zbarException,
-                                  mut visit: visitproc,
-                                  mut arg: *mut libc::c_void) -> libc::c_int {
+unsafe extern fn exc_traverse(
+    mut self_0: *mut zbarException,
+    mut visit: visitproc,
+    mut arg: *mut libc::c_void,
+) -> libc::c_int {
     if !(*self_0).obj.is_null() {
-        let mut vret: libc::c_int =
-            visit.expect("non-null function pointer")((*self_0).obj, arg);
-        if vret != 0 { return vret }
+        let mut vret: libc::c_int = visit.expect("non-null function pointer")((*self_0).obj, arg);
+        if vret != 0 {
+            return vret;
+        }
     }
     let mut base: *mut PyTypeObject = PyExc_Exception as *mut PyTypeObject;
-    return (*base).tp_traverse.expect("non-null function pointer")(self_0 as
-                                                                       *mut PyObject,
-                                                                   visit,
-                                                                   arg);
+    return (*base).tp_traverse.expect("non-null function pointer")(
+        self_0 as *mut PyObject,
+        visit,
+        arg,
+    );
 }
-unsafe extern "C" fn exc_clear(mut self_0: *mut zbarException)
- -> libc::c_int {
+unsafe extern fn exc_clear(mut self_0: *mut zbarException) -> libc::c_int {
     if !(*self_0).obj.is_null() {
         let mut _py_tmp: *mut PyObject = (*self_0).obj;
         (*self_0).obj = 0 as *mut PyObject;
         (*_py_tmp).ob_refcnt -= 1;
         if !((*_py_tmp).ob_refcnt != 0 as libc::c_int as libc::c_long) {
-            Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(_py_tmp);
+            Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer"))
+                .expect("non-null function pointer")(_py_tmp);
         }
     }
-    (*(PyExc_Exception as
-           *mut PyTypeObject)).tp_clear.expect("non-null function pointer")(self_0
-                                                                                as
-                                                                                *mut PyObject);
+    (*(PyExc_Exception as *mut PyTypeObject)).tp_clear.expect("non-null function pointer")(
+        self_0 as *mut PyObject,
+    );
     return 0 as libc::c_int;
 }
-unsafe extern "C" fn exc_dealloc(mut self_0: *mut zbarException) {
+unsafe extern fn exc_dealloc(mut self_0: *mut zbarException) {
     exc_clear(self_0);
-    (*(PyExc_Exception as
-           *mut PyTypeObject)).tp_dealloc.expect("non-null function pointer")(self_0
-                                                                                  as
-                                                                                  *mut PyObject);
+    (*(PyExc_Exception as *mut PyTypeObject)).tp_dealloc.expect("non-null function pointer")(
+        self_0 as *mut PyObject,
+    );
 }
-unsafe extern "C" fn exc_str(mut self_0: *mut zbarException)
- -> *mut PyObject {
+unsafe extern fn exc_str(mut self_0: *mut zbarException) -> *mut PyObject {
     return exc_get_message(self_0, 0 as *mut libc::c_void);
 }
-unsafe extern "C" fn exc_set_message(mut self_0: *mut zbarException,
-                                     mut value: *mut PyObject,
-                                     mut closure: *mut libc::c_void)
- -> libc::c_int {
-    let mut super_0: *mut PyBaseExceptionObject =
-        self_0 as *mut PyBaseExceptionObject;
+unsafe extern fn exc_set_message(
+    mut self_0: *mut zbarException,
+    mut value: *mut PyObject,
+    mut closure: *mut libc::c_void,
+) -> libc::c_int {
+    let mut super_0: *mut PyBaseExceptionObject = self_0 as *mut PyBaseExceptionObject;
     if !(*super_0).message.is_null() {
         let mut _py_tmp: *mut PyObject = (*super_0).message;
         (*super_0).message = 0 as *mut PyObject;
         (*_py_tmp).ob_refcnt -= 1;
         if !((*_py_tmp).ob_refcnt != 0 as libc::c_int as libc::c_long) {
-            Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(_py_tmp);
+            Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer"))
+                .expect("non-null function pointer")(_py_tmp);
         }
     }
     if value.is_null() {
-        value =
-            PyString_FromString(b"\x00" as *const u8 as *const libc::c_char)
-    } else { (*value).ob_refcnt += 1 }
+        value = PyString_FromString(b"\x00" as *const u8 as *const libc::c_char)
+    } else {
+        (*value).ob_refcnt += 1
+    }
     (*super_0).message = value;
     return 0 as libc::c_int;
 }
-static mut exc_getset: [PyGetSetDef; 2] =
-    unsafe {
-        [{
-             let mut init =
-                 PyGetSetDef{name:
-                                 b"message\x00" as *const u8 as
-                                     *const libc::c_char as *mut libc::c_char,
-                             get:
-                                 ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                         *mut zbarException,
-                                                                                     _:
-                                                                                         *mut libc::c_void)
-                                                                    ->
-                                                                        *mut PyObject>,
-                                                         getter>(Some(exc_get_message
-                                                                          as
-                                                                          unsafe extern "C" fn(_:
-                                                                                                   *mut zbarException,
-                                                                                               _:
-                                                                                                   *mut libc::c_void)
-                                                                              ->
-                                                                                  *mut PyObject)),
-                             set:
-                                 ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                         *mut zbarException,
-                                                                                     _:
-                                                                                         *mut PyObject,
-                                                                                     _:
-                                                                                         *mut libc::c_void)
-                                                                    ->
-                                                                        libc::c_int>,
-                                                         setter>(Some(exc_set_message
-                                                                          as
-                                                                          unsafe extern "C" fn(_:
-                                                                                                   *mut zbarException,
-                                                                                               _:
-                                                                                                   *mut PyObject,
-                                                                                               _:
-                                                                                                   *mut libc::c_void)
-                                                                              ->
-                                                                                  libc::c_int)),
-                             doc:
-                                 0 as *const libc::c_char as
-                                     *mut libc::c_char,
-                             closure:
-                                 0 as *const libc::c_void as
-                                     *mut libc::c_void,};
-             init
-         },
-         {
-             let mut init =
-                 PyGetSetDef{name:
-                                 0 as *const libc::c_char as
-                                     *mut libc::c_char,
-                             get: None,
-                             set: None,
-                             doc:
-                                 0 as *const libc::c_char as
-                                     *mut libc::c_char,
-                             closure:
-                                 0 as *const libc::c_void as
-                                     *mut libc::c_void,};
-             init
-         }]
-    };
-#[no_mangle]
-pub static mut zbarException_Type: PyTypeObject =
-    unsafe {
+static mut exc_getset: [PyGetSetDef; 2] = unsafe {
+    [
         {
-            let mut init =
-                _typeobject{ob_refcnt: 1 as libc::c_int as Py_ssize_t,
-                            ob_type:
-                                0 as *const _typeobject as *mut _typeobject,
-                            ob_size: 0,
-                            tp_name:
-                                b"zbar.Exception\x00" as *const u8 as
-                                    *const libc::c_char,
-                            tp_basicsize:
-                                ::std::mem::size_of::<zbarException>() as
-                                    libc::c_ulong as Py_ssize_t,
-                            tp_itemsize: 0,
-                            tp_dealloc:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarException)
-                                                                   -> ()>,
-                                                        destructor>(Some(exc_dealloc
-                                                                             as
-                                                                             unsafe extern "C" fn(_:
-                                                                                                      *mut zbarException)
-                                                                                 ->
-                                                                                     ())),
-                            tp_print: None,
-                            tp_getattr: None,
-                            tp_setattr: None,
-                            tp_compare: None,
-                            tp_repr: None,
-                            tp_as_number:
-                                0 as *const PyNumberMethods as
-                                    *mut PyNumberMethods,
-                            tp_as_sequence:
-                                0 as *const PySequenceMethods as
-                                    *mut PySequenceMethods,
-                            tp_as_mapping:
-                                0 as *const PyMappingMethods as
-                                    *mut PyMappingMethods,
-                            tp_hash: None,
-                            tp_call: None,
-                            tp_str:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarException)
-                                                                   ->
-                                                                       *mut PyObject>,
-                                                        reprfunc>(Some(exc_str
-                                                                           as
-                                                                           unsafe extern "C" fn(_:
-                                                                                                    *mut zbarException)
-                                                                               ->
-                                                                                   *mut PyObject)),
-                            tp_getattro: None,
-                            tp_setattro: None,
-                            tp_as_buffer:
-                                0 as *const PyBufferProcs as
-                                    *mut PyBufferProcs,
-                            tp_flags:
-                                (1 as libc::c_long) << 0 as libc::c_int |
-                                    (1 as libc::c_long) << 1 as libc::c_int |
-                                    (1 as libc::c_long) << 3 as libc::c_int |
-                                    (1 as libc::c_long) << 5 as libc::c_int |
-                                    (1 as libc::c_long) << 6 as libc::c_int |
-                                    (1 as libc::c_long) << 7 as libc::c_int |
-                                    (1 as libc::c_long) << 8 as libc::c_int |
-                                    0 as libc::c_int as libc::c_long |
-                                    (1 as libc::c_long) << 17 as libc::c_int |
-                                    0 as libc::c_int as libc::c_long |
-                                    (1 as libc::c_long) << 10 as libc::c_int |
-                                    (1 as libc::c_long) << 14 as libc::c_int,
-                            tp_doc: 0 as *const libc::c_char,
-                            tp_traverse:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarException,
-                                                                                    _:
-                                                                                        visitproc,
-                                                                                    _:
-                                                                                        *mut libc::c_void)
-                                                                   ->
-                                                                       libc::c_int>,
-                                                        traverseproc>(Some(exc_traverse
-                                                                               as
-                                                                               unsafe extern "C" fn(_:
-                                                                                                        *mut zbarException,
-                                                                                                    _:
-                                                                                                        visitproc,
-                                                                                                    _:
-                                                                                                        *mut libc::c_void)
-                                                                                   ->
-                                                                                       libc::c_int)),
-                            tp_clear:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarException)
-                                                                   ->
-                                                                       libc::c_int>,
-                                                        inquiry>(Some(exc_clear
-                                                                          as
-                                                                          unsafe extern "C" fn(_:
-                                                                                                   *mut zbarException)
-                                                                              ->
-                                                                                  libc::c_int)),
-                            tp_richcompare: None,
-                            tp_weaklistoffset: 0,
-                            tp_iter: None,
-                            tp_iternext: None,
-                            tp_methods:
-                                0 as *const PyMethodDef as *mut PyMethodDef,
-                            tp_members:
-                                0 as *const PyMemberDef as *mut PyMemberDef,
-                            tp_getset: exc_getset.as_ptr() as *mut _,
-                            tp_base:
-                                0 as *const _typeobject as *mut _typeobject,
-                            tp_dict: 0 as *const PyObject as *mut PyObject,
-                            tp_descr_get: None,
-                            tp_descr_set: None,
-                            tp_dictoffset: 0,
-                            tp_init:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarException,
-                                                                                    _:
-                                                                                        *mut PyObject,
-                                                                                    _:
-                                                                                        *mut PyObject)
-                                                                   ->
-                                                                       libc::c_int>,
-                                                        initproc>(Some(exc_init
-                                                                           as
-                                                                           unsafe extern "C" fn(_:
-                                                                                                    *mut zbarException,
-                                                                                                _:
-                                                                                                    *mut PyObject,
-                                                                                                _:
-                                                                                                    *mut PyObject)
-                                                                               ->
-                                                                                   libc::c_int)),
-                            tp_alloc: None,
-                            tp_new: None,
-                            tp_free: None,
-                            tp_is_gc: None,
-                            tp_bases: 0 as *const PyObject as *mut PyObject,
-                            tp_mro: 0 as *const PyObject as *mut PyObject,
-                            tp_cache: 0 as *const PyObject as *mut PyObject,
-                            tp_subclasses:
-                                0 as *const PyObject as *mut PyObject,
-                            tp_weaklist:
-                                0 as *const PyObject as *mut PyObject,
-                            tp_del: None,
-                            tp_version_tag: 0,};
+            let mut init = PyGetSetDef {
+                name: b"message\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                get: ::std::mem::transmute::<
+                    Option<
+                        unsafe extern fn(
+                            _: *mut zbarException,
+                            _: *mut libc::c_void,
+                        ) -> *mut PyObject,
+                    >,
+                    getter,
+                >(Some(
+                    exc_get_message
+                        as unsafe extern fn(
+                            _: *mut zbarException,
+                            _: *mut libc::c_void,
+                        ) -> *mut PyObject,
+                )),
+                set: ::std::mem::transmute::<
+                    Option<
+                        unsafe extern fn(
+                            _: *mut zbarException,
+                            _: *mut PyObject,
+                            _: *mut libc::c_void,
+                        ) -> libc::c_int,
+                    >,
+                    setter,
+                >(Some(
+                    exc_set_message
+                        as unsafe extern fn(
+                            _: *mut zbarException,
+                            _: *mut PyObject,
+                            _: *mut libc::c_void,
+                        ) -> libc::c_int,
+                )),
+                doc: 0 as *const libc::c_char as *mut libc::c_char,
+                closure: 0 as *const libc::c_void as *mut libc::c_void,
+            };
             init
-        }
-    };
+        },
+        {
+            let mut init = PyGetSetDef {
+                name: 0 as *const libc::c_char as *mut libc::c_char,
+                get: None,
+                set: None,
+                doc: 0 as *const libc::c_char as *mut libc::c_char,
+                closure: 0 as *const libc::c_void as *mut libc::c_void,
+            };
+            init
+        },
+    ]
+};
+#[no_mangle]
+pub static mut zbarException_Type: PyTypeObject = unsafe {
+    {
+        let mut init = _typeobject {
+            ob_refcnt: 1 as libc::c_int as Py_ssize_t,
+            ob_type: 0 as *const _typeobject as *mut _typeobject,
+            ob_size: 0,
+            tp_name: b"zbar.Exception\x00" as *const u8 as *const libc::c_char,
+            tp_basicsize: ::std::mem::size_of::<zbarException>() as libc::c_ulong as Py_ssize_t,
+            tp_itemsize: 0,
+            tp_dealloc: ::std::mem::transmute::<
+                Option<unsafe extern fn(_: *mut zbarException) -> ()>,
+                destructor,
+            >(Some(
+                exc_dealloc as unsafe extern fn(_: *mut zbarException) -> (),
+            )),
+            tp_print: None,
+            tp_getattr: None,
+            tp_setattr: None,
+            tp_compare: None,
+            tp_repr: None,
+            tp_as_number: 0 as *const PyNumberMethods as *mut PyNumberMethods,
+            tp_as_sequence: 0 as *const PySequenceMethods as *mut PySequenceMethods,
+            tp_as_mapping: 0 as *const PyMappingMethods as *mut PyMappingMethods,
+            tp_hash: None,
+            tp_call: None,
+            tp_str: ::std::mem::transmute::<
+                Option<unsafe extern fn(_: *mut zbarException) -> *mut PyObject>,
+                reprfunc,
+            >(Some(
+                exc_str as unsafe extern fn(_: *mut zbarException) -> *mut PyObject,
+            )),
+            tp_getattro: None,
+            tp_setattro: None,
+            tp_as_buffer: 0 as *const PyBufferProcs as *mut PyBufferProcs,
+            tp_flags: (1 as libc::c_long) << 0 as libc::c_int
+                | (1 as libc::c_long) << 1 as libc::c_int
+                | (1 as libc::c_long) << 3 as libc::c_int
+                | (1 as libc::c_long) << 5 as libc::c_int
+                | (1 as libc::c_long) << 6 as libc::c_int
+                | (1 as libc::c_long) << 7 as libc::c_int
+                | (1 as libc::c_long) << 8 as libc::c_int
+                | 0 as libc::c_int as libc::c_long
+                | (1 as libc::c_long) << 17 as libc::c_int
+                | 0 as libc::c_int as libc::c_long
+                | (1 as libc::c_long) << 10 as libc::c_int
+                | (1 as libc::c_long) << 14 as libc::c_int,
+            tp_doc: 0 as *const libc::c_char,
+            tp_traverse: ::std::mem::transmute::<
+                Option<
+                    unsafe extern fn(
+                        _: *mut zbarException,
+                        _: visitproc,
+                        _: *mut libc::c_void,
+                    ) -> libc::c_int,
+                >,
+                traverseproc,
+            >(Some(
+                exc_traverse
+                    as unsafe extern fn(
+                        _: *mut zbarException,
+                        _: visitproc,
+                        _: *mut libc::c_void,
+                    ) -> libc::c_int,
+            )),
+            tp_clear: ::std::mem::transmute::<
+                Option<unsafe extern fn(_: *mut zbarException) -> libc::c_int>,
+                inquiry,
+            >(Some(
+                exc_clear as unsafe extern fn(_: *mut zbarException) -> libc::c_int,
+            )),
+            tp_richcompare: None,
+            tp_weaklistoffset: 0,
+            tp_iter: None,
+            tp_iternext: None,
+            tp_methods: 0 as *const PyMethodDef as *mut PyMethodDef,
+            tp_members: 0 as *const PyMemberDef as *mut PyMemberDef,
+            tp_getset: exc_getset.as_ptr() as *mut _,
+            tp_base: 0 as *const _typeobject as *mut _typeobject,
+            tp_dict: 0 as *const PyObject as *mut PyObject,
+            tp_descr_get: None,
+            tp_descr_set: None,
+            tp_dictoffset: 0,
+            tp_init: ::std::mem::transmute::<
+                Option<
+                    unsafe extern fn(
+                        _: *mut zbarException,
+                        _: *mut PyObject,
+                        _: *mut PyObject,
+                    ) -> libc::c_int,
+                >,
+                initproc,
+            >(Some(
+                exc_init
+                    as unsafe extern fn(
+                        _: *mut zbarException,
+                        _: *mut PyObject,
+                        _: *mut PyObject,
+                    ) -> libc::c_int,
+            )),
+            tp_alloc: None,
+            tp_new: None,
+            tp_free: None,
+            tp_is_gc: None,
+            tp_bases: 0 as *const PyObject as *mut PyObject,
+            tp_mro: 0 as *const PyObject as *mut PyObject,
+            tp_cache: 0 as *const PyObject as *mut PyObject,
+            tp_subclasses: 0 as *const PyObject as *mut PyObject,
+            tp_weaklist: 0 as *const PyObject as *mut PyObject,
+            tp_del: None,
+            tp_version_tag: 0,
+        };
+        init
+    }
+};
 /*------------------------------------------------------------------------
  *  Copyright 2009-2010 (c) Jeff Brown <spadix@users.sourceforge.net>
  *
@@ -1053,19 +929,19 @@ pub static mut zbarException_Type: PyTypeObject =
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 #[no_mangle]
-pub unsafe extern "C" fn zbarErr_Set(mut self_0: *mut PyObject)
- -> *mut PyObject {
+pub unsafe extern fn zbarErr_Set(mut self_0: *mut PyObject) -> *mut PyObject {
     let mut zobj: *const libc::c_void =
         (*(self_0 as *mut zbarProcessor)).zproc as *const libc::c_void;
     let mut err: zbar_error_t = _zbar_get_error_code(zobj);
     if err as libc::c_uint == ZBAR_ERR_NOMEM as libc::c_int as libc::c_uint {
         PyErr_NoMemory();
-    } else if (err as libc::c_uint) <
-                  ZBAR_ERR_NUM as libc::c_int as libc::c_uint {
+    } else if (err as libc::c_uint) < ZBAR_ERR_NUM as libc::c_int as libc::c_uint {
         let mut type_0: *mut PyObject = zbar_exc[err as usize];
         PyErr_SetObject(type_0, self_0);
-    } else { PyErr_SetObject(zbar_exc[0 as libc::c_int as usize], self_0); }
+    } else {
+        PyErr_SetObject(zbar_exc[0 as libc::c_int as usize], self_0);
+    }
     return 0 as *mut PyObject;
 }

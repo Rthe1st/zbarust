@@ -1,13 +1,13 @@
 use ::libc;
-extern "C" {
+extern {
     pub type zbar_symbol_set_s;
-    /*@}*/
-    /*------------------------------------------------------------*/
-/* * @name Image interface
- * stores image data samples along with associated format and size
- * metadata
- */
-/*@{*/
+    /* @} */
+    /* ------------------------------------------------------------ */
+    /* * @name Image interface
+     * stores image data samples along with associated format and size
+     * metadata
+     */
+    /* @{ */
     pub type zbar_image_s;
     pub type zbar_image_scanner_s;
     pub type zbar_window_s;
@@ -17,27 +17,24 @@ extern "C" {
     pub type _IO_marker;
     /* * @internal type unsafe error API (don't use) */
     #[no_mangle]
-    fn _zbar_error_spew(object: *const libc::c_void, verbosity: libc::c_int)
-     -> libc::c_int;
+    fn _zbar_error_spew(object: *const libc::c_void, verbosity: libc::c_int) -> libc::c_int;
     /* * image destructor.  all images created by or returned to the
- * application should be destroyed using this function.  when an image
- * is destroyed, the associated data cleanup handler will be invoked
- * if available
- * @note make no assumptions about the image or the data buffer.
- * they may not be destroyed/cleaned immediately if the library
- * is still using them.  if necessary, use the cleanup handler hook
- * to keep track of image data buffers
- */
+     * application should be destroyed using this function.  when an image
+     * is destroyed, the associated data cleanup handler will be invoked
+     * if available
+     * @note make no assumptions about the image or the data buffer.
+     * they may not be destroyed/cleaned immediately if the library
+     * is still using them.  if necessary, use the cleanup handler hook
+     * to keep track of image data buffers
+     */
     #[no_mangle]
     fn zbar_image_destroy(image: *mut zbar_image_t);
     #[no_mangle]
     fn close(__fd: libc::c_int) -> libc::c_int;
     #[no_mangle]
-    fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t)
-     -> ssize_t;
+    fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
     #[no_mangle]
-    fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t)
-     -> ssize_t;
+    fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
     #[no_mangle]
     fn pipe(__pipedes: *mut libc::c_int) -> libc::c_int;
     #[no_mangle]
@@ -47,14 +44,12 @@ extern "C" {
     #[no_mangle]
     fn free(__ptr: *mut libc::c_void);
     #[no_mangle]
-    fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong)
-     -> *mut libc::c_void;
+    fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
     #[no_mangle]
     fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong)
-     -> *mut libc::c_void;
+        -> *mut libc::c_void;
     #[no_mangle]
-    fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong)
-     -> *mut libc::c_void;
+    fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
     #[no_mangle]
     fn zbar_video_get_fd(video: *const zbar_video_t) -> libc::c_int;
     #[no_mangle]
@@ -68,54 +63,55 @@ extern "C" {
     #[no_mangle]
     fn __errno_location() -> *mut libc::c_int;
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     #[no_mangle]
     static mut _zbar_verbosity: libc::c_int;
     #[no_mangle]
-    fn nanosleep(__requested_time: *const timespec,
-                 __remaining: *mut timespec) -> libc::c_int;
+    fn nanosleep(__requested_time: *const timespec, __remaining: *mut timespec) -> libc::c_int;
     #[no_mangle]
-    fn pthread_create(__newthread: *mut pthread_t,
-                      __attr: *const pthread_attr_t,
-                      __start_routine:
-                          Option<unsafe extern "C" fn(_: *mut libc::c_void)
-                                     -> *mut libc::c_void>,
-                      __arg: *mut libc::c_void) -> libc::c_int;
+    fn pthread_create(
+        __newthread: *mut pthread_t,
+        __attr: *const pthread_attr_t,
+        __start_routine: Option<unsafe extern fn(_: *mut libc::c_void) -> *mut libc::c_void>,
+        __arg: *mut libc::c_void,
+    ) -> libc::c_int;
     #[no_mangle]
-    fn pthread_join(__th: pthread_t, __thread_return: *mut *mut libc::c_void)
-     -> libc::c_int;
+    fn pthread_join(__th: pthread_t, __thread_return: *mut *mut libc::c_void) -> libc::c_int;
     #[no_mangle]
     fn pthread_mutex_lock(__mutex: *mut pthread_mutex_t) -> libc::c_int;
     #[no_mangle]
     fn pthread_mutex_unlock(__mutex: *mut pthread_mutex_t) -> libc::c_int;
     #[no_mangle]
-    fn pthread_cond_init(__cond: *mut pthread_cond_t,
-                         __cond_attr: *const pthread_condattr_t)
-     -> libc::c_int;
+    fn pthread_cond_init(
+        __cond: *mut pthread_cond_t,
+        __cond_attr: *const pthread_condattr_t,
+    ) -> libc::c_int;
     #[no_mangle]
     fn pthread_cond_destroy(__cond: *mut pthread_cond_t) -> libc::c_int;
     #[no_mangle]
     fn pthread_cond_broadcast(__cond: *mut pthread_cond_t) -> libc::c_int;
     #[no_mangle]
-    fn pthread_cond_wait(__cond: *mut pthread_cond_t,
-                         __mutex: *mut pthread_mutex_t) -> libc::c_int;
+    fn pthread_cond_wait(__cond: *mut pthread_cond_t, __mutex: *mut pthread_mutex_t)
+        -> libc::c_int;
     #[no_mangle]
-    fn pthread_cond_timedwait(__cond: *mut pthread_cond_t,
-                              __mutex: *mut pthread_mutex_t,
-                              __abstime: *const timespec) -> libc::c_int;
+    fn pthread_cond_timedwait(
+        __cond: *mut pthread_cond_t,
+        __mutex: *mut pthread_mutex_t,
+        __abstime: *const timespec,
+    ) -> libc::c_int;
     #[no_mangle]
-    fn _zbar_process_image(_: *mut zbar_processor_t, _: *mut zbar_image_t)
-     -> libc::c_int;
+    fn _zbar_process_image(_: *mut zbar_processor_t, _: *mut zbar_image_t) -> libc::c_int;
     #[no_mangle]
-    fn _zbar_processor_unlock(_: *mut zbar_processor_t, _: libc::c_int)
-     -> libc::c_int;
+    fn _zbar_processor_unlock(_: *mut zbar_processor_t, _: libc::c_int) -> libc::c_int;
     #[no_mangle]
     fn _zbar_processor_lock(_: *mut zbar_processor_t) -> libc::c_int;
     #[no_mangle]
-    fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int)
-     -> libc::c_int;
+    fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
 }
 pub type __uint32_t = libc::c_uint;
 pub type __off_t = libc::c_long;
@@ -259,9 +255,8 @@ pub type zbar_image_t = zbar_image_s;
 /* * data handler callback function.
  * called when decoded symbol results are available for an image
  */
-pub type zbar_image_data_handler_t
-    =
-    unsafe extern "C" fn(_: *mut zbar_image_t, _: *const libc::c_void) -> ();
+pub type zbar_image_data_handler_t =
+    unsafe extern fn(_: *mut zbar_image_t, _: *const libc::c_void) -> ();
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct zbar_processor_s {
@@ -326,11 +321,8 @@ pub struct processor_state_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
-pub type poll_handler_t
-    =
-    unsafe extern "C" fn(_: *mut zbar_processor_t, _: libc::c_int)
-        -> libc::c_int;
+ *------------------------------------------------------------------------ */
+pub type poll_handler_t = unsafe extern fn(_: *mut zbar_processor_t, _: libc::c_int) -> libc::c_int;
 pub type zbar_processor_t = zbar_processor_s;
 /* poll information */
 pub type poll_desc_t = poll_desc_s;
@@ -390,7 +382,7 @@ pub struct zbar_event_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* simple platform mutex abstraction
  */
 pub type zbar_mutex_t = pthread_mutex_t;
@@ -438,14 +430,14 @@ pub struct zbar_thread_s {
  */
 /* * retrieve the detail string for the last processor error. */
 /* * retrieve the type code for the last processor error. */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Video interface
  * @anchor c-video
  * mid-level video source abstraction.
  * captures images from a video device
  */
-/*@{*/
+/* @{ */
 /* * opaque video object. */
 /* * constructor. */
 /* * destructor. */
@@ -518,14 +510,14 @@ pub struct zbar_thread_s {
  */
 /* * retrieve the detail string for the last video error. */
 /* * retrieve the type code for the last video error. */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Window interface
  * @anchor c-window
  * mid-level output window abstraction.
  * displays images to user-specified platform specific output window
  */
-/*@{*/
+/* @{ */
 /* * opaque window object. */
 /* * constructor. */
 /* * destructor. */
@@ -565,14 +557,14 @@ pub struct zbar_thread_s {
  * barcode scanning.  if a format conversion is necessary, it will
  * heuristically attempt to minimize the cost of the conversion
  */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Image Scanner interface
  * @anchor c-imagescanner
  * mid-level image scanner interface.
  * reads barcodes from 2-D images
  */
-/*@{*/
+/* @{ */
 /* * opaque image scanner object. */
 pub type zbar_image_scanner_t = zbar_image_scanner_s;
 pub type zbar_window_t = zbar_window_s;
@@ -598,7 +590,7 @@ pub type zbar_video_t = zbar_video_s;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* "zERR" (LE) */
 /* application must terminate */
 /* might be able to recover and continue */
@@ -697,7 +689,7 @@ pub type FILE = _IO_FILE;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* gettimeofday */
 /* platform timer abstraction
  *
@@ -710,16 +702,16 @@ pub type FILE = _IO_FILE;
  *     will be <= 0 if timer has expired
  */
 pub type zbar_timer_t = timespec;
-pub type zbar_thread_proc_t
-    =
-    unsafe extern "C" fn(_: *mut libc::c_void) -> *mut libc::c_void;
+pub type zbar_thread_proc_t = unsafe extern fn(_: *mut libc::c_void) -> *mut libc::c_void;
 pub type nfds_t = libc::c_ulong;
 #[inline]
-unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
-                                 mut sev: errsev_t, mut type_0: zbar_error_t,
-                                 mut func: *const libc::c_char,
-                                 mut detail: *const libc::c_char)
- -> libc::c_int {
+unsafe extern fn err_capture(
+    mut container: *const libc::c_void,
+    mut sev: errsev_t,
+    mut type_0: zbar_error_t,
+    mut func: *const libc::c_char,
+    mut detail: *const libc::c_char,
+) -> libc::c_int {
     let mut err: *mut errinfo_t = container as *mut errinfo_t;
     if (*err).magic == 0x5252457a as libc::c_int as libc::c_uint {
     } else {
@@ -731,8 +723,7 @@ unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
                       (*::std::mem::transmute::<&[u8; 82],
                                                 &[libc::c_char; 82]>(b"int err_capture(const void *, errsev_t, zbar_error_t, const char *, const char *)\x00")).as_ptr());
     }
-    if type_0 as libc::c_uint ==
-           ZBAR_ERR_SYSTEM as libc::c_int as libc::c_uint {
+    if type_0 as libc::c_uint == ZBAR_ERR_SYSTEM as libc::c_int as libc::c_uint {
         (*err).errnum = *__errno_location()
     }
     (*err).sev = sev;
@@ -745,47 +736,47 @@ unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
     return -(1 as libc::c_int);
 }
 #[inline]
-unsafe extern "C" fn _zbar_mutex_lock(mut lock: *mut zbar_mutex_t)
- -> libc::c_int {
+unsafe extern fn _zbar_mutex_lock(mut lock: *mut zbar_mutex_t) -> libc::c_int {
     let mut rc: libc::c_int = pthread_mutex_lock(lock);
     /* FIXME save system code */
     /*rc = err_capture(proc, SEV_ERROR, ZBAR_ERR_LOCKING, __func__,
-                       "unable to lock processor");*/
+    "unable to lock processor");*/
     return rc;
 }
 #[inline]
-unsafe extern "C" fn _zbar_mutex_unlock(mut lock: *mut zbar_mutex_t)
- -> libc::c_int {
+unsafe extern fn _zbar_mutex_unlock(mut lock: *mut zbar_mutex_t) -> libc::c_int {
     let mut rc: libc::c_int = pthread_mutex_unlock(lock);
     /* FIXME save system code */
     return rc;
 }
 /* special case */
 #[inline]
-unsafe extern "C" fn alloc_polls(mut p: *mut poll_desc_t) -> libc::c_int {
-    ::std::ptr::write_volatile(&mut (*p).fds as *mut *mut pollfd,
-                               realloc((*p).fds as *mut libc::c_void,
-                                       ((*p).num as
-                                            libc::c_ulong).wrapping_mul(::std::mem::size_of::<pollfd>()
-                                                                            as
-                                                                            libc::c_ulong))
-                                   as *mut pollfd);
-    ::std::ptr::write_volatile(&mut (*p).handlers as
-                                   *mut *mut Option<poll_handler_t>,
-                               realloc((*p).handlers as *mut libc::c_void,
-                                       ((*p).num as
-                                            libc::c_ulong).wrapping_mul(::std::mem::size_of::<Option<poll_handler_t>>()
-                                                                            as
-                                                                            libc::c_ulong))
-                                   as *mut Option<poll_handler_t>);
+unsafe extern fn alloc_polls(mut p: *mut poll_desc_t) -> libc::c_int {
+    ::std::ptr::write_volatile(
+        &mut (*p).fds as *mut *mut pollfd,
+        realloc(
+            (*p).fds as *mut libc::c_void,
+            ((*p).num as libc::c_ulong)
+                .wrapping_mul(::std::mem::size_of::<pollfd>() as libc::c_ulong),
+        ) as *mut pollfd,
+    );
+    ::std::ptr::write_volatile(
+        &mut (*p).handlers as *mut *mut Option<poll_handler_t>,
+        realloc(
+            (*p).handlers as *mut libc::c_void,
+            ((*p).num as libc::c_ulong)
+                .wrapping_mul(::std::mem::size_of::<Option<poll_handler_t>>() as libc::c_ulong),
+        ) as *mut Option<poll_handler_t>,
+    );
     /* FIXME should check for ENOMEM */
     return 0 as libc::c_int;
 }
 #[inline]
-unsafe extern "C" fn add_poll(mut proc_0: *mut zbar_processor_t,
-                              mut fd: libc::c_int,
-                              mut handler: Option<poll_handler_t>)
- -> libc::c_int {
+unsafe extern fn add_poll(
+    mut proc_0: *mut zbar_processor_t,
+    mut fd: libc::c_int,
+    mut handler: Option<poll_handler_t>,
+) -> libc::c_int {
     let mut state: *mut processor_state_t = (*proc_0).state;
     _zbar_mutex_lock(&mut (*proc_0).mutex);
     let mut polling: *mut poll_desc_t = &mut (*state).polling;
@@ -793,40 +784,49 @@ unsafe extern "C" fn add_poll(mut proc_0: *mut zbar_processor_t,
     (*polling).num = (*polling).num + 1;
     let mut i: libc::c_uint = fresh0 as libc::c_uint;
     if _zbar_verbosity >= 5 as libc::c_int {
-        fprintf(stderr,
-                b"%s: [%d] fd=%d handler=%p\n\x00" as *const u8 as
-                    *const libc::c_char,
-                (*::std::mem::transmute::<&[u8; 9],
-                                          &[libc::c_char; 9]>(b"add_poll\x00")).as_ptr(),
-                i, fd, handler);
+        fprintf(
+            stderr,
+            b"%s: [%d] fd=%d handler=%p\n\x00" as *const u8 as *const libc::c_char,
+            (*::std::mem::transmute::<&[u8; 9], &[libc::c_char; 9]>(b"add_poll\x00")).as_ptr(),
+            i,
+            fd,
+            handler,
+        );
     }
     if alloc_polls(polling as *mut poll_desc_t) == 0 {
-        memset(&mut *(*polling).fds.offset(i as isize) as *mut pollfd as
-                   *mut libc::c_void, 0 as libc::c_int,
-               ::std::mem::size_of::<pollfd>() as libc::c_ulong);
+        memset(
+            &mut *(*polling).fds.offset(i as isize) as *mut pollfd as *mut libc::c_void,
+            0 as libc::c_int,
+            ::std::mem::size_of::<pollfd>() as libc::c_ulong,
+        );
         (*(*polling).fds.offset(i as isize)).fd = fd;
-        (*(*polling).fds.offset(i as isize)).events =
-            0x1 as libc::c_int as libc::c_short;
+        (*(*polling).fds.offset(i as isize)).events = 0x1 as libc::c_int as libc::c_short;
         let ref mut fresh1 = *(*polling).handlers.offset(i as isize);
         *fresh1 = handler
-    } else { i = -(1 as libc::c_int) as libc::c_uint }
+    } else {
+        i = -(1 as libc::c_int) as libc::c_uint
+    }
     _zbar_mutex_unlock(&mut (*proc_0).mutex);
     if (*proc_0).input_thread.started != 0 {
         if (*state).kick_fds[1 as libc::c_int as usize] >= 0 as libc::c_int {
         } else {
-            __assert_fail(b"state->kick_fds[1] >= 0\x00" as *const u8 as
-                              *const libc::c_char,
-                          b"zbar/processor/posix.h\x00" as *const u8 as
-                              *const libc::c_char,
-                          85 as libc::c_int as libc::c_uint,
-                          (*::std::mem::transmute::<&[u8; 56],
-                                                    &[libc::c_char; 56]>(b"int add_poll(zbar_processor_t *, int, poll_handler_t *)\x00")).as_ptr());
+            __assert_fail(
+                b"state->kick_fds[1] >= 0\x00" as *const u8 as *const libc::c_char,
+                b"zbar/processor/posix.h\x00" as *const u8 as *const libc::c_char,
+                85 as libc::c_int as libc::c_uint,
+                (*::std::mem::transmute::<&[u8; 56], &[libc::c_char; 56]>(
+                    b"int add_poll(zbar_processor_t *, int, poll_handler_t *)\x00",
+                ))
+                .as_ptr(),
+            );
         }
-        if write((*state).kick_fds[1 as libc::c_int as usize],
-                 &mut i as *mut libc::c_uint as *const libc::c_void,
-                 ::std::mem::size_of::<libc::c_uint>() as libc::c_ulong) <
-               0 as libc::c_int as libc::c_long {
-            return -(1 as libc::c_int)
+        if write(
+            (*state).kick_fds[1 as libc::c_int as usize],
+            &mut i as *mut libc::c_uint as *const libc::c_void,
+            ::std::mem::size_of::<libc::c_uint>() as libc::c_ulong,
+        ) < 0 as libc::c_int as libc::c_long
+        {
+            return -(1 as libc::c_int);
         }
     } else if (*proc_0).threaded == 0 {
         (*state).thr_polling.num = (*polling).num;
@@ -836,55 +836,61 @@ unsafe extern "C" fn add_poll(mut proc_0: *mut zbar_processor_t,
     return i as libc::c_int;
 }
 #[inline]
-unsafe extern "C" fn remove_poll(mut proc_0: *mut zbar_processor_t,
-                                 mut fd: libc::c_int) -> libc::c_int {
+unsafe extern fn remove_poll(
+    mut proc_0: *mut zbar_processor_t,
+    mut fd: libc::c_int,
+) -> libc::c_int {
     let mut state: *mut processor_state_t = (*proc_0).state;
     _zbar_mutex_lock(&mut (*proc_0).mutex);
     let mut polling: *mut poll_desc_t = &mut (*state).polling;
     let mut i: libc::c_int = 0;
     i = (*polling).num - 1 as libc::c_int;
     while i >= 0 as libc::c_int {
-        if (*(*polling).fds.offset(i as isize)).fd == fd { break ; }
+        if (*(*polling).fds.offset(i as isize)).fd == fd {
+            break;
+        }
         i -= 1
     }
     if _zbar_verbosity >= 5 as libc::c_int {
-        fprintf(stderr,
-                b"%s: [%d] fd=%d n=%d\n\x00" as *const u8 as
-                    *const libc::c_char,
-                (*::std::mem::transmute::<&[u8; 12],
-                                          &[libc::c_char; 12]>(b"remove_poll\x00")).as_ptr(),
-                i, fd, (*polling).num);
+        fprintf(
+            stderr,
+            b"%s: [%d] fd=%d n=%d\n\x00" as *const u8 as *const libc::c_char,
+            (*::std::mem::transmute::<&[u8; 12], &[libc::c_char; 12]>(b"remove_poll\x00")).as_ptr(),
+            i,
+            fd,
+            (*polling).num,
+        );
     }
     if i >= 0 as libc::c_int {
         if (i + 1 as libc::c_int) < (*polling).num {
             let mut n: libc::c_int = (*polling).num - i - 1 as libc::c_int;
-            memmove(&mut *(*polling).fds.offset(i as isize) as *mut pollfd as
-                        *mut libc::c_void,
-                    &mut *(*polling).fds.offset((i + 1 as libc::c_int) as
-                                                    isize) as *mut pollfd as
-                        *const libc::c_void,
-                    (n as
-                         libc::c_ulong).wrapping_mul(::std::mem::size_of::<pollfd>()
-                                                         as libc::c_ulong));
-            memmove(&mut *(*polling).handlers.offset(i as isize) as
-                        *mut Option<poll_handler_t> as *mut libc::c_void,
-                    &mut *(*polling).handlers.offset((i + 1 as libc::c_int) as
-                                                         isize) as
-                        *mut Option<poll_handler_t> as *const libc::c_void,
-                    (n as
-                         libc::c_ulong).wrapping_mul(::std::mem::size_of::<poll_handler_t>()
-                                                         as libc::c_ulong));
+            memmove(
+                &mut *(*polling).fds.offset(i as isize) as *mut pollfd as *mut libc::c_void,
+                &mut *(*polling).fds.offset((i + 1 as libc::c_int) as isize) as *mut pollfd
+                    as *const libc::c_void,
+                (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<pollfd>() as libc::c_ulong),
+            );
+            memmove(
+                &mut *(*polling).handlers.offset(i as isize) as *mut Option<poll_handler_t>
+                    as *mut libc::c_void,
+                &mut *(*polling).handlers.offset((i + 1 as libc::c_int) as isize)
+                    as *mut Option<poll_handler_t> as *const libc::c_void,
+                (n as libc::c_ulong)
+                    .wrapping_mul(::std::mem::size_of::<poll_handler_t>() as libc::c_ulong),
+            );
         }
         (*polling).num -= 1;
         i = alloc_polls(polling as *mut poll_desc_t)
     }
     _zbar_mutex_unlock(&mut (*proc_0).mutex);
     if (*proc_0).input_thread.started != 0 {
-        if write((*state).kick_fds[1 as libc::c_int as usize],
-                 &mut i as *mut libc::c_int as *const libc::c_void,
-                 ::std::mem::size_of::<libc::c_uint>() as libc::c_ulong) <
-               0 as libc::c_int as libc::c_long {
-            return -(1 as libc::c_int)
+        if write(
+            (*state).kick_fds[1 as libc::c_int as usize],
+            &mut i as *mut libc::c_int as *const libc::c_void,
+            ::std::mem::size_of::<libc::c_uint>() as libc::c_ulong,
+        ) < 0 as libc::c_int as libc::c_long
+        {
+            return -(1 as libc::c_int);
         }
     } else if (*proc_0).threaded == 0 {
         (*state).thr_polling.num = (*polling).num;
@@ -914,55 +920,60 @@ unsafe extern "C" fn remove_poll(mut proc_0: *mut zbar_processor_t,
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 #[inline]
-unsafe extern "C" fn proc_sleep(mut timeout: libc::c_int) -> libc::c_int {
+unsafe extern fn proc_sleep(mut timeout: libc::c_int) -> libc::c_int {
     if timeout > 0 as libc::c_int {
     } else {
-        __assert_fail(b"timeout > 0\x00" as *const u8 as *const libc::c_char,
-                      b"zbar/processor/posix.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      33 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 20],
-                                                &[libc::c_char; 20]>(b"int proc_sleep(int)\x00")).as_ptr());
+        __assert_fail(
+            b"timeout > 0\x00" as *const u8 as *const libc::c_char,
+            b"zbar/processor/posix.c\x00" as *const u8 as *const libc::c_char,
+            33 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 20], &[libc::c_char; 20]>(b"int proc_sleep(int)\x00"))
+                .as_ptr(),
+        );
     }
-    let mut sleepns: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
-    let mut remns: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
+    let mut sleepns: timespec = timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
+    let mut remns: timespec = timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
     sleepns.tv_sec = (timeout / 1000 as libc::c_int) as __time_t;
-    sleepns.tv_nsec =
-        (timeout % 1000 as libc::c_int * 1000000 as libc::c_int) as
-            __syscall_slong_t;
-    while nanosleep(&mut sleepns, &mut remns) != 0 &&
-              *__errno_location() == 4 as libc::c_int {
+    sleepns.tv_nsec = (timeout % 1000 as libc::c_int * 1000000 as libc::c_int) as __syscall_slong_t;
+    while nanosleep(&mut sleepns, &mut remns) != 0 && *__errno_location() == 4 as libc::c_int {
         sleepns = remns
     }
     return 1 as libc::c_int;
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_event_init(mut event: *mut zbar_event_t)
- -> libc::c_int {
+pub unsafe extern fn _zbar_event_init(mut event: *mut zbar_event_t) -> libc::c_int {
     (*event).state = 0 as libc::c_int;
     (*event).pollfd = -(1 as libc::c_int);
     pthread_cond_init(&mut (*event).cond, 0 as *const pthread_condattr_t);
     return 0 as libc::c_int;
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_event_destroy(mut event: *mut zbar_event_t) {
+pub unsafe extern fn _zbar_event_destroy(mut event: *mut zbar_event_t) {
     (*event).state = -(1 as libc::c_int);
     (*event).pollfd = -(1 as libc::c_int);
     pthread_cond_destroy(&mut (*event).cond);
 }
 /* lock must be held */
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_event_trigger(mut event: *mut zbar_event_t) {
+pub unsafe extern fn _zbar_event_trigger(mut event: *mut zbar_event_t) {
     (*event).state = 1 as libc::c_int; /* unused */
     pthread_cond_broadcast(&mut (*event).cond);
     if (*event).pollfd >= 0 as libc::c_int {
         let mut i: libc::c_uint = 0 as libc::c_int as libc::c_uint;
-        if write((*event).pollfd,
-                 &mut i as *mut libc::c_uint as *const libc::c_void,
-                 ::std::mem::size_of::<libc::c_uint>() as libc::c_ulong) <
-               0 as libc::c_int as libc::c_long {
+        if write(
+            (*event).pollfd,
+            &mut i as *mut libc::c_uint as *const libc::c_void,
+            ::std::mem::size_of::<libc::c_uint>() as libc::c_ulong,
+        ) < 0 as libc::c_int as libc::c_long
+        {
             perror(b"\x00" as *const u8 as *const libc::c_char);
         }
         (*event).pollfd = -(1 as libc::c_int)
@@ -989,15 +1000,16 @@ pub unsafe extern "C" fn _zbar_event_trigger(mut event: *mut zbar_event_t) {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* platform synchronization "event" abstraction
  */
 /* lock must be held */
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_event_wait(mut event: *mut zbar_event_t,
-                                          mut lock: *mut zbar_mutex_t,
-                                          mut timeout: *mut zbar_timer_t)
- -> libc::c_int {
+pub unsafe extern fn _zbar_event_wait(
+    mut event: *mut zbar_event_t,
+    mut lock: *mut zbar_mutex_t,
+    mut timeout: *mut zbar_timer_t,
+) -> libc::c_int {
     let mut rc: libc::c_int = 0 as libc::c_int;
     while rc == 0 && (*event).state == 0 {
         if timeout.is_null() {
@@ -1010,43 +1022,46 @@ pub unsafe extern "C" fn _zbar_event_wait(mut event: *mut zbar_event_t,
     }
     /* consume/reset event */
     (*event).state = 0 as libc::c_int; /* got event */
-    if rc == 0 { return 1 as libc::c_int } /* timed out */
-    if rc == 110 as libc::c_int { return 0 as libc::c_int }
+    if rc == 0 {
+        return 1 as libc::c_int;
+    } /* timed out */
+    if rc == 110 as libc::c_int {
+        return 0 as libc::c_int;
+    }
     return -(1 as libc::c_int);
     /* error (FIXME save info) */
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_thread_start(mut thr: *mut zbar_thread_t,
-                                            mut proc_0:
-                                                Option<zbar_thread_proc_t>,
-                                            mut arg: *mut libc::c_void,
-                                            mut lock: *mut zbar_mutex_t)
- -> libc::c_int {
+pub unsafe extern fn _zbar_thread_start(
+    mut thr: *mut zbar_thread_t,
+    mut proc_0: Option<zbar_thread_proc_t>,
+    mut arg: *mut libc::c_void,
+    mut lock: *mut zbar_mutex_t,
+) -> libc::c_int {
     if (*thr).started != 0 || (*thr).running != 0 {
-        return -(1 as libc::c_int)
-        /*FIXME*/
+        return -(1 as libc::c_int);
+        /* FIXME */
     }
     (*thr).started = 1 as libc::c_int;
     _zbar_event_init(&mut (*thr).notify);
     _zbar_event_init(&mut (*thr).activity);
     let mut rc: libc::c_int = 0 as libc::c_int;
     _zbar_mutex_lock(lock);
-    if pthread_create(&mut (*thr).tid, 0 as *const pthread_attr_t, proc_0,
-                      arg) != 0 ||
-           _zbar_event_wait(&mut (*thr).activity, lock,
-                            0 as *mut zbar_timer_t) < 0 as libc::c_int ||
-           (*thr).running == 0 {
+    if pthread_create(&mut (*thr).tid, 0 as *const pthread_attr_t, proc_0, arg) != 0
+        || _zbar_event_wait(&mut (*thr).activity, lock, 0 as *mut zbar_timer_t) < 0 as libc::c_int
+        || (*thr).running == 0
+    {
         (*thr).started = 0 as libc::c_int;
         _zbar_event_destroy(&mut (*thr).notify);
         _zbar_event_destroy(&mut (*thr).activity);
-        /*FIXME*/
+        /* FIXME */
         rc = -(1 as libc::c_int)
     }
     _zbar_mutex_unlock(lock);
     return rc;
 }
 /*rc = err_capture_num(proc, SEV_ERROR, ZBAR_ERR_SYSTEM,
-          __func__, "spawning thread", rc);*/
+__func__, "spawning thread", rc);*/
 /*------------------------------------------------------------------------
  *  Copyright 2007-2009 (c) Jeff Brown <spadix@users.sourceforge.net>
  *
@@ -1068,20 +1083,20 @@ pub unsafe extern "C" fn _zbar_thread_start(mut thr: *mut zbar_thread_t,
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* simple platform thread abstraction
  */
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_thread_stop(mut thr: *mut zbar_thread_t,
-                                           mut lock: *mut zbar_mutex_t)
- -> libc::c_int {
+pub unsafe extern fn _zbar_thread_stop(
+    mut thr: *mut zbar_thread_t,
+    mut lock: *mut zbar_mutex_t,
+) -> libc::c_int {
     if (*thr).started != 0 {
         (*thr).started = 0 as libc::c_int;
         _zbar_event_trigger(&mut (*thr).notify);
         while (*thr).running != 0 {
             /* FIXME time out and abandon? */
-            _zbar_event_wait(&mut (*thr).activity, lock,
-                             0 as *mut zbar_timer_t);
+            _zbar_event_wait(&mut (*thr).activity, lock, 0 as *mut zbar_timer_t);
         }
         pthread_join((*thr).tid, 0 as *mut *mut libc::c_void);
         _zbar_event_destroy(&mut (*thr).notify);
@@ -1090,8 +1105,10 @@ pub unsafe extern "C" fn _zbar_thread_stop(mut thr: *mut zbar_thread_t,
     return 0 as libc::c_int;
 }
 /* used by poll interface.  lock is already held */
-unsafe extern "C" fn proc_video_handler(mut proc_0: *mut zbar_processor_t,
-                                        mut i: libc::c_int) -> libc::c_int {
+unsafe extern fn proc_video_handler(
+    mut proc_0: *mut zbar_processor_t,
+    mut i: libc::c_int,
+) -> libc::c_int {
     _zbar_mutex_lock(&mut (*proc_0).mutex);
     _zbar_processor_lock(proc_0);
     _zbar_mutex_unlock(&mut (*proc_0).mutex);
@@ -1099,60 +1116,68 @@ unsafe extern "C" fn proc_video_handler(mut proc_0: *mut zbar_processor_t,
     if (*proc_0).streaming != 0 {
         /* not expected to block */
         img = zbar_video_next_image((*proc_0).video);
-        if !img.is_null() { _zbar_process_image(proc_0, img); }
+        if !img.is_null() {
+            _zbar_process_image(proc_0, img);
+        }
     }
     _zbar_mutex_lock(&mut (*proc_0).mutex);
     _zbar_processor_unlock(proc_0, 0 as libc::c_int);
     _zbar_mutex_unlock(&mut (*proc_0).mutex);
-    if !img.is_null() { zbar_image_destroy(img); }
+    if !img.is_null() {
+        zbar_image_destroy(img);
+    }
     return 0 as libc::c_int;
 }
 #[inline]
-unsafe extern "C" fn proc_cache_polling(mut state: *mut processor_state_t) {
+unsafe extern fn proc_cache_polling(mut state: *mut processor_state_t) {
     /* make a thread-local copy of polling data */
     (*state).thr_polling.num = (*state).polling.num;
     let mut n: libc::c_int = (*state).thr_polling.num;
-    alloc_polls(&mut (*state).thr_polling as *mut poll_desc_t as
-                    *mut poll_desc_t);
-    memcpy((*state).thr_polling.fds as *mut libc::c_void,
-           (*state).polling.fds as *const libc::c_void,
-           (n as
-                libc::c_ulong).wrapping_mul(::std::mem::size_of::<pollfd>() as
-                                                libc::c_ulong));
-    memcpy((*state).thr_polling.handlers as *mut libc::c_void,
-           (*state).polling.handlers as *const libc::c_void,
-           (n as
-                libc::c_ulong).wrapping_mul(::std::mem::size_of::<Option<poll_handler_t>>()
-                                                as libc::c_ulong));
+    alloc_polls(&mut (*state).thr_polling as *mut poll_desc_t as *mut poll_desc_t);
+    memcpy(
+        (*state).thr_polling.fds as *mut libc::c_void,
+        (*state).polling.fds as *const libc::c_void,
+        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<pollfd>() as libc::c_ulong),
+    );
+    memcpy(
+        (*state).thr_polling.handlers as *mut libc::c_void,
+        (*state).polling.handlers as *const libc::c_void,
+        (n as libc::c_ulong)
+            .wrapping_mul(::std::mem::size_of::<Option<poll_handler_t>>() as libc::c_ulong),
+    );
 }
-unsafe extern "C" fn proc_kick_handler(mut proc_0: *mut zbar_processor_t,
-                                       mut i: libc::c_int) -> libc::c_int {
+unsafe extern fn proc_kick_handler(
+    mut proc_0: *mut zbar_processor_t,
+    mut i: libc::c_int,
+) -> libc::c_int {
     let mut state: *mut processor_state_t = (*proc_0).state;
     if _zbar_verbosity >= 5 as libc::c_int {
-        fprintf(stderr,
-                b"%s: kicking %d fds\n\x00" as *const u8 as
-                    *const libc::c_char,
-                (*::std::mem::transmute::<&[u8; 18],
-                                          &[libc::c_char; 18]>(b"proc_kick_handler\x00")).as_ptr(),
-                (*state).polling.num);
+        fprintf(
+            stderr,
+            b"%s: kicking %d fds\n\x00" as *const u8 as *const libc::c_char,
+            (*::std::mem::transmute::<&[u8; 18], &[libc::c_char; 18]>(b"proc_kick_handler\x00"))
+                .as_ptr(),
+            (*state).polling.num,
+        );
     }
     let mut junk: [libc::c_uint; 2] = [0; 2];
-    let mut rc: libc::c_int =
-        read((*state).kick_fds[0 as libc::c_int as usize],
-             junk.as_mut_ptr() as *mut libc::c_void,
-             (2 as libc::c_int as
-                  libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_uint>()
-                                                  as libc::c_ulong)) as
-            libc::c_int;
+    let mut rc: libc::c_int = read(
+        (*state).kick_fds[0 as libc::c_int as usize],
+        junk.as_mut_ptr() as *mut libc::c_void,
+        (2 as libc::c_int as libc::c_ulong)
+            .wrapping_mul(::std::mem::size_of::<libc::c_uint>() as libc::c_ulong),
+    ) as libc::c_int;
     if (*proc_0).threaded != 0 {
     } else {
-        __assert_fail(b"proc->threaded\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"zbar/processor/posix.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      225 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 47],
-                                                &[libc::c_char; 47]>(b"int proc_kick_handler(zbar_processor_t *, int)\x00")).as_ptr());
+        __assert_fail(
+            b"proc->threaded\x00" as *const u8 as *const libc::c_char,
+            b"zbar/processor/posix.c\x00" as *const u8 as *const libc::c_char,
+            225 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 47], &[libc::c_char; 47]>(
+                b"int proc_kick_handler(zbar_processor_t *, int)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     _zbar_mutex_lock(&mut (*proc_0).mutex);
     proc_cache_polling((*proc_0).state);
@@ -1160,63 +1185,64 @@ unsafe extern "C" fn proc_kick_handler(mut proc_0: *mut zbar_processor_t,
     return rc;
 }
 #[inline]
-unsafe extern "C" fn proc_poll_inputs(mut proc_0: *mut zbar_processor_t,
-                                      mut timeout: libc::c_int)
- -> libc::c_int {
+unsafe extern fn proc_poll_inputs(
+    mut proc_0: *mut zbar_processor_t,
+    mut timeout: libc::c_int,
+) -> libc::c_int {
     let mut state: *mut processor_state_t = (*proc_0).state;
     if (*state).pre_poll_handler.is_some() {
-        (*state).pre_poll_handler.expect("non-null function pointer")(proc_0,
-                                                                      -(1 as
-                                                                            libc::c_int));
+        (*state).pre_poll_handler.expect("non-null function pointer")(proc_0, -(1 as libc::c_int));
     }
     let mut p: *mut poll_desc_t = &mut (*state).thr_polling;
     if (*p).num != 0 {
     } else {
-        __assert_fail(b"p->num\x00" as *const u8 as *const libc::c_char,
-                      b"zbar/processor/posix.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      240 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 46],
-                                                &[libc::c_char; 46]>(b"int proc_poll_inputs(zbar_processor_t *, int)\x00")).as_ptr());
+        __assert_fail(
+            b"p->num\x00" as *const u8 as *const libc::c_char,
+            b"zbar/processor/posix.c\x00" as *const u8 as *const libc::c_char,
+            240 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 46], &[libc::c_char; 46]>(
+                b"int proc_poll_inputs(zbar_processor_t *, int)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     let mut rc: libc::c_int = poll((*p).fds, (*p).num as nfds_t, timeout);
     if rc <= 0 as libc::c_int {
         /* FIXME detect and handle fatal errors (somehow) */
-        return rc
+        return rc;
     } /* debug */
     let mut i: libc::c_int = 0;
     i = (*p).num - 1 as libc::c_int;
     while i >= 0 as libc::c_int {
         if (*(*p).fds.offset(i as isize)).revents != 0 {
             if (*(*p).handlers.offset(i as isize)).is_some() {
-                (*(*p).handlers.offset(i as
-                                           isize)).expect("non-null function pointer")(proc_0,
-                                                                                       i);
+                (*(*p).handlers.offset(i as isize)).expect("non-null function pointer")(proc_0, i);
             }
-            (*(*p).fds.offset(i as isize)).revents =
-                0 as libc::c_int as libc::c_short;
+            (*(*p).fds.offset(i as isize)).revents = 0 as libc::c_int as libc::c_short;
             rc -= 1
         }
         i -= 1
     }
     if rc == 0 {
     } else {
-        __assert_fail(b"!rc\x00" as *const u8 as *const libc::c_char,
-                      b"zbar/processor/posix.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      253 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 46],
-                                                &[libc::c_char; 46]>(b"int proc_poll_inputs(zbar_processor_t *, int)\x00")).as_ptr());
+        __assert_fail(
+            b"!rc\x00" as *const u8 as *const libc::c_char,
+            b"zbar/processor/posix.c\x00" as *const u8 as *const libc::c_char,
+            253 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 46], &[libc::c_char; 46]>(
+                b"int proc_poll_inputs(zbar_processor_t *, int)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     return 1 as libc::c_int;
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_input_wait(mut proc_0:
-                                                        *mut zbar_processor_t,
-                                                    mut event:
-                                                        *mut zbar_event_t,
-                                                    mut timeout: libc::c_int)
- -> libc::c_int {
+pub unsafe extern fn _zbar_processor_input_wait(
+    mut proc_0: *mut zbar_processor_t,
+    mut event: *mut zbar_event_t,
+    mut timeout: libc::c_int,
+) -> libc::c_int {
     let mut state: *mut processor_state_t = (*proc_0).state;
     if (*state).thr_polling.num != 0 {
         if !event.is_null() {
@@ -1224,52 +1250,57 @@ pub unsafe extern "C" fn _zbar_processor_input_wait(mut proc_0:
             (*event).pollfd = (*state).kick_fds[1 as libc::c_int as usize];
             _zbar_mutex_unlock(&mut (*proc_0).mutex);
         }
-        return proc_poll_inputs(proc_0, timeout)
-    } else { if timeout != 0 { return proc_sleep(timeout) } }
+        return proc_poll_inputs(proc_0, timeout);
+    } else {
+        if timeout != 0 {
+            return proc_sleep(timeout);
+        }
+    }
     return -(1 as libc::c_int);
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_init(mut proc_0:
-                                                  *mut zbar_processor_t)
- -> libc::c_int {
-    (*proc_0).state =
-        calloc(1 as libc::c_int as libc::c_ulong,
-               ::std::mem::size_of::<processor_state_t>() as libc::c_ulong) as
-            *mut processor_state_t;
+pub unsafe extern fn _zbar_processor_init(mut proc_0: *mut zbar_processor_t) -> libc::c_int {
+    (*proc_0).state = calloc(
+        1 as libc::c_int as libc::c_ulong,
+        ::std::mem::size_of::<processor_state_t>() as libc::c_ulong,
+    ) as *mut processor_state_t;
     let mut state: *mut processor_state_t = (*proc_0).state;
     (*state).kick_fds[1 as libc::c_int as usize] = -(1 as libc::c_int);
-    (*state).kick_fds[0 as libc::c_int as usize] =
-        (*state).kick_fds[1 as libc::c_int as usize];
+    (*state).kick_fds[0 as libc::c_int as usize] = (*state).kick_fds[1 as libc::c_int as usize];
     if (*proc_0).threaded != 0 {
         /* FIXME check errors */
         if pipe((*state).kick_fds.as_mut_ptr()) != 0 {
-            return err_capture(proc_0 as *const libc::c_void, SEV_FATAL,
-                               ZBAR_ERR_SYSTEM,
-                               (*::std::mem::transmute::<&[u8; 21],
-                                                         &[libc::c_char; 21]>(b"_zbar_processor_init\x00")).as_ptr(),
-                               b"failed to open pipe\x00" as *const u8 as
-                                   *const libc::c_char)
+            return err_capture(
+                proc_0 as *const libc::c_void,
+                SEV_FATAL,
+                ZBAR_ERR_SYSTEM,
+                (*::std::mem::transmute::<&[u8; 21], &[libc::c_char; 21]>(
+                    b"_zbar_processor_init\x00",
+                ))
+                .as_ptr(),
+                b"failed to open pipe\x00" as *const u8 as *const libc::c_char,
+            );
         }
-        add_poll(proc_0, (*state).kick_fds[0 as libc::c_int as usize],
-                 Some(proc_kick_handler as
-                          unsafe extern "C" fn(_: *mut zbar_processor_t,
-                                               _: libc::c_int)
-                              -> libc::c_int));
+        add_poll(
+            proc_0,
+            (*state).kick_fds[0 as libc::c_int as usize],
+            Some(
+                proc_kick_handler
+                    as unsafe extern fn(_: *mut zbar_processor_t, _: libc::c_int) -> libc::c_int,
+            ),
+        );
         proc_cache_polling((*proc_0).state);
     }
     return 0 as libc::c_int;
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_cleanup(mut proc_0:
-                                                     *mut zbar_processor_t)
- -> libc::c_int {
+pub unsafe extern fn _zbar_processor_cleanup(mut proc_0: *mut zbar_processor_t) -> libc::c_int {
     let mut state: *mut processor_state_t = (*proc_0).state;
     if (*proc_0).threaded != 0 {
         close((*state).kick_fds[0 as libc::c_int as usize]);
         close((*state).kick_fds[1 as libc::c_int as usize]);
         (*state).kick_fds[1 as libc::c_int as usize] = -(1 as libc::c_int);
-        (*state).kick_fds[0 as libc::c_int as usize] =
-            (*state).kick_fds[1 as libc::c_int as usize]
+        (*state).kick_fds[0 as libc::c_int as usize] = (*state).kick_fds[1 as libc::c_int as usize]
     }
     if !(*state).polling.fds.is_null() {
         free((*state).polling.fds as *mut libc::c_void);
@@ -1318,12 +1349,12 @@ pub unsafe extern "C" fn _zbar_processor_cleanup(mut proc_0:
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* max time to wait for input before looking for the next frame.
  * only used in unthreaded mode with blocking (non-pollable) video.
  * NB subject to precision of whatever timer is in use
  */
-/*ms*/
+/* ms */
 /* platform specific state wrapper */
 /* specific notification tracking */
 /* high-level API events */
@@ -1355,18 +1386,23 @@ pub unsafe extern "C" fn _zbar_processor_cleanup(mut proc_0:
 /* processor lock API */
 /* platform API */
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_enable(mut proc_0:
-                                                    *mut zbar_processor_t)
- -> libc::c_int {
+pub unsafe extern fn _zbar_processor_enable(mut proc_0: *mut zbar_processor_t) -> libc::c_int {
     let mut vid_fd: libc::c_int = zbar_video_get_fd((*proc_0).video);
-    if vid_fd < 0 as libc::c_int { return 0 as libc::c_int }
+    if vid_fd < 0 as libc::c_int {
+        return 0 as libc::c_int;
+    }
     if (*proc_0).streaming != 0 {
-        add_poll(proc_0, vid_fd,
-                 Some(proc_video_handler as
-                          unsafe extern "C" fn(_: *mut zbar_processor_t,
-                                               _: libc::c_int)
-                              -> libc::c_int));
-    } else { remove_poll(proc_0, vid_fd); }
+        add_poll(
+            proc_0,
+            vid_fd,
+            Some(
+                proc_video_handler
+                    as unsafe extern fn(_: *mut zbar_processor_t, _: libc::c_int) -> libc::c_int,
+            ),
+        );
+    } else {
+        remove_poll(proc_0, vid_fd);
+    }
     /* FIXME failure recovery? */
     return 0 as libc::c_int;
 }

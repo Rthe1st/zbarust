@@ -1,5 +1,5 @@
 use ::libc;
-extern "C" {
+extern {
     pub type _IO_wide_data;
     pub type _IO_codecvt;
     pub type _IO_marker;
@@ -8,21 +8,22 @@ extern "C" {
     #[no_mangle]
     fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
     #[no_mangle]
-    fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...)
-     -> libc::c_int;
+    fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
     #[no_mangle]
     fn strdup(_: *const libc::c_char) -> *mut libc::c_char;
     #[no_mangle]
-    fn strstr(_: *const libc::c_char, _: *const libc::c_char)
-     -> *mut libc::c_char;
+    fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
     #[no_mangle]
     fn strlen(_: *const libc::c_char) -> libc::c_ulong;
     #[no_mangle]
     fn strerror(_: libc::c_int) -> *mut libc::c_char;
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     #[no_mangle]
     fn realloc(_: *mut libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 }
@@ -131,84 +132,102 @@ pub const ZBAR_MOD_PROCESSOR: errmodule_e = 0;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 #[no_mangle]
 pub static mut _zbar_verbosity: libc::c_int = 0 as libc::c_int;
-static mut sev_str: [*const libc::c_char; 5] =
-    [b"FATAL ERROR\x00" as *const u8 as *const libc::c_char,
-     b"ERROR\x00" as *const u8 as *const libc::c_char,
-     b"OK\x00" as *const u8 as *const libc::c_char,
-     b"WARNING\x00" as *const u8 as *const libc::c_char,
-     b"NOTE\x00" as *const u8 as *const libc::c_char];
-static mut mod_str: [*const libc::c_char; 5] =
-    [b"processor\x00" as *const u8 as *const libc::c_char,
-     b"video\x00" as *const u8 as *const libc::c_char,
-     b"window\x00" as *const u8 as *const libc::c_char,
-     b"image scanner\x00" as *const u8 as *const libc::c_char,
-     b"<unknown>\x00" as *const u8 as *const libc::c_char];
-static mut err_str: [*const libc::c_char; 13] =
-    [b"no error\x00" as *const u8 as *const libc::c_char,
-     b"out of memory\x00" as *const u8 as *const libc::c_char,
-     b"internal library error\x00" as *const u8 as *const libc::c_char,
-     b"unsupported request\x00" as *const u8 as *const libc::c_char,
-     b"invalid request\x00" as *const u8 as *const libc::c_char,
-     b"system error\x00" as *const u8 as *const libc::c_char,
-     b"locking error\x00" as *const u8 as *const libc::c_char,
-     b"all resources busy\x00" as *const u8 as *const libc::c_char,
-     b"X11 display error\x00" as *const u8 as *const libc::c_char,
-     b"X11 protocol error\x00" as *const u8 as *const libc::c_char,
-     b"output window is closed\x00" as *const u8 as *const libc::c_char,
-     b"windows system error\x00" as *const u8 as *const libc::c_char,
-     b"unknown error\x00" as *const u8 as *const libc::c_char];
+static mut sev_str: [*const libc::c_char; 5] = [
+    b"FATAL ERROR\x00" as *const u8 as *const libc::c_char,
+    b"ERROR\x00" as *const u8 as *const libc::c_char,
+    b"OK\x00" as *const u8 as *const libc::c_char,
+    b"WARNING\x00" as *const u8 as *const libc::c_char,
+    b"NOTE\x00" as *const u8 as *const libc::c_char,
+];
+static mut mod_str: [*const libc::c_char; 5] = [
+    b"processor\x00" as *const u8 as *const libc::c_char,
+    b"video\x00" as *const u8 as *const libc::c_char,
+    b"window\x00" as *const u8 as *const libc::c_char,
+    b"image scanner\x00" as *const u8 as *const libc::c_char,
+    b"<unknown>\x00" as *const u8 as *const libc::c_char,
+];
+static mut err_str: [*const libc::c_char; 13] = [
+    b"no error\x00" as *const u8 as *const libc::c_char,
+    b"out of memory\x00" as *const u8 as *const libc::c_char,
+    b"internal library error\x00" as *const u8 as *const libc::c_char,
+    b"unsupported request\x00" as *const u8 as *const libc::c_char,
+    b"invalid request\x00" as *const u8 as *const libc::c_char,
+    b"system error\x00" as *const u8 as *const libc::c_char,
+    b"locking error\x00" as *const u8 as *const libc::c_char,
+    b"all resources busy\x00" as *const u8 as *const libc::c_char,
+    b"X11 display error\x00" as *const u8 as *const libc::c_char,
+    b"X11 protocol error\x00" as *const u8 as *const libc::c_char,
+    b"output window is closed\x00" as *const u8 as *const libc::c_char,
+    b"windows system error\x00" as *const u8 as *const libc::c_char,
+    b"unknown error\x00" as *const u8 as *const libc::c_char,
+];
 #[no_mangle]
-pub unsafe extern "C" fn zbar_version(mut major: *mut libc::c_uint,
-                                      mut minor: *mut libc::c_uint)
- -> libc::c_int {
-    if !major.is_null() { *major = 0 as libc::c_int as libc::c_uint }
-    if !minor.is_null() { *minor = 20 as libc::c_int as libc::c_uint }
+pub unsafe extern fn zbar_version(
+    mut major: *mut libc::c_uint,
+    mut minor: *mut libc::c_uint,
+) -> libc::c_int {
+    if !major.is_null() {
+        *major = 0 as libc::c_int as libc::c_uint
+    }
+    if !minor.is_null() {
+        *minor = 20 as libc::c_int as libc::c_uint
+    }
     return 0 as libc::c_int;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_set_verbosity(mut level: libc::c_int) {
+pub unsafe extern fn zbar_set_verbosity(mut level: libc::c_int) {
     _zbar_verbosity = level;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_increase_verbosity() {
+pub unsafe extern fn zbar_increase_verbosity() {
     if _zbar_verbosity == 0 {
         _zbar_verbosity += 1
-    } else { _zbar_verbosity <<= 1 as libc::c_int };
+    } else {
+        _zbar_verbosity <<= 1 as libc::c_int
+    };
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_error_spew(mut container: *const libc::c_void,
-                                          mut verbosity: libc::c_int)
- -> libc::c_int {
+pub unsafe extern fn _zbar_error_spew(
+    mut container: *const libc::c_void,
+    mut verbosity: libc::c_int,
+) -> libc::c_int {
     let mut err: *const errinfo_t = container as *const errinfo_t;
     if (*err).magic == 0x5252457a as libc::c_int as libc::c_uint {
     } else {
-        __assert_fail(b"err->magic == ERRINFO_MAGIC\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"zbar/error.c\x00" as *const u8 as *const libc::c_char,
-                      83 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 40],
-                                                &[libc::c_char; 40]>(b"int _zbar_error_spew(const void *, int)\x00")).as_ptr());
+        __assert_fail(
+            b"err->magic == ERRINFO_MAGIC\x00" as *const u8 as *const libc::c_char,
+            b"zbar/error.c\x00" as *const u8 as *const libc::c_char,
+            83 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 40], &[libc::c_char; 40]>(
+                b"int _zbar_error_spew(const void *, int)\x00",
+            ))
+            .as_ptr(),
+        );
     }
-    fprintf(stderr, b"%s\x00" as *const u8 as *const libc::c_char,
-            _zbar_error_string(err as *const libc::c_void, verbosity));
+    fprintf(
+        stderr,
+        b"%s\x00" as *const u8 as *const libc::c_char,
+        _zbar_error_string(err as *const libc::c_void, verbosity),
+    );
     return -((*err).sev as libc::c_int);
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_get_error_code(mut container:
-                                                  *const libc::c_void)
- -> zbar_error_t {
+pub unsafe extern fn _zbar_get_error_code(mut container: *const libc::c_void) -> zbar_error_t {
     let mut err: *const errinfo_t = container as *const errinfo_t;
     if (*err).magic == 0x5252457a as libc::c_int as libc::c_uint {
     } else {
-        __assert_fail(b"err->magic == ERRINFO_MAGIC\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"zbar/error.c\x00" as *const u8 as *const libc::c_char,
-                      91 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 48],
-                                                &[libc::c_char; 48]>(b"zbar_error_t _zbar_get_error_code(const void *)\x00")).as_ptr());
+        __assert_fail(
+            b"err->magic == ERRINFO_MAGIC\x00" as *const u8 as *const libc::c_char,
+            b"zbar/error.c\x00" as *const u8 as *const libc::c_char,
+            91 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 48], &[libc::c_char; 48]>(
+                b"zbar_error_t _zbar_get_error_code(const void *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     return (*err).type_0;
 }
@@ -233,7 +252,7 @@ pub unsafe extern "C" fn _zbar_get_error_code(mut container:
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* * @file
  * ZBar Barcode Reader C API definition
  */
@@ -275,7 +294,7 @@ pub unsafe extern "C" fn _zbar_get_error_code(mut container:
  *   extracts barcodes from a stream of bar and space widths
  */
 /* * @name Global library interfaces */
-/*@{*/
+/* @{ */
 /* * "color" of element: bar or space. */
 /* *< light area or space between bars */
 /* *< dark area or colored bar segment */
@@ -301,21 +320,21 @@ pub unsafe extern "C" fn _zbar_get_error_code(mut container:
 /* *< Code 93. @since 0.11 */
 /* *< Code 128 */
 /* * mask for base symbol type.
-     * @deprecated in 0.11, remove this from existing code
-     */
+ * @deprecated in 0.11, remove this from existing code
+ */
 /* * 2-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
-     * 2-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
+ * 2-digit GS1 add-ons
+ */
 /* * 5-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
-     * 5-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
+ * 5-digit GS1 add-ons
+ */
 /* * add-on flag mask.
-     * @deprecated in 0.11, GS1 add-ons are represented using composite
-     * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
-     * or ::ZBAR_EAN5
-     */
+ * @deprecated in 0.11, GS1 add-ons are represented using composite
+ * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
+ * or ::ZBAR_EAN5
+ */
 /* * decoded symbol coarse orientation.
  * @since 0.11
  */
@@ -356,12 +375,12 @@ pub unsafe extern "C" fn _zbar_get_error_code(mut container:
  * @since 0.11
  */
 /* * barcode tagged as GS1 (EAN.UCC) reserved
-     * (eg, FNC1 before first data character).
-     * data may be parsed as a sequence of GS1 AIs
-     */
+ * (eg, FNC1 before first data character).
+ * data may be parsed as a sequence of GS1 AIs
+ */
 /* * barcode tagged as AIM reserved
-     * (eg, FNC1 after first character or digit pair)
-     */
+ * (eg, FNC1 after first character or digit pair)
+ */
 /* * number of modifiers */
 /* * store video control menu
  * @param name name of the menu item
@@ -438,13 +457,14 @@ pub unsafe extern "C" fn _zbar_get_error_code(mut container:
  *     system error: blah[: blah]
  */
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_error_string(mut container:
-                                                *const libc::c_void,
-                                            mut verbosity: libc::c_int)
- -> *const libc::c_char {
-    static mut basefmt: [libc::c_char; 30] =
-        [37, 115, 58, 32, 122, 98, 97, 114, 32, 37, 115, 32, 105, 110, 32, 37,
-         115, 40, 41, 58, 10, 32, 32, 32, 32, 37, 115, 58, 32, 0];
+pub unsafe extern fn _zbar_error_string(
+    mut container: *const libc::c_void,
+    mut verbosity: libc::c_int,
+) -> *const libc::c_char {
+    static mut basefmt: [libc::c_char; 30] = [
+        37, 115, 58, 32, 122, 98, 97, 114, 32, 37, 115, 32, 105, 110, 32, 37, 115, 40, 41, 58, 10,
+        32, 32, 32, 32, 37, 115, 58, 32, 0,
+    ];
     let mut err: *mut errinfo_t = container as *mut errinfo_t;
     let mut sev: *const libc::c_char = 0 as *const libc::c_char;
     let mut mod_0: *const libc::c_char = 0 as *const libc::c_char;
@@ -453,123 +473,105 @@ pub unsafe extern "C" fn _zbar_error_string(mut container:
     let mut len: libc::c_int = 0;
     if (*err).magic == 0x5252457a as libc::c_int as libc::c_uint {
     } else {
-        __assert_fail(b"err->magic == ERRINFO_MAGIC\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"zbar/error.c\x00" as *const u8 as *const libc::c_char,
-                      107 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 50],
-                                                &[libc::c_char; 50]>(b"const char *_zbar_error_string(const void *, int)\x00")).as_ptr());
+        __assert_fail(
+            b"err->magic == ERRINFO_MAGIC\x00" as *const u8 as *const libc::c_char,
+            b"zbar/error.c\x00" as *const u8 as *const libc::c_char,
+            107 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 50], &[libc::c_char; 50]>(
+                b"const char *_zbar_error_string(const void *, int)\x00",
+            ))
+            .as_ptr(),
+        );
     }
-    if (*err).sev as libc::c_int >= SEV_FATAL as libc::c_int &&
-           (*err).sev as libc::c_int <= SEV_NOTE as libc::c_int {
+    if (*err).sev as libc::c_int >= SEV_FATAL as libc::c_int
+        && (*err).sev as libc::c_int <= SEV_NOTE as libc::c_int
+    {
         sev = sev_str[((*err).sev as libc::c_int + 2 as libc::c_int) as usize]
-    } else { sev = sev_str[1 as libc::c_int as usize] }
-    if (*err).module as libc::c_uint >=
-           ZBAR_MOD_PROCESSOR as libc::c_int as libc::c_uint &&
-           ((*err).module as libc::c_uint) <
-               ZBAR_MOD_UNKNOWN as libc::c_int as libc::c_uint {
+    } else {
+        sev = sev_str[1 as libc::c_int as usize]
+    }
+    if (*err).module as libc::c_uint >= ZBAR_MOD_PROCESSOR as libc::c_int as libc::c_uint
+        && ((*err).module as libc::c_uint) < ZBAR_MOD_UNKNOWN as libc::c_int as libc::c_uint
+    {
         mod_0 = mod_str[(*err).module as usize]
-    } else { mod_0 = mod_str[ZBAR_MOD_UNKNOWN as libc::c_int as usize] }
-    func =
-        if !(*err).func.is_null() {
-            (*err).func
-        } else { b"<unknown>\x00" as *const u8 as *const libc::c_char };
-    if (*err).type_0 as libc::c_uint >= 0 as libc::c_int as libc::c_uint &&
-           ((*err).type_0 as libc::c_uint) <
-               ZBAR_ERR_NUM as libc::c_int as libc::c_uint {
+    } else {
+        mod_0 = mod_str[ZBAR_MOD_UNKNOWN as libc::c_int as usize]
+    }
+    func = if !(*err).func.is_null() {
+        (*err).func
+    } else {
+        b"<unknown>\x00" as *const u8 as *const libc::c_char
+    };
+    if (*err).type_0 as libc::c_uint >= 0 as libc::c_int as libc::c_uint
+        && ((*err).type_0 as libc::c_uint) < ZBAR_ERR_NUM as libc::c_int as libc::c_uint
+    {
         type_0 = err_str[(*err).type_0 as usize]
-    } else { type_0 = err_str[ZBAR_ERR_NUM as libc::c_int as usize] }
-    len =
-        strlen(sev_str[0 as libc::c_int as
-                           usize]).wrapping_add(strlen(mod_str[ZBAR_MOD_IMAGE_SCANNER
-                                                                   as
-                                                                   libc::c_int
-                                                                   as
-                                                                   usize])).wrapping_add(strlen(err_str[ZBAR_ERR_CLOSED
-                                                                                                            as
-                                                                                                            libc::c_int
-                                                                                                            as
-                                                                                                            usize])).wrapping_add(strlen(func)).wrapping_add(::std::mem::size_of::<[libc::c_char; 30]>()
-                                                                                                                                                                 as
-                                                                                                                                                                 libc::c_ulong)
-            as libc::c_int;
+    } else {
+        type_0 = err_str[ZBAR_ERR_NUM as libc::c_int as usize]
+    }
+    len = strlen(sev_str[0 as libc::c_int as usize])
+        .wrapping_add(strlen(mod_str[ZBAR_MOD_IMAGE_SCANNER as libc::c_int as usize]))
+        .wrapping_add(strlen(err_str[ZBAR_ERR_CLOSED as libc::c_int as usize]))
+        .wrapping_add(strlen(func))
+        .wrapping_add(::std::mem::size_of::<[libc::c_char; 30]>() as libc::c_ulong)
+        as libc::c_int;
     (*err).buf =
-        realloc((*err).buf as *mut libc::c_void, len as libc::c_ulong) as
-            *mut libc::c_char;
+        realloc((*err).buf as *mut libc::c_void, len as libc::c_ulong) as *mut libc::c_char;
     len = sprintf((*err).buf, basefmt.as_ptr(), sev, mod_0, func, type_0);
     if len <= 0 as libc::c_int {
-        return b"<unknown>\x00" as *const u8 as *const libc::c_char
+        return b"<unknown>\x00" as *const u8 as *const libc::c_char;
     }
     if !(*err).detail.is_null() {
-        let mut newlen: libc::c_int =
-            (len as
-                 libc::c_ulong).wrapping_add(strlen((*err).detail)).wrapping_add(1
-                                                                                     as
-                                                                                     libc::c_int
-                                                                                     as
-                                                                                     libc::c_ulong)
-                as libc::c_int;
-        if !strstr((*err).detail,
-                   b"%s\x00" as *const u8 as *const libc::c_char).is_null() {
+        let mut newlen: libc::c_int = (len as libc::c_ulong)
+            .wrapping_add(strlen((*err).detail))
+            .wrapping_add(1 as libc::c_int as libc::c_ulong)
+            as libc::c_int;
+        if !strstr((*err).detail, b"%s\x00" as *const u8 as *const libc::c_char).is_null() {
             if (*err).arg_str.is_null() {
-                (*err).arg_str =
-                    strdup(b"<?>\x00" as *const u8 as *const libc::c_char)
+                (*err).arg_str = strdup(b"<?>\x00" as *const u8 as *const libc::c_char)
             }
-            (*err).buf =
-                realloc((*err).buf as *mut libc::c_void,
-                        (newlen as
-                             libc::c_ulong).wrapping_add(strlen((*err).arg_str)))
-                    as *mut libc::c_char;
-            len +=
-                sprintf((*err).buf.offset(len as isize), (*err).detail,
-                        (*err).arg_str)
-        } else if !strstr((*err).detail,
-                          b"%d\x00" as *const u8 as
-                              *const libc::c_char).is_null() ||
-                      !strstr((*err).detail,
-                              b"%x\x00" as *const u8 as
-                                  *const libc::c_char).is_null() {
-            (*err).buf =
-                realloc((*err).buf as *mut libc::c_void,
-                        (newlen + 32 as libc::c_int) as libc::c_ulong) as
-                    *mut libc::c_char;
-            len +=
-                sprintf((*err).buf.offset(len as isize), (*err).detail,
-                        (*err).arg_int)
+            (*err).buf = realloc(
+                (*err).buf as *mut libc::c_void,
+                (newlen as libc::c_ulong).wrapping_add(strlen((*err).arg_str)),
+            ) as *mut libc::c_char;
+            len += sprintf((*err).buf.offset(len as isize), (*err).detail, (*err).arg_str)
+        } else if !strstr((*err).detail, b"%d\x00" as *const u8 as *const libc::c_char).is_null()
+            || !strstr((*err).detail, b"%x\x00" as *const u8 as *const libc::c_char).is_null()
+        {
+            (*err).buf = realloc(
+                (*err).buf as *mut libc::c_void,
+                (newlen + 32 as libc::c_int) as libc::c_ulong,
+            ) as *mut libc::c_char;
+            len += sprintf((*err).buf.offset(len as isize), (*err).detail, (*err).arg_int)
         } else {
-            (*err).buf =
-                realloc((*err).buf as *mut libc::c_void,
-                        newlen as libc::c_ulong) as *mut libc::c_char;
-            len +=
-                sprintf((*err).buf.offset(len as isize),
-                        b"%s\x00" as *const u8 as *const libc::c_char,
-                        (*err).detail)
+            (*err).buf = realloc((*err).buf as *mut libc::c_void, newlen as libc::c_ulong)
+                as *mut libc::c_char;
+            len += sprintf(
+                (*err).buf.offset(len as isize),
+                b"%s\x00" as *const u8 as *const libc::c_char,
+                (*err).detail,
+            )
         }
         if len <= 0 as libc::c_int {
-            return b"<unknown>\x00" as *const u8 as *const libc::c_char
+            return b"<unknown>\x00" as *const u8 as *const libc::c_char;
         }
     }
-    if (*err).type_0 as libc::c_uint ==
-           ZBAR_ERR_SYSTEM as libc::c_int as libc::c_uint {
-        static mut sysfmt: [libc::c_char; 11] =
-            [58, 32, 37, 115, 32, 40, 37, 100, 41, 10, 0];
+    if (*err).type_0 as libc::c_uint == ZBAR_ERR_SYSTEM as libc::c_int as libc::c_uint {
+        static mut sysfmt: [libc::c_char; 11] = [58, 32, 37, 115, 32, 40, 37, 100, 41, 10, 0];
         let mut syserr: *const libc::c_char = strerror((*err).errnum);
-        (*err).buf =
-            realloc((*err).buf as *mut libc::c_void,
-                    (len as
-                         libc::c_ulong).wrapping_add(strlen(sysfmt.as_ptr())).wrapping_add(strlen(syserr)))
-                as *mut libc::c_char;
-        len +=
-            sprintf((*err).buf.offset(len as isize), sysfmt.as_ptr(), syserr,
-                    (*err).errnum)
+        (*err).buf = realloc(
+            (*err).buf as *mut libc::c_void,
+            (len as libc::c_ulong)
+                .wrapping_add(strlen(sysfmt.as_ptr()))
+                .wrapping_add(strlen(syserr)),
+        ) as *mut libc::c_char;
+        len += sprintf((*err).buf.offset(len as isize), sysfmt.as_ptr(), syserr, (*err).errnum)
     } else {
         (*err).buf =
-            realloc((*err).buf as *mut libc::c_void,
-                    (len + 2 as libc::c_int) as libc::c_ulong) as
-                *mut libc::c_char;
+            realloc((*err).buf as *mut libc::c_void, (len + 2 as libc::c_int) as libc::c_ulong)
+                as *mut libc::c_char;
         len +=
-            sprintf((*err).buf.offset(len as isize),
-                    b"\n\x00" as *const u8 as *const libc::c_char)
+            sprintf((*err).buf.offset(len as isize), b"\n\x00" as *const u8 as *const libc::c_char)
     }
     return (*err).buf;
 }

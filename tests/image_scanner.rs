@@ -3,24 +3,18 @@ extern crate qrcode_generator;
 use qrcode_generator::QrCodeEcc;
 
 extern crate zbarust;
+use zbarust::zbar::image::{ZBAR_NONE, ZBAR_QRCODE};
 use zbarust::zbar::img_scanner::{
-    zbar_image_scanner_s, zbar_image_scanner_create,
-    zbar_image_scanner_destroy,
-    zbar_image_scanner_set_config
-};
-use zbarust::zbar::image::{
-    ZBAR_NONE, ZBAR_QRCODE
+    zbar_image_scanner_create, zbar_image_scanner_destroy, zbar_image_scanner_s,
+    zbar_image_scanner_set_config,
 };
 
 use zbarust::scanner;
 
-use zbarust::zbar::config::{
-    ZBAR_CFG_ENABLE
-};
+use zbarust::zbar::config::ZBAR_CFG_ENABLE;
 
 #[test]
 fn image_create_destroy() {
-
     let scanner = unsafe { zbar_image_scanner_create() };
 
     unsafe {
@@ -30,19 +24,14 @@ fn image_create_destroy() {
 
 #[test]
 fn set_config() {
- 
     let scanner = unsafe { zbar_image_scanner_create() };
 
-    let result = unsafe {
-        zbar_image_scanner_set_config(scanner, ZBAR_NONE, ZBAR_CFG_ENABLE, 0)
-    };
+    let result = unsafe { zbar_image_scanner_set_config(scanner, ZBAR_NONE, ZBAR_CFG_ENABLE, 0) };
     if result != 0 {
         assert!(false);
     }
 
-    let result = unsafe {
-        zbar_image_scanner_set_config(scanner, ZBAR_QRCODE, ZBAR_CFG_ENABLE, 0)
-    };
+    let result = unsafe { zbar_image_scanner_set_config(scanner, ZBAR_QRCODE, ZBAR_CFG_ENABLE, 0) };
     if result != 0 {
         assert!(false);
     }

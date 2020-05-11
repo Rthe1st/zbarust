@@ -1,6 +1,6 @@
-use ::libc;
 use ::c2rust_bitfields;
-extern "C" {
+use ::libc;
+extern {
     pub type video_state_s;
     pub type _IO_wide_data;
     pub type _IO_codecvt;
@@ -8,57 +8,61 @@ extern "C" {
     pub type window_state_s;
     /* * @internal type unsafe error API (don't use) */
     #[no_mangle]
-    fn _zbar_error_spew(object: *const libc::c_void, verbosity: libc::c_int)
-     -> libc::c_int;
+    fn _zbar_error_spew(object: *const libc::c_void, verbosity: libc::c_int) -> libc::c_int;
     /* * new image constructor.
- * @returns a new image object with uninitialized data and format.
- * this image should be destroyed (using zbar_image_destroy()) as
- * soon as the application is finished with it
- */
+     * @returns a new image object with uninitialized data and format.
+     * this image should be destroyed (using zbar_image_destroy()) as
+     * soon as the application is finished with it
+     */
     #[no_mangle]
     fn zbar_image_create() -> *mut zbar_image_t;
     /* * image destructor.  all images created by or returned to the
- * application should be destroyed using this function.  when an image
- * is destroyed, the associated data cleanup handler will be invoked
- * if available
- * @note make no assumptions about the image or the data buffer.
- * they may not be destroyed/cleaned immediately if the library
- * is still using them.  if necessary, use the cleanup handler hook
- * to keep track of image data buffers
- */
+     * application should be destroyed using this function.  when an image
+     * is destroyed, the associated data cleanup handler will be invoked
+     * if available
+     * @note make no assumptions about the image or the data buffer.
+     * they may not be destroyed/cleaned immediately if the library
+     * is still using them.  if necessary, use the cleanup handler hook
+     * to keep track of image data buffers
+     */
     #[no_mangle]
     fn zbar_image_destroy(image: *mut zbar_image_t);
     /* * specify a rectangular region of the image to scan.
- * the rectangle will be clipped to the image boundaries.
- * defaults to the full image specified by zbar_image_set_size()
- */
+     * the rectangle will be clipped to the image boundaries.
+     * defaults to the full image specified by zbar_image_set_size()
+     */
     #[no_mangle]
-    fn zbar_image_set_crop(image: *mut zbar_image_t, x: libc::c_uint,
-                           y: libc::c_uint, width: libc::c_uint,
-                           height: libc::c_uint);
+    fn zbar_image_set_crop(
+        image: *mut zbar_image_t,
+        x: libc::c_uint,
+        y: libc::c_uint,
+        width: libc::c_uint,
+        height: libc::c_uint,
+    );
     /* * built-in cleanup handler.
- * passes the image data buffer to free()
- */
+     * passes the image data buffer to free()
+     */
     #[no_mangle]
     fn zbar_image_free_data(image: *mut zbar_image_t);
     /* * initialize video using a specific format for debug.
- * use zbar_negotiate_format() to automatically select and initialize
- * the best available format
- */
+     * use zbar_negotiate_format() to automatically select and initialize
+     * the best available format
+     */
     #[no_mangle]
-    fn zbar_video_init(video: *mut zbar_video_t, format: libc::c_ulong)
-     -> libc::c_int;
+    fn zbar_video_init(video: *mut zbar_video_t, format: libc::c_ulong) -> libc::c_int;
     #[no_mangle]
     fn malloc(_: libc::c_ulong) -> *mut libc::c_void;
     #[no_mangle]
     fn free(__ptr: *mut libc::c_void);
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     #[no_mangle]
-    fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong)
-     -> *mut libc::c_void;
+    fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
     #[no_mangle]
     static mut stderr: *mut FILE;
     #[no_mangle]
@@ -76,8 +80,7 @@ extern "C" {
     #[no_mangle]
     fn pthread_mutex_lock(__mutex: *mut pthread_mutex_t) -> libc::c_int;
     #[no_mangle]
-    fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong)
-     -> *mut libc::c_void;
+    fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 }
 pub type __uint8_t = libc::c_uchar;
 pub type __uint16_t = libc::c_ushort;
@@ -178,21 +181,21 @@ pub const ZBAR_ORIENT_UNKNOWN: zbar_orientation_e = -1;
 /* *< Code 93. @since 0.11 */
 /* *< Code 128 */
 /* * mask for base symbol type.
-     * @deprecated in 0.11, remove this from existing code
-     */
+ * @deprecated in 0.11, remove this from existing code
+ */
 /* * 2-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
-     * 2-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
+ * 2-digit GS1 add-ons
+ */
 /* * 5-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
-     * 5-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
+ * 5-digit GS1 add-ons
+ */
 /* * add-on flag mask.
-     * @deprecated in 0.11, GS1 add-ons are represented using composite
-     * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
-     * or ::ZBAR_EAN5
-     */
+ * @deprecated in 0.11, GS1 add-ons are represented using composite
+ * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
+ * or ::ZBAR_EAN5
+ */
 /* * decoded symbol coarse orientation.
  * @since 0.11
  */
@@ -285,7 +288,7 @@ pub struct video_controls_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* number of filtered symbols */
 /* first of decoded symbol results */
 /* last of unfiltered symbol results */
@@ -318,7 +321,7 @@ pub struct zbar_symbol_set_s {
     pub head: *mut zbar_symbol_t,
     pub tail: *mut zbar_symbol_t,
 }
-/*@}*/
+/* @} */
 pub type zbar_symbol_t = zbar_symbol_s;
 /*------------------------------------------------------------------------
  *  Copyright 2007-2010 (c) Jeff Brown <spadix@users.sourceforge.net>
@@ -341,7 +344,7 @@ pub type zbar_symbol_t = zbar_symbol_s;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 pub type refcnt_t = libc::c_int;
 pub type point_t = point_s;
 #[derive(Copy, Clone)]
@@ -371,7 +374,7 @@ pub struct point_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* unpack size/location of component */
 /* coarse image format categorization.
  * to limit conversion variations
@@ -398,23 +401,23 @@ pub struct zbar_image_s {
     pub seq: libc::c_uint,
     pub syms: *mut zbar_symbol_set_t,
 }
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Image interface
  * stores image data samples along with associated format and size
  * metadata
  */
-/*@{*/
+/* @{ */
 /* * opaque image object. */
 pub type zbar_image_t = zbar_image_s;
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Video interface
  * @anchor c-video
  * mid-level video source abstraction.
  * captures images from a video device
  */
-/*@{*/
+/* @{ */
 /* * opaque video object. */
 pub type zbar_video_t = zbar_video_s;
 #[derive(Copy, Clone, BitfieldStruct)]
@@ -447,27 +450,27 @@ pub struct zbar_video_s {
     pub dq_image: *mut zbar_image_t,
     pub shadow_image: *mut zbar_image_t,
     pub state: *mut video_state_t,
-    pub init: Option<unsafe extern "C" fn(_: *mut zbar_video_t, _: uint32_t)
-                         -> libc::c_int>,
-    pub cleanup: Option<unsafe extern "C" fn(_: *mut zbar_video_t)
-                            -> libc::c_int>,
-    pub start: Option<unsafe extern "C" fn(_: *mut zbar_video_t)
-                          -> libc::c_int>,
-    pub stop: Option<unsafe extern "C" fn(_: *mut zbar_video_t)
-                         -> libc::c_int>,
-    pub nq: Option<unsafe extern "C" fn(_: *mut zbar_video_t,
-                                        _: *mut zbar_image_t) -> libc::c_int>,
-    pub set_control: Option<unsafe extern "C" fn(_: *mut zbar_video_t,
-                                                 _: *const libc::c_char,
-                                                 _: *mut libc::c_void)
-                                -> libc::c_int>,
-    pub get_control: Option<unsafe extern "C" fn(_: *mut zbar_video_t,
-                                                 _: *const libc::c_char,
-                                                 _: *mut libc::c_void)
-                                -> libc::c_int>,
-    pub free: Option<unsafe extern "C" fn(_: *mut zbar_video_t) -> ()>,
-    pub dq: Option<unsafe extern "C" fn(_: *mut zbar_video_t)
-                       -> *mut zbar_image_t>,
+    pub init: Option<unsafe extern fn(_: *mut zbar_video_t, _: uint32_t) -> libc::c_int>,
+    pub cleanup: Option<unsafe extern fn(_: *mut zbar_video_t) -> libc::c_int>,
+    pub start: Option<unsafe extern fn(_: *mut zbar_video_t) -> libc::c_int>,
+    pub stop: Option<unsafe extern fn(_: *mut zbar_video_t) -> libc::c_int>,
+    pub nq: Option<unsafe extern fn(_: *mut zbar_video_t, _: *mut zbar_image_t) -> libc::c_int>,
+    pub set_control: Option<
+        unsafe extern fn(
+            _: *mut zbar_video_t,
+            _: *const libc::c_char,
+            _: *mut libc::c_void,
+        ) -> libc::c_int,
+    >,
+    pub get_control: Option<
+        unsafe extern fn(
+            _: *mut zbar_video_t,
+            _: *const libc::c_char,
+            _: *mut libc::c_void,
+        ) -> libc::c_int,
+    >,
+    pub free: Option<unsafe extern fn(_: *mut zbar_video_t) -> ()>,
+    pub dq: Option<unsafe extern fn(_: *mut zbar_video_t) -> *mut zbar_image_t>,
 }
 pub type video_state_t = video_state_s;
 pub type zbar_mutex_t = pthread_mutex_t;
@@ -503,7 +506,7 @@ pub const VIDEO_INVALID: video_interface_e = 0;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* "zERR" (LE) */
 /* application must terminate */
 /* might be able to recover and continue */
@@ -549,9 +552,7 @@ pub const ZBAR_MOD_PROCESSOR: errmodule_e = 0;
 /* * cleanup handler callback function.
  * called to free sample data when an image is destroyed.
  */
-pub type zbar_image_cleanup_handler_t
-    =
-    unsafe extern "C" fn(_: *mut zbar_image_t) -> ();
+pub type zbar_image_cleanup_handler_t = unsafe extern fn(_: *mut zbar_image_t) -> ();
 /*------------------------------------------------------------------------
  *  Copyright 2007-2010 (c) Jeff Brown <spadix@users.sourceforge.net>
  *
@@ -573,14 +574,15 @@ pub type zbar_image_cleanup_handler_t
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* pack bit size and location offset of a component into one byte
  */
-pub type conversion_handler_t
-    =
-    unsafe extern "C" fn(_: *mut zbar_image_t, _: *const zbar_format_def_t,
-                         _: *const zbar_image_t, _: *const zbar_format_def_t)
-        -> ();
+pub type conversion_handler_t = unsafe extern fn(
+    _: *mut zbar_image_t,
+    _: *const zbar_format_def_t,
+    _: *const zbar_image_t,
+    _: *const zbar_format_def_t,
+) -> ();
 pub type zbar_format_def_t = zbar_format_def_s;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -690,25 +692,27 @@ pub struct zbar_window_s {
     pub time: libc::c_ulong,
     pub time_avg: libc::c_ulong,
     pub state: *mut window_state_t,
-    pub init: Option<unsafe extern "C" fn(_: *mut zbar_window_t,
-                                          _: *mut zbar_image_t,
-                                          _: libc::c_int) -> libc::c_int>,
-    pub draw_image: Option<unsafe extern "C" fn(_: *mut zbar_window_t,
-                                                _: *mut zbar_image_t)
-                               -> libc::c_int>,
-    pub cleanup: Option<unsafe extern "C" fn(_: *mut zbar_window_t)
-                            -> libc::c_int>,
+    pub init: Option<
+        unsafe extern fn(
+            _: *mut zbar_window_t,
+            _: *mut zbar_image_t,
+            _: libc::c_int,
+        ) -> libc::c_int,
+    >,
+    pub draw_image:
+        Option<unsafe extern fn(_: *mut zbar_window_t, _: *mut zbar_image_t) -> libc::c_int>,
+    pub cleanup: Option<unsafe extern fn(_: *mut zbar_window_t) -> libc::c_int>,
 }
 /* conversion "badness" */
 /* function that accomplishes it */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Window interface
  * @anchor c-window
  * mid-level output window abstraction.
  * displays images to user-specified platform specific output window
  */
-/*@{*/
+/* @{ */
 /* * opaque window object. */
 pub type zbar_window_t = zbar_window_s;
 /*------------------------------------------------------------------------
@@ -732,27 +736,29 @@ pub type zbar_window_t = zbar_window_s;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 pub type window_state_t = window_state_s;
 #[inline]
-unsafe extern "C" fn _zbar_image_refcnt(mut img: *mut zbar_image_t,
-                                        mut delta: libc::c_int) {
-    if _zbar_refcnt(&mut (*img).refcnt, delta) == 0 &&
-           delta <= 0 as libc::c_int {
+unsafe extern fn _zbar_image_refcnt(mut img: *mut zbar_image_t, mut delta: libc::c_int) {
+    if _zbar_refcnt(&mut (*img).refcnt, delta) == 0 && delta <= 0 as libc::c_int {
         if (*img).cleanup.is_some() {
             (*img).cleanup.expect("non-null function pointer")(img);
         }
-        if (*img).src.is_null() { _zbar_image_free(img); }
+        if (*img).src.is_null() {
+            _zbar_image_free(img);
+        }
     };
 }
 /* FIXME don't we need varargs hacks here? */
 /* unused at src, avoid double free */
 #[inline]
-unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
-                                 mut sev: errsev_t, mut type_0: zbar_error_t,
-                                 mut func: *const libc::c_char,
-                                 mut detail: *const libc::c_char)
- -> libc::c_int {
+unsafe extern fn err_capture(
+    mut container: *const libc::c_void,
+    mut sev: errsev_t,
+    mut type_0: zbar_error_t,
+    mut func: *const libc::c_char,
+    mut detail: *const libc::c_char,
+) -> libc::c_int {
     let mut err: *mut errinfo_t = container as *mut errinfo_t;
     if (*err).magic == 0x5252457a as libc::c_int as libc::c_uint {
     } else {
@@ -764,8 +770,7 @@ unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
                       (*::std::mem::transmute::<&[u8; 82],
                                                 &[libc::c_char; 82]>(b"int err_capture(const void *, errsev_t, zbar_error_t, const char *, const char *)\x00")).as_ptr());
     }
-    if type_0 as libc::c_uint ==
-           ZBAR_ERR_SYSTEM as libc::c_int as libc::c_uint {
+    if type_0 as libc::c_uint == ZBAR_ERR_SYSTEM as libc::c_int as libc::c_uint {
         (*err).errnum = *__errno_location()
     }
     (*err).sev = sev;
@@ -778,17 +783,15 @@ unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
     return -(1 as libc::c_int);
 }
 #[inline]
-unsafe extern "C" fn _zbar_mutex_lock(mut lock: *mut zbar_mutex_t)
- -> libc::c_int {
+unsafe extern fn _zbar_mutex_lock(mut lock: *mut zbar_mutex_t) -> libc::c_int {
     let mut rc: libc::c_int = pthread_mutex_lock(lock);
     /* FIXME save system code */
     /*rc = err_capture(proc, SEV_ERROR, ZBAR_ERR_LOCKING, __func__,
-                       "unable to lock processor");*/
+    "unable to lock processor");*/
     return rc;
 }
 #[inline]
-unsafe extern "C" fn _zbar_mutex_unlock(mut lock: *mut zbar_mutex_t)
- -> libc::c_int {
+unsafe extern fn _zbar_mutex_unlock(mut lock: *mut zbar_mutex_t) -> libc::c_int {
     let mut rc: libc::c_int = pthread_mutex_unlock(lock);
     /* FIXME save system code */
     return rc;
@@ -797,32 +800,37 @@ unsafe extern "C" fn _zbar_mutex_unlock(mut lock: *mut zbar_mutex_t)
  * FIXME should be a semaphore
  */
 #[inline]
-unsafe extern "C" fn window_lock(mut w: *mut zbar_window_t) -> libc::c_int {
+unsafe extern fn window_lock(mut w: *mut zbar_window_t) -> libc::c_int {
     let mut rc: libc::c_int = 0 as libc::c_int;
     rc = _zbar_mutex_lock(&mut (*w).imglock);
     if rc != 0 {
-        err_capture(w as *const libc::c_void, SEV_FATAL, ZBAR_ERR_LOCKING,
-                    (*::std::mem::transmute::<&[u8; 12],
-                                              &[libc::c_char; 12]>(b"window_lock\x00")).as_ptr(),
-                    b"unable to acquire lock\x00" as *const u8 as
-                        *const libc::c_char);
+        err_capture(
+            w as *const libc::c_void,
+            SEV_FATAL,
+            ZBAR_ERR_LOCKING,
+            (*::std::mem::transmute::<&[u8; 12], &[libc::c_char; 12]>(b"window_lock\x00")).as_ptr(),
+            b"unable to acquire lock\x00" as *const u8 as *const libc::c_char,
+        );
         (*w).err.errnum = rc;
-        return -(1 as libc::c_int)
+        return -(1 as libc::c_int);
     }
     return 0 as libc::c_int;
 }
 #[inline]
-unsafe extern "C" fn window_unlock(mut w: *mut zbar_window_t) -> libc::c_int {
+unsafe extern fn window_unlock(mut w: *mut zbar_window_t) -> libc::c_int {
     let mut rc: libc::c_int = 0 as libc::c_int;
     rc = _zbar_mutex_unlock(&mut (*w).imglock);
     if rc != 0 {
-        err_capture(w as *const libc::c_void, SEV_FATAL, ZBAR_ERR_LOCKING,
-                    (*::std::mem::transmute::<&[u8; 14],
-                                              &[libc::c_char; 14]>(b"window_unlock\x00")).as_ptr(),
-                    b"unable to release lock\x00" as *const u8 as
-                        *const libc::c_char);
+        err_capture(
+            w as *const libc::c_void,
+            SEV_FATAL,
+            ZBAR_ERR_LOCKING,
+            (*::std::mem::transmute::<&[u8; 14], &[libc::c_char; 14]>(b"window_unlock\x00"))
+                .as_ptr(),
+            b"unable to release lock\x00" as *const u8 as *const libc::c_char,
+        );
         (*w).err.errnum = rc;
-        return -(1 as libc::c_int)
+        return -(1 as libc::c_int);
     }
     return 0 as libc::c_int;
 }
@@ -830,1186 +838,852 @@ unsafe extern "C" fn window_unlock(mut w: *mut zbar_window_t) -> libc::c_int {
  * (NB Cr=V Cb=U)
  */
 #[no_mangle]
-pub static mut _zbar_formats: [uint32_t; 38] =
-    [('4' as i32 as libc::c_ulong |
-          ('2' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('2' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('P' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('I' as i32 as libc::c_ulong |
-          ('4' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('2' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('0' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('U' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('1' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('2' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('V' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('1' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('2' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('4' as i32 as libc::c_ulong |
-          ('1' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('1' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('P' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('N' as i32 as libc::c_ulong |
-          ('V' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('1' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('2' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('N' as i32 as libc::c_ulong |
-          ('V' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('2' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('1' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('U' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('Y' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('V' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('U' as i32 as libc::c_ulong |
-          ('Y' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('V' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('Y' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('U' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('Y' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('2' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('U' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('V' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('4' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('R' as i32 as libc::c_ulong |
-          ('G' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('B' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('3' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     (3 as libc::c_int as libc::c_ulong |
-          (0 as libc::c_int as libc::c_ulong) << 8 as libc::c_int |
-          (0 as libc::c_int as libc::c_ulong) << 16 as libc::c_int |
-          (0 as libc::c_int as libc::c_ulong) << 24 as libc::c_int) as
-         uint32_t,
-     ('B' as i32 as libc::c_ulong |
-          ('G' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('R' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('3' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('R' as i32 as libc::c_ulong |
-          ('G' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('B' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('4' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('B' as i32 as libc::c_ulong |
-          ('G' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('R' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('4' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('R' as i32 as libc::c_ulong |
-          ('G' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('B' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('P' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('R' as i32 as libc::c_ulong |
-          ('G' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('B' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('O' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('R' as i32 as libc::c_ulong |
-          ('G' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('B' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('R' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('R' as i32 as libc::c_ulong |
-          ('G' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('B' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('Q' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('U' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('V' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('9' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('V' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('U' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('9' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('G' as i32 as libc::c_ulong |
-          ('R' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('E' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('Y' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('8' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('0' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('0' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('8' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          (' ' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          (' ' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('8' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          (0 as libc::c_int as libc::c_ulong) << 16 as libc::c_int |
-          (0 as libc::c_int as libc::c_ulong) << 24 as libc::c_int) as
-         uint32_t,
-     ('R' as i32 as libc::c_ulong |
-          ('G' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('B' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('1' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('R' as i32 as libc::c_ulong |
-          ('4' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('4' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('4' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('B' as i32 as libc::c_ulong |
-          ('A' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('8' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('1' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('4' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('1' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('P' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('4' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('4' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('4' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('Y' as i32 as libc::c_ulong |
-          ('U' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('V' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('O' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('H' as i32 as libc::c_ulong |
-          ('M' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('1' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('2' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('H' as i32 as libc::c_ulong |
-          ('I' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('2' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('4' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('J' as i32 as libc::c_ulong |
-          ('P' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('E' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('G' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('M' as i32 as libc::c_ulong |
-          ('J' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('P' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('G' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     ('M' as i32 as libc::c_ulong |
-          ('P' as i32 as libc::c_ulong) << 8 as libc::c_int |
-          ('E' as i32 as libc::c_ulong) << 16 as libc::c_int |
-          ('G' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-     0 as libc::c_int as uint32_t];
+pub static mut _zbar_formats: [uint32_t; 38] = [
+    ('4' as i32 as libc::c_ulong
+        | ('2' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('2' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('P' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('I' as i32 as libc::c_ulong
+        | ('4' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('2' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('0' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('U' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('1' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('2' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('V' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('1' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('2' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('4' as i32 as libc::c_ulong
+        | ('1' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('1' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('P' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('N' as i32 as libc::c_ulong
+        | ('V' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('1' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('2' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('N' as i32 as libc::c_ulong
+        | ('V' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('2' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('1' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('U' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('Y' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('V' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('U' as i32 as libc::c_ulong
+        | ('Y' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('V' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('Y' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('U' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('Y' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('2' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('U' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('V' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('4' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('R' as i32 as libc::c_ulong
+        | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('3' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    (3 as libc::c_int as libc::c_ulong
+        | (0 as libc::c_int as libc::c_ulong) << 8 as libc::c_int
+        | (0 as libc::c_int as libc::c_ulong) << 16 as libc::c_int
+        | (0 as libc::c_int as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('B' as i32 as libc::c_ulong
+        | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('R' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('3' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('R' as i32 as libc::c_ulong
+        | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('4' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('B' as i32 as libc::c_ulong
+        | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('R' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('4' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('R' as i32 as libc::c_ulong
+        | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('P' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('R' as i32 as libc::c_ulong
+        | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('O' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('R' as i32 as libc::c_ulong
+        | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('R' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('R' as i32 as libc::c_ulong
+        | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('Q' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('U' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('V' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('9' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('V' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('U' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('9' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('G' as i32 as libc::c_ulong
+        | ('R' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('E' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('Y' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('8' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('0' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('0' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('8' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | (' ' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | (' ' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('8' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | (0 as libc::c_int as libc::c_ulong) << 16 as libc::c_int
+        | (0 as libc::c_int as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('R' as i32 as libc::c_ulong
+        | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('1' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('R' as i32 as libc::c_ulong
+        | ('4' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('4' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('4' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('B' as i32 as libc::c_ulong
+        | ('A' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('8' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('1' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('4' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('1' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('P' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('4' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('4' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('4' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('Y' as i32 as libc::c_ulong
+        | ('U' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('V' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('O' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('H' as i32 as libc::c_ulong
+        | ('M' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('1' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('2' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('H' as i32 as libc::c_ulong
+        | ('I' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('2' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('4' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('J' as i32 as libc::c_ulong
+        | ('P' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('E' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('G' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('M' as i32 as libc::c_ulong
+        | ('J' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('P' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('G' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    ('M' as i32 as libc::c_ulong
+        | ('P' as i32 as libc::c_ulong) << 8 as libc::c_int
+        | ('E' as i32 as libc::c_ulong) << 16 as libc::c_int
+        | ('G' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+    0 as libc::c_int as uint32_t,
+];
 // Initialized in run_static_initializers
 #[no_mangle]
 pub static mut _zbar_num_formats: libc::c_int = 0;
 /* format definitions */
-static mut format_defs: [zbar_format_def_t; 31] =
-    [{
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('R' as i32 as libc::c_ulong |
-                                        ('G' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('B' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('4' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_RGB_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [4 as libc::c_int as
-                                                          uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           8 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           16 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           24 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('B' as i32 as libc::c_ulong |
-                                        ('G' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('R' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('1' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_RGB_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [1 as libc::c_int as
-                                                          uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            3 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           0 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            3 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           3 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            2 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           6 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('4' as i32 as libc::c_ulong |
-                                        ('2' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('2' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('P' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_PLANAR,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [1 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('Y' as i32 as libc::c_ulong |
-                                        ('8' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('0' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('0' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_GRAY,
-                               p: C2RustUnnamed{gen: [0; 4],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('Y' as i32 as libc::c_ulong |
-                                        ('U' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('Y' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('2' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [1 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('J' as i32 as libc::c_ulong |
-                                        ('P' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('E' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('G' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_JPEG,
-                               p: C2RustUnnamed{gen: [0; 4],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('Y' as i32 as libc::c_ulong |
-                                        ('V' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('Y' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('U' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [1 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t,
-                                                      1 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('Y' as i32 as libc::c_ulong |
-                                        ('8' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        (0 as libc::c_int as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        (0 as libc::c_int as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_GRAY,
-                               p: C2RustUnnamed{gen: [0; 4],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('N' as i32 as libc::c_ulong |
-                                        ('V' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('2' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('1' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_NV,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [1 as libc::c_int as
-                                                          uint8_t,
-                                                      1 as libc::c_int as
-                                                          uint8_t,
-                                                      1 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('N' as i32 as libc::c_ulong |
-                                        ('V' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('1' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('2' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_NV,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [1 as libc::c_int as
-                                                          uint8_t,
-                                                      1 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('B' as i32 as libc::c_ulong |
-                                        ('G' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('R' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('3' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_RGB_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [3 as libc::c_int as
-                                                          uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           16 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           8 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           0 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('Y' as i32 as libc::c_ulong |
-                                        ('V' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('U' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('9' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_PLANAR,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [2 as libc::c_int as
-                                                          uint8_t,
-                                                      2 as libc::c_int as
-                                                          uint8_t,
-                                                      1 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('R' as i32 as libc::c_ulong |
-                                        ('G' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('B' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('O' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_RGB_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [2 as libc::c_int as
-                                                          uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            5 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           10 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            5 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           5 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            5 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           0 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('R' as i32 as libc::c_ulong |
-                                        ('G' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('B' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('Q' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_RGB_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [2 as libc::c_int as
-                                                          uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            5 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           2 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            5 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           13 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            5 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           8 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('G' as i32 as libc::c_ulong |
-                                        ('R' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('E' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('Y' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_GRAY,
-                               p: C2RustUnnamed{gen: [0; 4],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   (3 as libc::c_int as libc::c_ulong |
-                                        (0 as libc::c_int as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        (0 as libc::c_int as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        (0 as libc::c_int as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_RGB_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [4 as libc::c_int as
-                                                          uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           16 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           8 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           0 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('Y' as i32 as libc::c_ulong |
-                                        ('8' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        (' ' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        (' ' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_GRAY,
-                               p: C2RustUnnamed{gen: [0; 4],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('I' as i32 as libc::c_ulong |
-                                        ('4' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('2' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('0' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_PLANAR,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [1 as libc::c_int as
-                                                          uint8_t,
-                                                      1 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('R' as i32 as libc::c_ulong |
-                                        ('G' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('B' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('1' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_RGB_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [1 as libc::c_int as
-                                                          uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            3 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           5 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            3 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           2 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            2 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           0 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('Y' as i32 as libc::c_ulong |
-                                        ('U' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('1' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('2' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_PLANAR,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [1 as libc::c_int as
-                                                          uint8_t,
-                                                      1 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('Y' as i32 as libc::c_ulong |
-                                        ('V' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('1' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('2' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_PLANAR,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [1 as libc::c_int as
-                                                          uint8_t,
-                                                      1 as libc::c_int as
-                                                          uint8_t,
-                                                      1 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('R' as i32 as libc::c_ulong |
-                                        ('G' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('B' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('3' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_RGB_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [3 as libc::c_int as
-                                                          uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           0 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           8 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           16 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('R' as i32 as libc::c_ulong |
-                                        ('4' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('4' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('4' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_RGB_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [2 as libc::c_int as
-                                                          uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            4 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           8 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            4 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           4 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            4 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           0 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('B' as i32 as libc::c_ulong |
-                                        ('G' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('R' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('4' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_RGB_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [4 as libc::c_int as
-                                                          uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           16 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           8 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            8 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           0 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('Y' as i32 as libc::c_ulong |
-                                        ('U' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('V' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('9' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_PLANAR,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [2 as libc::c_int as
-                                                          uint8_t,
-                                                      2 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('M' as i32 as libc::c_ulong |
-                                        ('J' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('P' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('G' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_JPEG,
-                               p: C2RustUnnamed{gen: [0; 4],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('4' as i32 as libc::c_ulong |
-                                        ('1' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('1' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('P' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_PLANAR,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [2 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('R' as i32 as libc::c_ulong |
-                                        ('G' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('B' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('P' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_RGB_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [2 as libc::c_int as
-                                                          uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            5 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           11 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            6 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           5 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            5 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           0 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('R' as i32 as libc::c_ulong |
-                                        ('G' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('B' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('R' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_RGB_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [2 as libc::c_int as
-                                                          uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            5 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           3 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            6 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           13 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t,
-                                                      ((8 as libc::c_int -
-                                                            5 as libc::c_int &
-                                                            0x7 as
-                                                                libc::c_int)
-                                                           << 5 as libc::c_int
-                                                           |
-                                                           8 as libc::c_int &
-                                                               0x1f as
-                                                                   libc::c_int)
-                                                          as uint8_t],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('Y' as i32 as libc::c_ulong |
-                                        ('U' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('Y' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('V' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [1 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     },
-     {
-         let mut init =
-             zbar_format_def_s{format:
-                                   ('U' as i32 as libc::c_ulong |
-                                        ('Y' as i32 as libc::c_ulong) <<
-                                            8 as libc::c_int |
-                                        ('V' as i32 as libc::c_ulong) <<
-                                            16 as libc::c_int |
-                                        ('Y' as i32 as libc::c_ulong) <<
-                                            24 as libc::c_int) as uint32_t,
-                               group: ZBAR_FMT_YUV_PACKED,
-                               p:
-                                   C2RustUnnamed{gen:
-                                                     [1 as libc::c_int as
-                                                          uint8_t,
-                                                      0 as libc::c_int as
-                                                          uint8_t,
-                                                      2 as libc::c_int as
-                                                          uint8_t, 0],},};
-         init
-     }];
+static mut format_defs: [zbar_format_def_t; 31] = [
+    {
+        let mut init = zbar_format_def_s {
+            format: ('R' as i32 as libc::c_ulong
+                | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('4' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_RGB_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    4 as libc::c_int as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 8 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 16 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 24 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('B' as i32 as libc::c_ulong
+                | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('R' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('1' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_RGB_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    1 as libc::c_int as uint8_t,
+                    ((8 as libc::c_int - 3 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 0 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 3 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 3 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 2 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 6 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('4' as i32 as libc::c_ulong
+                | ('2' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('2' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('P' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_PLANAR,
+            p: C2RustUnnamed {
+                gen: [
+                    1 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('Y' as i32 as libc::c_ulong
+                | ('8' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('0' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('0' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_GRAY,
+            p: C2RustUnnamed {
+                gen: [0; 4],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('Y' as i32 as libc::c_ulong
+                | ('U' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('Y' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('2' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    1 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('J' as i32 as libc::c_ulong
+                | ('P' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('E' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('G' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_JPEG,
+            p: C2RustUnnamed {
+                gen: [0; 4],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('Y' as i32 as libc::c_ulong
+                | ('V' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('Y' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('U' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    1 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    1 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('Y' as i32 as libc::c_ulong
+                | ('8' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | (0 as libc::c_int as libc::c_ulong) << 16 as libc::c_int
+                | (0 as libc::c_int as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_GRAY,
+            p: C2RustUnnamed {
+                gen: [0; 4],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('N' as i32 as libc::c_ulong
+                | ('V' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('2' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('1' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_NV,
+            p: C2RustUnnamed {
+                gen: [
+                    1 as libc::c_int as uint8_t,
+                    1 as libc::c_int as uint8_t,
+                    1 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('N' as i32 as libc::c_ulong
+                | ('V' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('1' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('2' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_NV,
+            p: C2RustUnnamed {
+                gen: [
+                    1 as libc::c_int as uint8_t,
+                    1 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('B' as i32 as libc::c_ulong
+                | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('R' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('3' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_RGB_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    3 as libc::c_int as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 16 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 8 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 0 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('Y' as i32 as libc::c_ulong
+                | ('V' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('U' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('9' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_PLANAR,
+            p: C2RustUnnamed {
+                gen: [
+                    2 as libc::c_int as uint8_t,
+                    2 as libc::c_int as uint8_t,
+                    1 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('R' as i32 as libc::c_ulong
+                | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('O' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_RGB_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    2 as libc::c_int as uint8_t,
+                    ((8 as libc::c_int - 5 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 10 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 5 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 5 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 5 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 0 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('R' as i32 as libc::c_ulong
+                | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('Q' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_RGB_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    2 as libc::c_int as uint8_t,
+                    ((8 as libc::c_int - 5 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 2 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 5 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 13 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 5 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 8 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('G' as i32 as libc::c_ulong
+                | ('R' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('E' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('Y' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_GRAY,
+            p: C2RustUnnamed {
+                gen: [0; 4],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: (3 as libc::c_int as libc::c_ulong
+                | (0 as libc::c_int as libc::c_ulong) << 8 as libc::c_int
+                | (0 as libc::c_int as libc::c_ulong) << 16 as libc::c_int
+                | (0 as libc::c_int as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_RGB_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    4 as libc::c_int as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 16 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 8 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 0 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('Y' as i32 as libc::c_ulong
+                | ('8' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | (' ' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | (' ' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_GRAY,
+            p: C2RustUnnamed {
+                gen: [0; 4],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('I' as i32 as libc::c_ulong
+                | ('4' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('2' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('0' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_PLANAR,
+            p: C2RustUnnamed {
+                gen: [
+                    1 as libc::c_int as uint8_t,
+                    1 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('R' as i32 as libc::c_ulong
+                | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('1' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_RGB_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    1 as libc::c_int as uint8_t,
+                    ((8 as libc::c_int - 3 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 5 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 3 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 2 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 2 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 0 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('Y' as i32 as libc::c_ulong
+                | ('U' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('1' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('2' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_PLANAR,
+            p: C2RustUnnamed {
+                gen: [
+                    1 as libc::c_int as uint8_t,
+                    1 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('Y' as i32 as libc::c_ulong
+                | ('V' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('1' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('2' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_PLANAR,
+            p: C2RustUnnamed {
+                gen: [
+                    1 as libc::c_int as uint8_t,
+                    1 as libc::c_int as uint8_t,
+                    1 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('R' as i32 as libc::c_ulong
+                | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('3' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_RGB_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    3 as libc::c_int as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 0 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 8 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 16 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('R' as i32 as libc::c_ulong
+                | ('4' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('4' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('4' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_RGB_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    2 as libc::c_int as uint8_t,
+                    ((8 as libc::c_int - 4 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 8 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 4 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 4 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 4 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 0 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('B' as i32 as libc::c_ulong
+                | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('R' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('4' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_RGB_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    4 as libc::c_int as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 16 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 8 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 8 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 0 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('Y' as i32 as libc::c_ulong
+                | ('U' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('V' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('9' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_PLANAR,
+            p: C2RustUnnamed {
+                gen: [
+                    2 as libc::c_int as uint8_t,
+                    2 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('M' as i32 as libc::c_ulong
+                | ('J' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('P' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('G' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_JPEG,
+            p: C2RustUnnamed {
+                gen: [0; 4],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('4' as i32 as libc::c_ulong
+                | ('1' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('1' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('P' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_PLANAR,
+            p: C2RustUnnamed {
+                gen: [
+                    2 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('R' as i32 as libc::c_ulong
+                | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('P' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_RGB_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    2 as libc::c_int as uint8_t,
+                    ((8 as libc::c_int - 5 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 11 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 6 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 5 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 5 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 0 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('R' as i32 as libc::c_ulong
+                | ('G' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('B' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('R' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_RGB_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    2 as libc::c_int as uint8_t,
+                    ((8 as libc::c_int - 5 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 3 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 6 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 13 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                    ((8 as libc::c_int - 5 as libc::c_int & 0x7 as libc::c_int) << 5 as libc::c_int
+                        | 8 as libc::c_int & 0x1f as libc::c_int) as uint8_t,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('Y' as i32 as libc::c_ulong
+                | ('U' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('Y' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('V' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    1 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+    {
+        let mut init = zbar_format_def_s {
+            format: ('U' as i32 as libc::c_ulong
+                | ('Y' as i32 as libc::c_ulong) << 8 as libc::c_int
+                | ('V' as i32 as libc::c_ulong) << 16 as libc::c_int
+                | ('Y' as i32 as libc::c_ulong) << 24 as libc::c_int)
+                as uint32_t,
+            group: ZBAR_FMT_YUV_PACKED,
+            p: C2RustUnnamed {
+                gen: [
+                    1 as libc::c_int as uint8_t,
+                    0 as libc::c_int as uint8_t,
+                    2 as libc::c_int as uint8_t,
+                    0,
+                ],
+            },
+        };
+        init
+    },
+];
 // Initialized in run_static_initializers
 static mut num_format_defs: libc::c_int = 0;
 /* verify that format list is in required sort order */
 #[inline]
-unsafe extern "C" fn verify_format_sort() -> libc::c_int {
+unsafe extern fn verify_format_sort() -> libc::c_int {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < num_format_defs {
         let mut j: libc::c_int = i * 2 as libc::c_int + 1 as libc::c_int;
-        if j < num_format_defs &&
-               format_defs[i as usize].format < format_defs[j as usize].format
-               ||
-               (j + 1 as libc::c_int) < num_format_defs &&
-                   format_defs[(j + 1 as libc::c_int) as usize].format <
-                       format_defs[i as usize].format {
-            break ;
+        if j < num_format_defs && format_defs[i as usize].format < format_defs[j as usize].format
+            || (j + 1 as libc::c_int) < num_format_defs
+                && format_defs[(j + 1 as libc::c_int) as usize].format
+                    < format_defs[i as usize].format
+        {
+            break;
         }
         i += 1
     }
-    if i == num_format_defs { return 0 as libc::c_int }
+    if i == num_format_defs {
+        return 0 as libc::c_int;
+    }
     /* spew correct order for fix */
-    fprintf(stderr,
-            b"ERROR: image format list is not sorted!?\n\x00" as *const u8 as
-                *const libc::c_char);
+    fprintf(
+        stderr,
+        b"ERROR: image format list is not sorted!?\n\x00" as *const u8 as *const libc::c_char,
+    );
     return -(1 as libc::c_int);
 }
 #[inline]
-unsafe extern "C" fn uv_roundup(mut img: *mut zbar_image_t,
-                                mut fmt: *const zbar_format_def_t) {
+unsafe extern fn uv_roundup(mut img: *mut zbar_image_t, mut fmt: *const zbar_format_def_t) {
     let mut xmask: libc::c_uint = 0;
     let mut ymask: libc::c_uint = 0;
-    if (*fmt).group as libc::c_uint ==
-           ZBAR_FMT_GRAY as libc::c_int as libc::c_uint {
-        return
+    if (*fmt).group as libc::c_uint == ZBAR_FMT_GRAY as libc::c_int as libc::c_uint {
+        return;
     }
-    xmask =
-        (((1 as libc::c_int) << (*fmt).p.yuv.xsub2 as libc::c_int) -
-             1 as libc::c_int) as libc::c_uint;
+    xmask = (((1 as libc::c_int) << (*fmt).p.yuv.xsub2 as libc::c_int) - 1 as libc::c_int)
+        as libc::c_uint;
     if (*img).width & xmask != 0 {
         (*img).width = (*img).width.wrapping_add(xmask) & !xmask
     }
-    ymask =
-        (((1 as libc::c_int) << (*fmt).p.yuv.ysub2 as libc::c_int) -
-             1 as libc::c_int) as libc::c_uint;
+    ymask = (((1 as libc::c_int) << (*fmt).p.yuv.ysub2 as libc::c_int) - 1 as libc::c_int)
+        as libc::c_uint;
     if (*img).height & ymask != 0 {
         (*img).height = (*img).height.wrapping_add(ymask) & !ymask
     };
 }
 #[inline]
-unsafe extern "C" fn uvp_size(mut img: *const zbar_image_t,
-                              mut fmt: *const zbar_format_def_t)
- -> libc::c_ulong {
-    if (*fmt).group as libc::c_uint ==
-           ZBAR_FMT_GRAY as libc::c_int as libc::c_uint {
-        return 0 as libc::c_int as libc::c_ulong
+unsafe extern fn uvp_size(
+    mut img: *const zbar_image_t,
+    mut fmt: *const zbar_format_def_t,
+) -> libc::c_ulong {
+    if (*fmt).group as libc::c_uint == ZBAR_FMT_GRAY as libc::c_int as libc::c_uint {
+        return 0 as libc::c_int as libc::c_ulong;
     }
-    return ((*img).width >>
-                (*fmt).p.yuv.xsub2 as
-                    libc::c_int).wrapping_mul((*img).height >>
-                                                  (*fmt).p.yuv.ysub2 as
-                                                      libc::c_int) as
-               libc::c_ulong;
+    return ((*img).width >> (*fmt).p.yuv.xsub2 as libc::c_int)
+        .wrapping_mul((*img).height >> (*fmt).p.yuv.ysub2 as libc::c_int)
+        as libc::c_ulong;
 }
 #[inline]
-unsafe extern "C" fn convert_read_rgb(mut srcp: *const uint8_t,
-                                      mut bpp: libc::c_int) -> uint32_t {
+unsafe extern fn convert_read_rgb(mut srcp: *const uint8_t, mut bpp: libc::c_int) -> uint32_t {
     let mut p: uint32_t = 0;
     if bpp == 3 as libc::c_int {
         p = *srcp as uint32_t;
-        p |=
-            ((*srcp.offset(1 as libc::c_int as isize) as libc::c_int) <<
-                 8 as libc::c_int) as libc::c_uint;
-        p |=
-            ((*srcp.offset(2 as libc::c_int as isize) as libc::c_int) <<
-                 16 as libc::c_int) as libc::c_uint
+        p |= ((*srcp.offset(1 as libc::c_int as isize) as libc::c_int) << 8 as libc::c_int)
+            as libc::c_uint;
+        p |= ((*srcp.offset(2 as libc::c_int as isize) as libc::c_int) << 16 as libc::c_int)
+            as libc::c_uint
     } else if bpp == 4 as libc::c_int {
         p = *(srcp as *mut uint32_t)
     } else if bpp == 2 as libc::c_int {
         p = *(srcp as *mut uint16_t) as uint32_t
-    } else { p = *srcp as uint32_t }
+    } else {
+        p = *srcp as uint32_t
+    }
     return p;
 }
 #[inline]
-unsafe extern "C" fn convert_write_rgb(mut dstp: *mut uint8_t,
-                                       mut p: uint32_t,
-                                       mut bpp: libc::c_int) {
+unsafe extern fn convert_write_rgb(mut dstp: *mut uint8_t, mut p: uint32_t, mut bpp: libc::c_int) {
     if bpp == 3 as libc::c_int {
         *dstp = (p & 0xff as libc::c_int as libc::c_uint) as uint8_t;
         *dstp.offset(1 as libc::c_int as isize) =
-            (p >> 8 as libc::c_int & 0xff as libc::c_int as libc::c_uint) as
-                uint8_t;
+            (p >> 8 as libc::c_int & 0xff as libc::c_int as libc::c_uint) as uint8_t;
         *dstp.offset(2 as libc::c_int as isize) =
-            (p >> 16 as libc::c_int & 0xff as libc::c_int as libc::c_uint) as
-                uint8_t
+            (p >> 16 as libc::c_int & 0xff as libc::c_int as libc::c_uint) as uint8_t
     } else if bpp == 4 as libc::c_int {
         *(dstp as *mut uint32_t) = p
     } else if bpp == 2 as libc::c_int {
         *(dstp as *mut uint16_t) = p as uint16_t
-    } else { *dstp = p as uint8_t };
+    } else {
+        *dstp = p as uint8_t
+    };
 }
 /* cleanup linked image by unrefing */
-unsafe extern "C" fn cleanup_ref(mut img: *mut zbar_image_t) {
+unsafe extern fn cleanup_ref(mut img: *mut zbar_image_t) {
     if !(*img).next.is_null() {
         _zbar_image_refcnt((*img).next, -(1 as libc::c_int));
     };
@@ -2018,11 +1692,13 @@ unsafe extern "C" fn cleanup_ref(mut img: *mut zbar_image_t) {
  * or duplicate last column/row to pad missing data
  */
 #[inline]
-unsafe extern "C" fn convert_y_resize(mut dst: *mut zbar_image_t,
-                                      mut dstfmt: *const zbar_format_def_t,
-                                      mut src: *const zbar_image_t,
-                                      mut srcfmt: *const zbar_format_def_t,
-                                      mut n: size_t) {
+unsafe extern fn convert_y_resize(
+    mut dst: *mut zbar_image_t,
+    mut dstfmt: *const zbar_format_def_t,
+    mut src: *const zbar_image_t,
+    mut srcfmt: *const zbar_format_def_t,
+    mut n: size_t,
+) {
     let mut psrc: *mut uint8_t = 0 as *mut uint8_t;
     let mut pdst: *mut uint8_t = 0 as *mut uint8_t;
     let mut width: libc::c_uint = 0;
@@ -2031,82 +1707,93 @@ unsafe extern "C" fn convert_y_resize(mut dst: *mut zbar_image_t,
     let mut y: libc::c_uint = 0;
     if (*dst).width == (*src).width && (*dst).height == (*src).height {
         memcpy((*dst).data as *mut libc::c_void, (*src).data, n);
-        return
+        return;
     }
     psrc = (*src).data as *mut libc::c_void as *mut uint8_t;
     pdst = (*dst).data as *mut libc::c_void as *mut uint8_t;
-    width =
-        if (*dst).width > (*src).width { (*src).width } else { (*dst).width };
-    xpad =
-        if (*dst).width > (*src).width {
-            (*dst).width.wrapping_sub((*src).width)
-        } else { 0 as libc::c_int as libc::c_uint };
-    height =
-        if (*dst).height > (*src).height {
-            (*src).height
-        } else { (*dst).height };
+    width = if (*dst).width > (*src).width {
+        (*src).width
+    } else {
+        (*dst).width
+    };
+    xpad = if (*dst).width > (*src).width {
+        (*dst).width.wrapping_sub((*src).width)
+    } else {
+        0 as libc::c_int as libc::c_uint
+    };
+    height = if (*dst).height > (*src).height {
+        (*src).height
+    } else {
+        (*dst).height
+    };
     y = 0 as libc::c_int as libc::c_uint;
     while y < height {
-        memcpy(pdst as *mut libc::c_void, psrc as *const libc::c_void,
-               width as libc::c_ulong);
+        memcpy(pdst as *mut libc::c_void, psrc as *const libc::c_void, width as libc::c_ulong);
         pdst = pdst.offset(width as isize);
         psrc = psrc.offset((*src).width as isize);
         if xpad != 0 {
-            memset(pdst as *mut libc::c_void,
-                   *psrc.offset(-(1 as libc::c_int as isize)) as libc::c_int,
-                   xpad as libc::c_ulong);
+            memset(
+                pdst as *mut libc::c_void,
+                *psrc.offset(-(1 as libc::c_int as isize)) as libc::c_int,
+                xpad as libc::c_ulong,
+            );
             pdst = pdst.offset(xpad as isize)
         }
         y = y.wrapping_add(1)
     }
     psrc = psrc.offset(-((*src).width as isize));
     while y < (*dst).height {
-        memcpy(pdst as *mut libc::c_void, psrc as *const libc::c_void,
-               width as libc::c_ulong);
+        memcpy(pdst as *mut libc::c_void, psrc as *const libc::c_void, width as libc::c_ulong);
         pdst = pdst.offset(width as isize);
         if xpad != 0 {
-            memset(pdst as *mut libc::c_void,
-                   *psrc.offset(-(1 as libc::c_int as isize)) as libc::c_int,
-                   xpad as libc::c_ulong);
+            memset(
+                pdst as *mut libc::c_void,
+                *psrc.offset(-(1 as libc::c_int as isize)) as libc::c_int,
+                xpad as libc::c_ulong,
+            );
             pdst = pdst.offset(xpad as isize)
         }
         y = y.wrapping_add(1)
-    };
+    }
 }
 /* make new image w/reference to the same image data */
-unsafe extern "C" fn convert_copy(mut dst: *mut zbar_image_t,
-                                  mut dstfmt: *const zbar_format_def_t,
-                                  mut src: *const zbar_image_t,
-                                  mut srcfmt: *const zbar_format_def_t) {
+unsafe extern fn convert_copy(
+    mut dst: *mut zbar_image_t,
+    mut dstfmt: *const zbar_format_def_t,
+    mut src: *const zbar_image_t,
+    mut srcfmt: *const zbar_format_def_t,
+) {
     if (*src).width == (*dst).width && (*src).height == (*dst).height {
         let mut s: *mut zbar_image_t = src as *mut zbar_image_t;
         (*dst).data = (*src).data;
         (*dst).datalen = (*src).datalen;
-        (*dst).cleanup =
-            Some(cleanup_ref as
-                     unsafe extern "C" fn(_: *mut zbar_image_t) -> ());
+        (*dst).cleanup = Some(cleanup_ref as unsafe extern fn(_: *mut zbar_image_t) -> ());
         (*dst).next = s;
         _zbar_image_refcnt(s, 1 as libc::c_int);
     } else {
         /* NB only for GRAY/YUV_PLANAR formats */
-        convert_y_resize(dst, dstfmt, src, srcfmt,
-                         (*dst).width.wrapping_mul((*dst).height) as size_t);
+        convert_y_resize(
+            dst,
+            dstfmt,
+            src,
+            srcfmt,
+            (*dst).width.wrapping_mul((*dst).height) as size_t,
+        );
     };
 }
 /* append neutral UV plane to grayscale image */
-unsafe extern "C" fn convert_uvp_append(mut dst: *mut zbar_image_t,
-                                        mut dstfmt: *const zbar_format_def_t,
-                                        mut src: *const zbar_image_t,
-                                        mut srcfmt:
-                                            *const zbar_format_def_t) {
+unsafe extern fn convert_uvp_append(
+    mut dst: *mut zbar_image_t,
+    mut dstfmt: *const zbar_format_def_t,
+    mut src: *const zbar_image_t,
+    mut srcfmt: *const zbar_format_def_t,
+) {
     let mut n: libc::c_ulong = 0;
     uv_roundup(dst, dstfmt);
-    (*dst).datalen =
-        uvp_size(dst, dstfmt).wrapping_mul(2 as libc::c_int as libc::c_ulong);
+    (*dst).datalen = uvp_size(dst, dstfmt).wrapping_mul(2 as libc::c_int as libc::c_ulong);
     n = (*dst).width.wrapping_mul((*dst).height) as libc::c_ulong;
     (*dst).datalen = (*dst).datalen.wrapping_add(n);
-    if (*src).datalen >=
-           (*src).width.wrapping_mul((*src).height) as libc::c_ulong {
+    if (*src).datalen >= (*src).width.wrapping_mul((*src).height) as libc::c_ulong {
     } else {
         __assert_fail(b"src->datalen >= src->width * src->height\x00" as
                           *const u8 as *const libc::c_char,
@@ -2117,26 +1804,38 @@ unsafe extern "C" fn convert_uvp_append(mut dst: *mut zbar_image_t,
                                                 &[libc::c_char; 116]>(b"void convert_uvp_append(zbar_image_t *, const zbar_format_def_t *, const zbar_image_t *, const zbar_format_def_t *)\x00")).as_ptr());
     }
     if _zbar_verbosity >= 24 as libc::c_int {
-        fprintf(stderr,
-                b"%s: dst=%dx%d (%lx) %lx src=%dx%d %lx\n\x00" as *const u8 as
-                    *const libc::c_char,
-                (*::std::mem::transmute::<&[u8; 19],
-                                          &[libc::c_char; 19]>(b"convert_uvp_append\x00")).as_ptr(),
-                (*dst).width, (*dst).height, n, (*dst).datalen, (*src).width,
-                (*src).height, (*src).datalen);
+        fprintf(
+            stderr,
+            b"%s: dst=%dx%d (%lx) %lx src=%dx%d %lx\n\x00" as *const u8 as *const libc::c_char,
+            (*::std::mem::transmute::<&[u8; 19], &[libc::c_char; 19]>(b"convert_uvp_append\x00"))
+                .as_ptr(),
+            (*dst).width,
+            (*dst).height,
+            n,
+            (*dst).datalen,
+            (*src).width,
+            (*src).height,
+            (*src).datalen,
+        );
     }
     (*dst).data = malloc((*dst).datalen);
-    if (*dst).data.is_null() { return }
+    if (*dst).data.is_null() {
+        return;
+    }
     convert_y_resize(dst, dstfmt, src, srcfmt, n);
-    memset(((*dst).data as *mut uint8_t).offset(n as isize) as
-               *mut libc::c_void, 0x80 as libc::c_int,
-           (*dst).datalen.wrapping_sub(n));
+    memset(
+        ((*dst).data as *mut uint8_t).offset(n as isize) as *mut libc::c_void,
+        0x80 as libc::c_int,
+        (*dst).datalen.wrapping_sub(n),
+    );
 }
 /* interleave YUV planes into packed YUV */
-unsafe extern "C" fn convert_yuv_pack(mut dst: *mut zbar_image_t,
-                                      mut dstfmt: *const zbar_format_def_t,
-                                      mut src: *const zbar_image_t,
-                                      mut srcfmt: *const zbar_format_def_t) {
+unsafe extern fn convert_yuv_pack(
+    mut dst: *mut zbar_image_t,
+    mut dstfmt: *const zbar_format_def_t,
+    mut src: *const zbar_image_t,
+    mut srcfmt: *const zbar_format_def_t,
+) {
     let mut srcm: libc::c_ulong = 0;
     let mut srcn: libc::c_ulong = 0;
     let mut flags: uint8_t = 0;
@@ -2154,21 +1853,16 @@ unsafe extern "C" fn convert_yuv_pack(mut dst: *mut zbar_image_t,
     let mut u: uint8_t = 0x80 as libc::c_int as uint8_t;
     let mut v: uint8_t = 0x80 as libc::c_int as uint8_t;
     uv_roundup(dst, dstfmt);
-    (*dst).datalen =
-        ((*dst).width.wrapping_mul((*dst).height) as
-             libc::c_ulong).wrapping_add(uvp_size(dst,
-                                                  dstfmt).wrapping_mul(2 as
-                                                                           libc::c_int
-                                                                           as
-                                                                           libc::c_ulong));
+    (*dst).datalen = ((*dst).width.wrapping_mul((*dst).height) as libc::c_ulong)
+        .wrapping_add(uvp_size(dst, dstfmt).wrapping_mul(2 as libc::c_int as libc::c_ulong));
     (*dst).data = malloc((*dst).datalen);
-    if (*dst).data.is_null() { return }
+    if (*dst).data.is_null() {
+        return;
+    }
     dstp = (*dst).data as *mut libc::c_void as *mut uint8_t;
     srcm = uvp_size(src, srcfmt);
     srcn = (*src).width.wrapping_mul((*src).height) as libc::c_ulong;
-    if (*src).datalen >=
-           srcn.wrapping_add((2 as libc::c_int as
-                                  libc::c_ulong).wrapping_mul(srcn)) {
+    if (*src).datalen >= srcn.wrapping_add((2 as libc::c_int as libc::c_ulong).wrapping_mul(srcn)) {
     } else {
         __assert_fail(b"src->datalen >= srcn + 2 * srcn\x00" as *const u8 as
                           *const libc::c_char,
@@ -2178,9 +1872,8 @@ unsafe extern "C" fn convert_yuv_pack(mut dst: *mut zbar_image_t,
                       (*::std::mem::transmute::<&[u8; 114],
                                                 &[libc::c_char; 114]>(b"void convert_yuv_pack(zbar_image_t *, const zbar_format_def_t *, const zbar_image_t *, const zbar_format_def_t *)\x00")).as_ptr());
     }
-    flags =
-        ((*dstfmt).p.yuv.packorder as libc::c_int ^
-             (*srcfmt).p.yuv.packorder as libc::c_int) as uint8_t;
+    flags = ((*dstfmt).p.yuv.packorder as libc::c_int ^ (*srcfmt).p.yuv.packorder as libc::c_int)
+        as uint8_t;
     srcy = (*src).data as *mut libc::c_void as *mut uint8_t;
     if flags as libc::c_int & 1 as libc::c_int != 0 {
         srcv = ((*src).data as *mut uint8_t).offset(srcn as isize);
@@ -2189,16 +1882,12 @@ unsafe extern "C" fn convert_yuv_pack(mut dst: *mut zbar_image_t,
         srcu = ((*src).data as *mut uint8_t).offset(srcn as isize);
         srcv = srcu.offset(srcm as isize)
     }
-    flags =
-        ((*dstfmt).p.yuv.packorder as libc::c_int & 2 as libc::c_int) as
-            uint8_t;
+    flags = ((*dstfmt).p.yuv.packorder as libc::c_int & 2 as libc::c_int) as uint8_t;
     srcl = (*src).width >> (*srcfmt).p.yuv.xsub2 as libc::c_int;
-    xmask =
-        (((1 as libc::c_int) << (*srcfmt).p.yuv.xsub2 as libc::c_int) -
-             1 as libc::c_int) as libc::c_uint;
-    ymask =
-        (((1 as libc::c_int) << (*srcfmt).p.yuv.ysub2 as libc::c_int) -
-             1 as libc::c_int) as libc::c_uint;
+    xmask = (((1 as libc::c_int) << (*srcfmt).p.yuv.xsub2 as libc::c_int) - 1 as libc::c_int)
+        as libc::c_uint;
+    ymask = (((1 as libc::c_int) << (*srcfmt).p.yuv.ysub2 as libc::c_int) - 1 as libc::c_int)
+        as libc::c_uint;
     y = 0 as libc::c_int as libc::c_uint;
     while y < (*dst).height {
         if y >= (*src).height {
@@ -2258,20 +1947,24 @@ unsafe extern "C" fn convert_yuv_pack(mut dst: *mut zbar_image_t,
         }
         while x < (*src).width {
             srcy = srcy.offset(2 as libc::c_int as isize);
-            if x & xmask == 0 { srcu = srcu.offset(1); srcv = srcv.offset(1) }
+            if x & xmask == 0 {
+                srcu = srcu.offset(1);
+                srcv = srcv.offset(1)
+            }
             x = x.wrapping_add(2 as libc::c_int as libc::c_uint)
         }
         y = y.wrapping_add(1)
-    };
+    }
 }
 /* split packed YUV samples and join into YUV planes
  * FIXME currently ignores color and grayscales the image
  */
-unsafe extern "C" fn convert_yuv_unpack(mut dst: *mut zbar_image_t,
-                                        mut dstfmt: *const zbar_format_def_t,
-                                        mut src: *const zbar_image_t,
-                                        mut srcfmt:
-                                            *const zbar_format_def_t) {
+unsafe extern fn convert_yuv_unpack(
+    mut dst: *mut zbar_image_t,
+    mut dstfmt: *const zbar_format_def_t,
+    mut src: *const zbar_image_t,
+    mut srcfmt: *const zbar_format_def_t,
+) {
     let mut dstn: libc::c_ulong = 0;
     let mut dstm2: libc::c_ulong = 0;
     let mut dsty: *mut uint8_t = 0 as *mut uint8_t;
@@ -2284,28 +1977,33 @@ unsafe extern "C" fn convert_yuv_unpack(mut dst: *mut zbar_image_t,
     let mut y1: uint8_t = 0 as libc::c_int as uint8_t;
     uv_roundup(dst, dstfmt);
     dstn = (*dst).width.wrapping_mul((*dst).height) as libc::c_ulong;
-    dstm2 =
-        uvp_size(dst, dstfmt).wrapping_mul(2 as libc::c_int as libc::c_ulong);
+    dstm2 = uvp_size(dst, dstfmt).wrapping_mul(2 as libc::c_int as libc::c_ulong);
     (*dst).datalen = dstn.wrapping_add(dstm2);
     (*dst).data = malloc((*dst).datalen);
-    if (*dst).data.is_null() { return }
+    if (*dst).data.is_null() {
+        return;
+    }
     if dstm2 != 0 {
-        memset(((*dst).data as *mut uint8_t).offset(dstn as isize) as
-                   *mut libc::c_void, 0x80 as libc::c_int, dstm2);
+        memset(
+            ((*dst).data as *mut uint8_t).offset(dstn as isize) as *mut libc::c_void,
+            0x80 as libc::c_int,
+            dstm2,
+        );
     }
     dsty = (*dst).data as *mut uint8_t;
-    flags =
-        ((*srcfmt).p.yuv.packorder as libc::c_int ^
-             (*dstfmt).p.yuv.packorder as libc::c_int) as uint8_t;
+    flags = ((*srcfmt).p.yuv.packorder as libc::c_int ^ (*dstfmt).p.yuv.packorder as libc::c_int)
+        as uint8_t;
     flags = (flags as libc::c_int & 2 as libc::c_int) as uint8_t;
     srcp = (*src).data as *const uint8_t;
-    if flags != 0 { srcp = srcp.offset(1) }
-    srcl =
-        (*src).width.wrapping_add((*src).width >>
-                                      (*srcfmt).p.yuv.xsub2 as libc::c_int);
+    if flags != 0 {
+        srcp = srcp.offset(1)
+    }
+    srcl = (*src).width.wrapping_add((*src).width >> (*srcfmt).p.yuv.xsub2 as libc::c_int);
     y = 0 as libc::c_int as libc::c_uint;
     while y < (*dst).height {
-        if y >= (*src).height { srcp = srcp.offset(-(srcl as isize)) }
+        if y >= (*src).height {
+            srcp = srcp.offset(-(srcl as isize))
+        }
         x = 0 as libc::c_int as libc::c_uint;
         while x < (*dst).width {
             if x < (*src).width {
@@ -2327,46 +2025,48 @@ unsafe extern "C" fn convert_yuv_unpack(mut dst: *mut zbar_image_t,
             x = x.wrapping_add(2 as libc::c_int as libc::c_uint)
         }
         if x < (*src).width {
-            srcp =
-                srcp.offset((*src).width.wrapping_sub(x).wrapping_mul(2 as
-                                                                          libc::c_int
-                                                                          as
-                                                                          libc::c_uint)
-                                as isize)
+            srcp = srcp
+                .offset((*src).width.wrapping_sub(x).wrapping_mul(2 as libc::c_int as libc::c_uint)
+                    as isize)
         }
         y = y.wrapping_add(1)
-    };
+    }
 }
 /* resample and resize UV plane(s)
  * FIXME currently ignores color and grayscales the image
  */
-unsafe extern "C" fn convert_uvp_resample(mut dst: *mut zbar_image_t,
-                                          mut dstfmt:
-                                              *const zbar_format_def_t,
-                                          mut src: *const zbar_image_t,
-                                          mut srcfmt:
-                                              *const zbar_format_def_t) {
+unsafe extern fn convert_uvp_resample(
+    mut dst: *mut zbar_image_t,
+    mut dstfmt: *const zbar_format_def_t,
+    mut src: *const zbar_image_t,
+    mut srcfmt: *const zbar_format_def_t,
+) {
     let mut dstn: libc::c_ulong = 0;
     let mut dstm2: libc::c_ulong = 0;
     uv_roundup(dst, dstfmt);
     dstn = (*dst).width.wrapping_mul((*dst).height) as libc::c_ulong;
-    dstm2 =
-        uvp_size(dst, dstfmt).wrapping_mul(2 as libc::c_int as libc::c_ulong);
+    dstm2 = uvp_size(dst, dstfmt).wrapping_mul(2 as libc::c_int as libc::c_ulong);
     (*dst).datalen = dstn.wrapping_add(dstm2);
     (*dst).data = malloc((*dst).datalen);
-    if (*dst).data.is_null() { return }
+    if (*dst).data.is_null() {
+        return;
+    }
     convert_y_resize(dst, dstfmt, src, srcfmt, dstn);
     if dstm2 != 0 {
-        memset(((*dst).data as *mut uint8_t).offset(dstn as isize) as
-                   *mut libc::c_void, 0x80 as libc::c_int, dstm2);
+        memset(
+            ((*dst).data as *mut uint8_t).offset(dstn as isize) as *mut libc::c_void,
+            0x80 as libc::c_int,
+            dstm2,
+        );
     };
 }
 /* rearrange interleaved UV componets */
-unsafe extern "C" fn convert_uv_resample(mut dst: *mut zbar_image_t,
-                                         mut dstfmt: *const zbar_format_def_t,
-                                         mut src: *const zbar_image_t,
-                                         mut srcfmt:
-                                             *const zbar_format_def_t) {
+unsafe extern fn convert_uv_resample(
+    mut dst: *mut zbar_image_t,
+    mut dstfmt: *const zbar_format_def_t,
+    mut src: *const zbar_image_t,
+    mut srcfmt: *const zbar_format_def_t,
+) {
     let mut dstn: libc::c_ulong = 0;
     let mut dstp: *mut uint8_t = 0 as *mut uint8_t;
     let mut flags: uint8_t = 0;
@@ -2381,28 +2081,25 @@ unsafe extern "C" fn convert_uv_resample(mut dst: *mut zbar_image_t,
     uv_roundup(dst, dstfmt);
     dstn = (*dst).width.wrapping_mul((*dst).height) as libc::c_ulong;
     (*dst).datalen =
-        dstn.wrapping_add(uvp_size(dst,
-                                   dstfmt).wrapping_mul(2 as libc::c_int as
-                                                            libc::c_ulong));
+        dstn.wrapping_add(uvp_size(dst, dstfmt).wrapping_mul(2 as libc::c_int as libc::c_ulong));
     (*dst).data = malloc((*dst).datalen);
-    if (*dst).data.is_null() { return }
+    if (*dst).data.is_null() {
+        return;
+    }
     dstp = (*dst).data as *mut libc::c_void as *mut uint8_t;
-    flags =
-        (((*srcfmt).p.yuv.packorder as libc::c_int ^
-              (*dstfmt).p.yuv.packorder as libc::c_int) & 1 as libc::c_int) as
-            uint8_t;
+    flags = (((*srcfmt).p.yuv.packorder as libc::c_int ^ (*dstfmt).p.yuv.packorder as libc::c_int)
+        & 1 as libc::c_int) as uint8_t;
     srcp = (*src).data as *const uint8_t;
-    srcl =
-        (*src).width.wrapping_add((*src).width >>
-                                      (*srcfmt).p.yuv.xsub2 as libc::c_int);
+    srcl = (*src).width.wrapping_add((*src).width >> (*srcfmt).p.yuv.xsub2 as libc::c_int);
     y = 0 as libc::c_int as libc::c_uint;
     while y < (*dst).height {
-        if y >= (*src).height { srcp = srcp.offset(-(srcl as isize)) }
+        if y >= (*src).height {
+            srcp = srcp.offset(-(srcl as isize))
+        }
         x = 0 as libc::c_int as libc::c_uint;
         while x < (*dst).width {
             if x < (*src).width {
-                if (*srcfmt).p.yuv.packorder as libc::c_int & 2 as libc::c_int
-                       == 0 {
+                if (*srcfmt).p.yuv.packorder as libc::c_int & 2 as libc::c_int == 0 {
                     let fresh16 = srcp;
                     srcp = srcp.offset(1);
                     y0 = *fresh16;
@@ -2429,10 +2126,13 @@ unsafe extern "C" fn convert_uv_resample(mut dst: *mut zbar_image_t,
                     srcp = srcp.offset(1);
                     y1 = *fresh23
                 }
-                if flags != 0 { let mut tmp: uint8_t = u; u = v; v = tmp }
+                if flags != 0 {
+                    let mut tmp: uint8_t = u;
+                    u = v;
+                    v = tmp
+                }
             }
-            if (*dstfmt).p.yuv.packorder as libc::c_int & 2 as libc::c_int ==
-                   0 {
+            if (*dstfmt).p.yuv.packorder as libc::c_int & 2 as libc::c_int == 0 {
                 let fresh24 = dstp;
                 dstp = dstp.offset(1);
                 *fresh24 = y0;
@@ -2462,24 +2162,22 @@ unsafe extern "C" fn convert_uv_resample(mut dst: *mut zbar_image_t,
             x = x.wrapping_add(2 as libc::c_int as libc::c_uint)
         }
         if x < (*src).width {
-            srcp =
-                srcp.offset((*src).width.wrapping_sub(x).wrapping_mul(2 as
-                                                                          libc::c_int
-                                                                          as
-                                                                          libc::c_uint)
-                                as isize)
+            srcp = srcp
+                .offset((*src).width.wrapping_sub(x).wrapping_mul(2 as libc::c_int as libc::c_uint)
+                    as isize)
         }
         y = y.wrapping_add(1)
-    };
+    }
 }
 /* YUV planes to packed RGB
  * FIXME currently ignores color and grayscales the image
  */
-unsafe extern "C" fn convert_yuvp_to_rgb(mut dst: *mut zbar_image_t,
-                                         mut dstfmt: *const zbar_format_def_t,
-                                         mut src: *const zbar_image_t,
-                                         mut srcfmt:
-                                             *const zbar_format_def_t) {
+unsafe extern fn convert_yuvp_to_rgb(
+    mut dst: *mut zbar_image_t,
+    mut dstfmt: *const zbar_format_def_t,
+    mut src: *const zbar_image_t,
+    mut srcfmt: *const zbar_format_def_t,
+) {
     let mut dstp: *mut uint8_t = 0 as *mut uint8_t;
     let mut srcy: *mut uint8_t = 0 as *mut uint8_t;
     let mut drbits: libc::c_int = 0;
@@ -2494,12 +2192,12 @@ unsafe extern "C" fn convert_yuvp_to_rgb(mut dst: *mut zbar_image_t,
     let mut y: libc::c_uint = 0;
     let mut p: uint32_t = 0 as libc::c_int as uint32_t;
     (*dst).datalen =
-        (*dst).width.wrapping_mul((*dst).height).wrapping_mul((*dstfmt).p.rgb.bpp
-                                                                  as
-                                                                  libc::c_uint)
+        (*dst).width.wrapping_mul((*dst).height).wrapping_mul((*dstfmt).p.rgb.bpp as libc::c_uint)
             as libc::c_ulong;
     (*dst).data = malloc((*dst).datalen);
-    if (*dst).data.is_null() { return }
+    if (*dst).data.is_null() {
+        return;
+    }
     dstp = (*dst).data as *mut libc::c_void as *mut uint8_t;
     drbits = (*dstfmt).p.rgb.red as libc::c_int >> 5 as libc::c_int;
     drbit0 = (*dstfmt).p.rgb.red as libc::c_int & 0x1f as libc::c_int;
@@ -2509,9 +2207,7 @@ unsafe extern "C" fn convert_yuvp_to_rgb(mut dst: *mut zbar_image_t,
     dbbit0 = (*dstfmt).p.rgb.blue as libc::c_int & 0x1f as libc::c_int;
     srcm = uvp_size(src, srcfmt);
     srcn = (*src).width.wrapping_mul((*src).height) as libc::c_ulong;
-    if (*src).datalen >=
-           srcn.wrapping_add((2 as libc::c_int as
-                                  libc::c_ulong).wrapping_mul(srcm)) {
+    if (*src).datalen >= srcn.wrapping_add((2 as libc::c_int as libc::c_ulong).wrapping_mul(srcm)) {
     } else {
         __assert_fail(b"src->datalen >= srcn + 2 * srcm\x00" as *const u8 as
                           *const libc::c_char,
@@ -2524,7 +2220,9 @@ unsafe extern "C" fn convert_yuvp_to_rgb(mut dst: *mut zbar_image_t,
     srcy = (*src).data as *mut libc::c_void as *mut uint8_t;
     y = 0 as libc::c_int as libc::c_uint;
     while y < (*dst).height {
-        if y >= (*src).height { srcy = srcy.offset(-((*src).width as isize)) }
+        if y >= (*src).height {
+            srcy = srcy.offset(-((*src).width as isize))
+        }
         x = 0 as libc::c_int as libc::c_uint;
         while x < (*dst).width {
             if x < (*src).width {
@@ -2532,9 +2230,7 @@ unsafe extern "C" fn convert_yuvp_to_rgb(mut dst: *mut zbar_image_t,
                 let fresh32 = srcy;
                 srcy = srcy.offset(1);
                 let mut y0: libc::c_uint = *fresh32 as libc::c_uint;
-                p =
-                    y0 >> drbits << drbit0 | y0 >> dgbits << dgbit0 |
-                        y0 >> dbbits << dbbit0
+                p = y0 >> drbits << drbit0 | y0 >> dgbits << dgbit0 | y0 >> dbbits << dbbit0
             }
             convert_write_rgb(dstp, p, (*dstfmt).p.rgb.bpp as libc::c_int);
             dstp = dstp.offset((*dstfmt).p.rgb.bpp as libc::c_int as isize);
@@ -2544,16 +2240,17 @@ unsafe extern "C" fn convert_yuvp_to_rgb(mut dst: *mut zbar_image_t,
             srcy = srcy.offset((*src).width.wrapping_sub(x) as isize)
         }
         y = y.wrapping_add(1)
-    };
+    }
 }
 /* packed RGB to YUV planes
  * FIXME currently ignores color and grayscales the image
  */
-unsafe extern "C" fn convert_rgb_to_yuvp(mut dst: *mut zbar_image_t,
-                                         mut dstfmt: *const zbar_format_def_t,
-                                         mut src: *const zbar_image_t,
-                                         mut srcfmt:
-                                             *const zbar_format_def_t) {
+unsafe extern fn convert_rgb_to_yuvp(
+    mut dst: *mut zbar_image_t,
+    mut dstfmt: *const zbar_format_def_t,
+    mut src: *const zbar_image_t,
+    mut srcfmt: *const zbar_format_def_t,
+) {
     let mut dstn: libc::c_ulong = 0;
     let mut dstm2: libc::c_ulong = 0;
     let mut dsty: *mut uint8_t = 0 as *mut uint8_t;
@@ -2570,21 +2267,26 @@ unsafe extern "C" fn convert_rgb_to_yuvp(mut dst: *mut zbar_image_t,
     let mut y0: uint16_t = 0 as libc::c_int as uint16_t;
     uv_roundup(dst, dstfmt);
     dstn = (*dst).width.wrapping_mul((*dst).height) as libc::c_ulong;
-    dstm2 =
-        uvp_size(dst, dstfmt).wrapping_mul(2 as libc::c_int as libc::c_ulong);
+    dstm2 = uvp_size(dst, dstfmt).wrapping_mul(2 as libc::c_int as libc::c_ulong);
     (*dst).datalen = dstn.wrapping_add(dstm2);
     (*dst).data = malloc((*dst).datalen);
-    if (*dst).data.is_null() { return }
+    if (*dst).data.is_null() {
+        return;
+    }
     if dstm2 != 0 {
-        memset(((*dst).data as *mut uint8_t).offset(dstn as isize) as
-                   *mut libc::c_void, 0x80 as libc::c_int, dstm2);
+        memset(
+            ((*dst).data as *mut uint8_t).offset(dstn as isize) as *mut libc::c_void,
+            0x80 as libc::c_int,
+            dstm2,
+        );
     }
     dsty = (*dst).data as *mut libc::c_void as *mut uint8_t;
-    if (*src).datalen >=
-           (*src).width.wrapping_mul((*src).height).wrapping_mul((*srcfmt).p.rgb.bpp
-                                                                     as
-                                                                     libc::c_uint)
-               as libc::c_ulong {
+    if (*src).datalen
+        >= (*src)
+            .width
+            .wrapping_mul((*src).height)
+            .wrapping_mul((*srcfmt).p.rgb.bpp as libc::c_uint) as libc::c_ulong
+    {
     } else {
         __assert_fail(b"src->datalen >= (src->width * src->height * srcfmt->p.rgb.bpp)\x00"
                           as *const u8 as *const libc::c_char,
@@ -2604,34 +2306,27 @@ unsafe extern "C" fn convert_rgb_to_yuvp(mut dst: *mut zbar_image_t,
     srcl = (*src).width.wrapping_mul((*srcfmt).p.rgb.bpp as libc::c_uint);
     y = 0 as libc::c_int as libc::c_uint;
     while y < (*dst).height {
-        if y >= (*src).height { srcp = srcp.offset(-(srcl as isize)) }
+        if y >= (*src).height {
+            srcp = srcp.offset(-(srcl as isize))
+        }
         x = 0 as libc::c_int as libc::c_uint;
         while x < (*dst).width {
             if x < (*src).width {
                 let mut r: uint8_t = 0;
                 let mut g: uint8_t = 0;
                 let mut b: uint8_t = 0;
-                let mut p: uint32_t =
-                    convert_read_rgb(srcp,
-                                     (*srcfmt).p.rgb.bpp as libc::c_int);
-                srcp =
-                    srcp.offset((*srcfmt).p.rgb.bpp as libc::c_int as isize);
+                let mut p: uint32_t = convert_read_rgb(srcp, (*srcfmt).p.rgb.bpp as libc::c_int);
+                srcp = srcp.offset((*srcfmt).p.rgb.bpp as libc::c_int as isize);
                 /* FIXME endianness? */
-                r =
-                    (p >> rbit0 << rbits &
-                         0xff as libc::c_int as libc::c_uint) as uint8_t;
-                g =
-                    (p >> gbit0 << gbits &
-                         0xff as libc::c_int as libc::c_uint) as uint8_t;
-                b =
-                    (p >> bbit0 << bbits &
-                         0xff as libc::c_int as libc::c_uint) as uint8_t;
+                r = (p >> rbit0 << rbits & 0xff as libc::c_int as libc::c_uint) as uint8_t;
+                g = (p >> gbit0 << gbits & 0xff as libc::c_int as libc::c_uint) as uint8_t;
+                b = (p >> bbit0 << bbits & 0xff as libc::c_int as libc::c_uint) as uint8_t;
                 /* FIXME color space? */
-                y0 =
-                    (77 as libc::c_int * r as libc::c_int +
-                         150 as libc::c_int * g as libc::c_int +
-                         29 as libc::c_int * b as libc::c_int +
-                         0x80 as libc::c_int >> 8 as libc::c_int) as uint16_t
+                y0 = (77 as libc::c_int * r as libc::c_int
+                    + 150 as libc::c_int * g as libc::c_int
+                    + 29 as libc::c_int * b as libc::c_int
+                    + 0x80 as libc::c_int
+                    >> 8 as libc::c_int) as uint16_t
             }
             let fresh33 = dsty;
             dsty = dsty.offset(1);
@@ -2639,24 +2334,23 @@ unsafe extern "C" fn convert_rgb_to_yuvp(mut dst: *mut zbar_image_t,
             x = x.wrapping_add(1)
         }
         if x < (*src).width {
-            srcp =
-                srcp.offset((*src).width.wrapping_sub(x).wrapping_mul((*srcfmt).p.rgb.bpp
-                                                                          as
-                                                                          libc::c_uint)
-                                as isize)
+            srcp = srcp.offset(
+                (*src).width.wrapping_sub(x).wrapping_mul((*srcfmt).p.rgb.bpp as libc::c_uint)
+                    as isize,
+            )
         }
         y = y.wrapping_add(1)
-    };
+    }
 }
 /* packed YUV to packed RGB */
-unsafe extern "C" fn convert_yuv_to_rgb(mut dst: *mut zbar_image_t,
-                                        mut dstfmt: *const zbar_format_def_t,
-                                        mut src: *const zbar_image_t,
-                                        mut srcfmt:
-                                            *const zbar_format_def_t) {
+unsafe extern fn convert_yuv_to_rgb(
+    mut dst: *mut zbar_image_t,
+    mut dstfmt: *const zbar_format_def_t,
+    mut src: *const zbar_image_t,
+    mut srcfmt: *const zbar_format_def_t,
+) {
     let mut dstp: *mut uint8_t = 0 as *mut uint8_t;
-    let mut dstn: libc::c_ulong =
-        (*dst).width.wrapping_mul((*dst).height) as libc::c_ulong;
+    let mut dstn: libc::c_ulong = (*dst).width.wrapping_mul((*dst).height) as libc::c_ulong;
     let mut drbits: libc::c_int = 0;
     let mut drbit0: libc::c_int = 0;
     let mut dgbits: libc::c_int = 0;
@@ -2670,7 +2364,9 @@ unsafe extern "C" fn convert_yuv_to_rgb(mut dst: *mut zbar_image_t,
     let mut p: uint32_t = 0 as libc::c_int as uint32_t;
     (*dst).datalen = dstn.wrapping_mul((*dstfmt).p.rgb.bpp as libc::c_ulong);
     (*dst).data = malloc((*dst).datalen);
-    if (*dst).data.is_null() { return }
+    if (*dst).data.is_null() {
+        return;
+    }
     dstp = (*dst).data as *mut libc::c_void as *mut uint8_t;
     drbits = (*dstfmt).p.rgb.red as libc::c_int >> 5 as libc::c_int;
     drbit0 = (*dstfmt).p.rgb.red as libc::c_int & 0x1f as libc::c_int;
@@ -2678,14 +2374,10 @@ unsafe extern "C" fn convert_yuv_to_rgb(mut dst: *mut zbar_image_t,
     dgbit0 = (*dstfmt).p.rgb.green as libc::c_int & 0x1f as libc::c_int;
     dbbits = (*dstfmt).p.rgb.blue as libc::c_int >> 5 as libc::c_int;
     dbbit0 = (*dstfmt).p.rgb.blue as libc::c_int & 0x1f as libc::c_int;
-    if (*src).datalen >=
-           ((*src).width.wrapping_mul((*src).height) as
-                libc::c_ulong).wrapping_add(uvp_size(src,
-                                                     srcfmt).wrapping_mul(2 as
-                                                                              libc::c_int
-                                                                              as
-                                                                              libc::c_ulong))
-       {
+    if (*src).datalen
+        >= ((*src).width.wrapping_mul((*src).height) as libc::c_ulong)
+            .wrapping_add(uvp_size(src, srcfmt).wrapping_mul(2 as libc::c_int as libc::c_ulong))
+    {
     } else {
         __assert_fail(b"src->datalen >= (src->width * src->height + uvp_size(src, srcfmt) * 2)\x00"
                           as *const u8 as *const libc::c_char,
@@ -2712,7 +2404,9 @@ unsafe extern "C" fn convert_yuv_to_rgb(mut dst: *mut zbar_image_t,
     srcl = (*src).width.wrapping_add((*src).width >> 1 as libc::c_int);
     y = 0 as libc::c_int as libc::c_uint;
     while y < (*dst).height {
-        if y >= (*src).height { srcp = srcp.offset(-(srcl as isize)) }
+        if y >= (*src).height {
+            srcp = srcp.offset(-(srcl as isize))
+        }
         x = 0 as libc::c_int as libc::c_uint;
         while x < (*dst).width {
             if x < (*src).width {
@@ -2725,39 +2419,35 @@ unsafe extern "C" fn convert_yuv_to_rgb(mut dst: *mut zbar_image_t,
                 } else if y0 as libc::c_int >= 235 as libc::c_int {
                     y0 = 255 as libc::c_int as uint8_t
                 } else {
-                    y0 =
-                        ((y0 as libc::c_int - 16 as libc::c_int) as uint16_t
-                             as libc::c_int * 255 as libc::c_int /
-                             219 as libc::c_int) as uint8_t
+                    y0 = ((y0 as libc::c_int - 16 as libc::c_int) as uint16_t as libc::c_int
+                        * 255 as libc::c_int
+                        / 219 as libc::c_int) as uint8_t
                 }
-                p =
-                    (y0 as libc::c_int >> drbits << drbit0 |
-                         y0 as libc::c_int >> dgbits << dgbit0 |
-                         y0 as libc::c_int >> dbbits << dbbit0) as uint32_t
+                p = (y0 as libc::c_int >> drbits << drbit0
+                    | y0 as libc::c_int >> dgbits << dgbit0
+                    | y0 as libc::c_int >> dbbits << dbbit0) as uint32_t
             }
             convert_write_rgb(dstp, p, (*dstfmt).p.rgb.bpp as libc::c_int);
             dstp = dstp.offset((*dstfmt).p.rgb.bpp as libc::c_int as isize);
             x = x.wrapping_add(1)
         }
         if x < (*src).width {
-            srcp =
-                srcp.offset((*src).width.wrapping_sub(x).wrapping_mul(2 as
-                                                                          libc::c_int
-                                                                          as
-                                                                          libc::c_uint)
-                                as isize)
+            srcp = srcp
+                .offset((*src).width.wrapping_sub(x).wrapping_mul(2 as libc::c_int as libc::c_uint)
+                    as isize)
         }
         y = y.wrapping_add(1)
-    };
+    }
 }
 /* packed RGB to packed YUV
  * FIXME currently ignores color and grayscales the image
  */
-unsafe extern "C" fn convert_rgb_to_yuv(mut dst: *mut zbar_image_t,
-                                        mut dstfmt: *const zbar_format_def_t,
-                                        mut src: *const zbar_image_t,
-                                        mut srcfmt:
-                                            *const zbar_format_def_t) {
+unsafe extern fn convert_rgb_to_yuv(
+    mut dst: *mut zbar_image_t,
+    mut dstfmt: *const zbar_format_def_t,
+    mut src: *const zbar_image_t,
+    mut srcfmt: *const zbar_format_def_t,
+) {
     let mut dstp: *mut uint8_t = 0 as *mut uint8_t;
     let mut flags: uint8_t = 0;
     let mut srcp: *const uint8_t = 0 as *const uint8_t;
@@ -2772,24 +2462,20 @@ unsafe extern "C" fn convert_rgb_to_yuv(mut dst: *mut zbar_image_t,
     let mut y: libc::c_uint = 0;
     let mut y0: uint16_t = 0 as libc::c_int as uint16_t;
     uv_roundup(dst, dstfmt);
-    (*dst).datalen =
-        ((*dst).width.wrapping_mul((*dst).height) as
-             libc::c_ulong).wrapping_add(uvp_size(dst,
-                                                  dstfmt).wrapping_mul(2 as
-                                                                           libc::c_int
-                                                                           as
-                                                                           libc::c_ulong));
+    (*dst).datalen = ((*dst).width.wrapping_mul((*dst).height) as libc::c_ulong)
+        .wrapping_add(uvp_size(dst, dstfmt).wrapping_mul(2 as libc::c_int as libc::c_ulong));
     (*dst).data = malloc((*dst).datalen);
-    if (*dst).data.is_null() { return }
+    if (*dst).data.is_null() {
+        return;
+    }
     dstp = (*dst).data as *mut libc::c_void as *mut uint8_t;
-    flags =
-        ((*dstfmt).p.yuv.packorder as libc::c_int & 2 as libc::c_int) as
-            uint8_t;
-    if (*src).datalen >=
-           (*src).width.wrapping_mul((*src).height).wrapping_mul((*srcfmt).p.rgb.bpp
-                                                                     as
-                                                                     libc::c_uint)
-               as libc::c_ulong {
+    flags = ((*dstfmt).p.yuv.packorder as libc::c_int & 2 as libc::c_int) as uint8_t;
+    if (*src).datalen
+        >= (*src)
+            .width
+            .wrapping_mul((*src).height)
+            .wrapping_mul((*srcfmt).p.rgb.bpp as libc::c_uint) as libc::c_ulong
+    {
     } else {
         __assert_fail(b"src->datalen >= (src->width * src->height * srcfmt->p.rgb.bpp)\x00"
                           as *const u8 as *const libc::c_char,
@@ -2809,34 +2495,27 @@ unsafe extern "C" fn convert_rgb_to_yuv(mut dst: *mut zbar_image_t,
     srcl = (*src).width.wrapping_mul((*srcfmt).p.rgb.bpp as libc::c_uint);
     y = 0 as libc::c_int as libc::c_uint;
     while y < (*dst).height {
-        if y >= (*src).height { srcp = srcp.offset(-(srcl as isize)) }
+        if y >= (*src).height {
+            srcp = srcp.offset(-(srcl as isize))
+        }
         x = 0 as libc::c_int as libc::c_uint;
         while x < (*dst).width {
             if x < (*src).width {
                 let mut r: uint8_t = 0;
                 let mut g: uint8_t = 0;
                 let mut b: uint8_t = 0;
-                let mut p: uint32_t =
-                    convert_read_rgb(srcp,
-                                     (*srcfmt).p.rgb.bpp as libc::c_int);
-                srcp =
-                    srcp.offset((*srcfmt).p.rgb.bpp as libc::c_int as isize);
+                let mut p: uint32_t = convert_read_rgb(srcp, (*srcfmt).p.rgb.bpp as libc::c_int);
+                srcp = srcp.offset((*srcfmt).p.rgb.bpp as libc::c_int as isize);
                 /* FIXME endianness? */
-                r =
-                    (p >> rbit0 << rbits &
-                         0xff as libc::c_int as libc::c_uint) as uint8_t;
-                g =
-                    (p >> gbit0 << gbits &
-                         0xff as libc::c_int as libc::c_uint) as uint8_t;
-                b =
-                    (p >> bbit0 << bbits &
-                         0xff as libc::c_int as libc::c_uint) as uint8_t;
+                r = (p >> rbit0 << rbits & 0xff as libc::c_int as libc::c_uint) as uint8_t;
+                g = (p >> gbit0 << gbits & 0xff as libc::c_int as libc::c_uint) as uint8_t;
+                b = (p >> bbit0 << bbits & 0xff as libc::c_int as libc::c_uint) as uint8_t;
                 /* FIXME color space? */
-                y0 =
-                    (77 as libc::c_int * r as libc::c_int +
-                         150 as libc::c_int * g as libc::c_int +
-                         29 as libc::c_int * b as libc::c_int +
-                         0x80 as libc::c_int >> 8 as libc::c_int) as uint16_t
+                y0 = (77 as libc::c_int * r as libc::c_int
+                    + 150 as libc::c_int * g as libc::c_int
+                    + 29 as libc::c_int * b as libc::c_int
+                    + 0x80 as libc::c_int
+                    >> 8 as libc::c_int) as uint16_t
             }
             if flags != 0 {
                 let fresh35 = dstp;
@@ -2856,24 +2535,22 @@ unsafe extern "C" fn convert_rgb_to_yuv(mut dst: *mut zbar_image_t,
             x = x.wrapping_add(1)
         }
         if x < (*src).width {
-            srcp =
-                srcp.offset((*src).width.wrapping_sub(x).wrapping_mul((*srcfmt).p.rgb.bpp
-                                                                          as
-                                                                          libc::c_uint)
-                                as isize)
+            srcp = srcp.offset(
+                (*src).width.wrapping_sub(x).wrapping_mul((*srcfmt).p.rgb.bpp as libc::c_uint)
+                    as isize,
+            )
         }
         y = y.wrapping_add(1)
-    };
+    }
 }
 /* resample and resize packed RGB components */
-unsafe extern "C" fn convert_rgb_resample(mut dst: *mut zbar_image_t,
-                                          mut dstfmt:
-                                              *const zbar_format_def_t,
-                                          mut src: *const zbar_image_t,
-                                          mut srcfmt:
-                                              *const zbar_format_def_t) {
-    let mut dstn: libc::c_ulong =
-        (*dst).width.wrapping_mul((*dst).height) as libc::c_ulong;
+unsafe extern fn convert_rgb_resample(
+    mut dst: *mut zbar_image_t,
+    mut dstfmt: *const zbar_format_def_t,
+    mut src: *const zbar_image_t,
+    mut srcfmt: *const zbar_format_def_t,
+) {
+    let mut dstn: libc::c_ulong = (*dst).width.wrapping_mul((*dst).height) as libc::c_ulong;
     let mut dstp: *mut uint8_t = 0 as *mut uint8_t;
     let mut drbits: libc::c_int = 0;
     let mut drbit0: libc::c_int = 0;
@@ -2894,7 +2571,9 @@ unsafe extern "C" fn convert_rgb_resample(mut dst: *mut zbar_image_t,
     let mut p: uint32_t = 0 as libc::c_int as uint32_t;
     (*dst).datalen = dstn.wrapping_mul((*dstfmt).p.rgb.bpp as libc::c_ulong);
     (*dst).data = malloc((*dst).datalen);
-    if (*dst).data.is_null() { return }
+    if (*dst).data.is_null() {
+        return;
+    }
     dstp = (*dst).data as *mut libc::c_void as *mut uint8_t;
     drbits = (*dstfmt).p.rgb.red as libc::c_int >> 5 as libc::c_int;
     drbit0 = (*dstfmt).p.rgb.red as libc::c_int & 0x1f as libc::c_int;
@@ -2902,11 +2581,12 @@ unsafe extern "C" fn convert_rgb_resample(mut dst: *mut zbar_image_t,
     dgbit0 = (*dstfmt).p.rgb.green as libc::c_int & 0x1f as libc::c_int;
     dbbits = (*dstfmt).p.rgb.blue as libc::c_int >> 5 as libc::c_int;
     dbbit0 = (*dstfmt).p.rgb.blue as libc::c_int & 0x1f as libc::c_int;
-    if (*src).datalen >=
-           (*src).width.wrapping_mul((*src).height).wrapping_mul((*srcfmt).p.rgb.bpp
-                                                                     as
-                                                                     libc::c_uint)
-               as libc::c_ulong {
+    if (*src).datalen
+        >= (*src)
+            .width
+            .wrapping_mul((*src).height)
+            .wrapping_mul((*srcfmt).p.rgb.bpp as libc::c_uint) as libc::c_ulong
+    {
     } else {
         __assert_fail(b"src->datalen >= (src->width * src->height * srcfmt->p.rgb.bpp)\x00"
                           as *const u8 as *const libc::c_char,
@@ -2926,512 +2606,520 @@ unsafe extern "C" fn convert_rgb_resample(mut dst: *mut zbar_image_t,
     srcl = (*src).width.wrapping_mul((*srcfmt).p.rgb.bpp as libc::c_uint);
     y = 0 as libc::c_int as libc::c_uint;
     while y < (*dst).height {
-        if y >= (*src).height { y = y.wrapping_sub(srcl) }
+        if y >= (*src).height {
+            y = y.wrapping_sub(srcl)
+        }
         x = 0 as libc::c_int as libc::c_uint;
         while x < (*dst).width {
             if x < (*src).width {
                 let mut r: uint8_t = 0;
                 let mut g: uint8_t = 0;
                 let mut b: uint8_t = 0;
-                p =
-                    convert_read_rgb(srcp,
-                                     (*srcfmt).p.rgb.bpp as libc::c_int);
-                srcp =
-                    srcp.offset((*srcfmt).p.rgb.bpp as libc::c_int as isize);
+                p = convert_read_rgb(srcp, (*srcfmt).p.rgb.bpp as libc::c_int);
+                srcp = srcp.offset((*srcfmt).p.rgb.bpp as libc::c_int as isize);
                 /* FIXME endianness? */
                 r = (p >> srbit0 << srbits) as uint8_t;
                 g = (p >> sgbit0 << sgbits) as uint8_t;
                 b = (p >> sbbit0 << sbbits) as uint8_t;
-                p =
-                    (r as libc::c_int >> drbits << drbit0 |
-                         g as libc::c_int >> dgbits << dgbit0 |
-                         b as libc::c_int >> dbbits << dbbit0) as uint32_t
+                p = (r as libc::c_int >> drbits << drbit0
+                    | g as libc::c_int >> dgbits << dgbit0
+                    | b as libc::c_int >> dbbits << dbbit0) as uint32_t
             }
             convert_write_rgb(dstp, p, (*dstfmt).p.rgb.bpp as libc::c_int);
             dstp = dstp.offset((*dstfmt).p.rgb.bpp as libc::c_int as isize);
             x = x.wrapping_add(1)
         }
         if x < (*src).width {
-            srcp =
-                srcp.offset((*src).width.wrapping_sub(x).wrapping_mul((*srcfmt).p.rgb.bpp
-                                                                          as
-                                                                          libc::c_uint)
-                                as isize)
+            srcp = srcp.offset(
+                (*src).width.wrapping_sub(x).wrapping_mul((*srcfmt).p.rgb.bpp as libc::c_uint)
+                    as isize,
+            )
         }
         y = y.wrapping_add(1)
-    };
+    }
 }
 /* group conversion matrix */
-static mut conversions: [[conversion_def_t; 6]; 6] =
-    unsafe {
-        [[{
-              let mut init =
-                  conversion_def_s{cost: 0 as libc::c_int,
-                                   func:
-                                       Some(convert_copy as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 8 as libc::c_int,
-                                   func:
-                                       Some(convert_uvp_append as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 24 as libc::c_int,
-                                   func:
-                                       Some(convert_yuv_pack as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 32 as libc::c_int,
-                                   func:
-                                       Some(convert_yuvp_to_rgb as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 8 as libc::c_int,
-                                   func:
-                                       Some(convert_uvp_append as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: -(1 as libc::c_int), func: None,};
-              init
-          }],
-         [{
-              let mut init =
-                  conversion_def_s{cost: 1 as libc::c_int,
-                                   func:
-                                       Some(convert_copy as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 48 as libc::c_int,
-                                   func:
-                                       Some(convert_uvp_resample as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 64 as libc::c_int,
-                                   func:
-                                       Some(convert_yuv_pack as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 128 as libc::c_int,
-                                   func:
-                                       Some(convert_yuvp_to_rgb as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 40 as libc::c_int,
-                                   func:
-                                       Some(convert_uvp_append as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: -(1 as libc::c_int), func: None,};
-              init
-          }],
-         [{
-              let mut init =
-                  conversion_def_s{cost: 24 as libc::c_int,
-                                   func:
-                                       Some(convert_yuv_unpack as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 52 as libc::c_int,
-                                   func:
-                                       Some(convert_yuv_unpack as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 20 as libc::c_int,
-                                   func:
-                                       Some(convert_uv_resample as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 144 as libc::c_int,
-                                   func:
-                                       Some(convert_yuv_to_rgb as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 18 as libc::c_int,
-                                   func:
-                                       Some(convert_yuv_unpack as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: -(1 as libc::c_int), func: None,};
-              init
-          }],
-         [{
-              let mut init =
-                  conversion_def_s{cost: 112 as libc::c_int,
-                                   func:
-                                       Some(convert_rgb_to_yuvp as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 160 as libc::c_int,
-                                   func:
-                                       Some(convert_rgb_to_yuvp as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 144 as libc::c_int,
-                                   func:
-                                       Some(convert_rgb_to_yuv as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 120 as libc::c_int,
-                                   func:
-                                       Some(convert_rgb_resample as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 152 as libc::c_int,
-                                   func:
-                                       Some(convert_rgb_to_yuvp as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: -(1 as libc::c_int), func: None,};
-              init
-          }],
-         [{
-              let mut init =
-                  conversion_def_s{cost: 1 as libc::c_int,
-                                   func:
-                                       Some(convert_copy as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 8 as libc::c_int,
-                                   func:
-                                       Some(convert_uvp_append as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 24 as libc::c_int,
-                                   func:
-                                       Some(convert_yuv_pack as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 32 as libc::c_int,
-                                   func:
-                                       Some(convert_yuvp_to_rgb as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: 8 as libc::c_int,
-                                   func:
-                                       Some(convert_uvp_append as
-                                                unsafe extern "C" fn(_:
-                                                                         *mut zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t,
-                                                                     _:
-                                                                         *const zbar_image_t,
-                                                                     _:
-                                                                         *const zbar_format_def_t)
-                                                    -> ()),};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: -(1 as libc::c_int), func: None,};
-              init
-          }],
-         [{
-              let mut init =
-                  conversion_def_s{cost: -(1 as libc::c_int), func: None,};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: -(1 as libc::c_int), func: None,};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: -(1 as libc::c_int), func: None,};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: -(1 as libc::c_int), func: None,};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: -(1 as libc::c_int), func: None,};
-              init
-          },
-          {
-              let mut init =
-                  conversion_def_s{cost: -(1 as libc::c_int), func: None,};
-              init
-          }]]
-    };
+static mut conversions: [[conversion_def_t; 6]; 6] = unsafe {
+    [
+        [
+            {
+                let mut init = conversion_def_s {
+                    cost: 0 as libc::c_int,
+                    func: Some(
+                        convert_copy
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 8 as libc::c_int,
+                    func: Some(
+                        convert_uvp_append
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 24 as libc::c_int,
+                    func: Some(
+                        convert_yuv_pack
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 32 as libc::c_int,
+                    func: Some(
+                        convert_yuvp_to_rgb
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 8 as libc::c_int,
+                    func: Some(
+                        convert_uvp_append
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: -(1 as libc::c_int),
+                    func: None,
+                };
+                init
+            },
+        ],
+        [
+            {
+                let mut init = conversion_def_s {
+                    cost: 1 as libc::c_int,
+                    func: Some(
+                        convert_copy
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 48 as libc::c_int,
+                    func: Some(
+                        convert_uvp_resample
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 64 as libc::c_int,
+                    func: Some(
+                        convert_yuv_pack
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 128 as libc::c_int,
+                    func: Some(
+                        convert_yuvp_to_rgb
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 40 as libc::c_int,
+                    func: Some(
+                        convert_uvp_append
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: -(1 as libc::c_int),
+                    func: None,
+                };
+                init
+            },
+        ],
+        [
+            {
+                let mut init = conversion_def_s {
+                    cost: 24 as libc::c_int,
+                    func: Some(
+                        convert_yuv_unpack
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 52 as libc::c_int,
+                    func: Some(
+                        convert_yuv_unpack
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 20 as libc::c_int,
+                    func: Some(
+                        convert_uv_resample
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 144 as libc::c_int,
+                    func: Some(
+                        convert_yuv_to_rgb
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 18 as libc::c_int,
+                    func: Some(
+                        convert_yuv_unpack
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: -(1 as libc::c_int),
+                    func: None,
+                };
+                init
+            },
+        ],
+        [
+            {
+                let mut init = conversion_def_s {
+                    cost: 112 as libc::c_int,
+                    func: Some(
+                        convert_rgb_to_yuvp
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 160 as libc::c_int,
+                    func: Some(
+                        convert_rgb_to_yuvp
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 144 as libc::c_int,
+                    func: Some(
+                        convert_rgb_to_yuv
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 120 as libc::c_int,
+                    func: Some(
+                        convert_rgb_resample
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 152 as libc::c_int,
+                    func: Some(
+                        convert_rgb_to_yuvp
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: -(1 as libc::c_int),
+                    func: None,
+                };
+                init
+            },
+        ],
+        [
+            {
+                let mut init = conversion_def_s {
+                    cost: 1 as libc::c_int,
+                    func: Some(
+                        convert_copy
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 8 as libc::c_int,
+                    func: Some(
+                        convert_uvp_append
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 24 as libc::c_int,
+                    func: Some(
+                        convert_yuv_pack
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 32 as libc::c_int,
+                    func: Some(
+                        convert_yuvp_to_rgb
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: 8 as libc::c_int,
+                    func: Some(
+                        convert_uvp_append
+                            as unsafe extern fn(
+                                _: *mut zbar_image_t,
+                                _: *const zbar_format_def_t,
+                                _: *const zbar_image_t,
+                                _: *const zbar_format_def_t,
+                            ) -> (),
+                    ),
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: -(1 as libc::c_int),
+                    func: None,
+                };
+                init
+            },
+        ],
+        [
+            {
+                let mut init = conversion_def_s {
+                    cost: -(1 as libc::c_int),
+                    func: None,
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: -(1 as libc::c_int),
+                    func: None,
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: -(1 as libc::c_int),
+                    func: None,
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: -(1 as libc::c_int),
+                    func: None,
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: -(1 as libc::c_int),
+                    func: None,
+                };
+                init
+            },
+            {
+                let mut init = conversion_def_s {
+                    cost: -(1 as libc::c_int),
+                    func: None,
+                };
+                init
+            },
+        ],
+    ]
+};
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_format_lookup(mut fmt: uint32_t)
- -> *const zbar_format_def_t {
+pub unsafe extern fn _zbar_format_lookup(mut fmt: uint32_t) -> *const zbar_format_def_t {
     let mut def: *const zbar_format_def_t = 0 as *const zbar_format_def_t;
     let mut i: libc::c_int = 0 as libc::c_int;
     while i < num_format_defs {
-        def =
-            &*format_defs.as_ptr().offset(i as isize) as
-                *const zbar_format_def_t;
-        if fmt == (*def).format { return def }
+        def = &*format_defs.as_ptr().offset(i as isize) as *const zbar_format_def_t;
+        if fmt == (*def).format {
+            return def;
+        }
         i = i * 2 as libc::c_int + 1 as libc::c_int;
-        if fmt > (*def).format { i += 1 }
+        if fmt > (*def).format {
+            i += 1
+        }
     }
     return 0 as *const zbar_format_def_t;
 }
@@ -3447,12 +3135,12 @@ pub unsafe extern "C" fn _zbar_format_lookup(mut fmt: uint32_t)
  * @since 0.4
  */
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_convert_resize(mut src:
-                                                       *const zbar_image_t,
-                                                   mut fmt: libc::c_ulong,
-                                                   mut width: libc::c_uint,
-                                                   mut height: libc::c_uint)
- -> *mut zbar_image_t {
+pub unsafe extern fn zbar_image_convert_resize(
+    mut src: *const zbar_image_t,
+    mut fmt: libc::c_ulong,
+    mut width: libc::c_uint,
+    mut height: libc::c_uint,
+) -> *mut zbar_image_t {
     let mut srcfmt: *const zbar_format_def_t = 0 as *const zbar_format_def_t;
     let mut dstfmt: *const zbar_format_def_t = 0 as *const zbar_format_def_t;
     let mut func: Option<conversion_handler_t> = None;
@@ -3460,37 +3148,32 @@ pub unsafe extern "C" fn zbar_image_convert_resize(mut src:
     (*dst).format = fmt as uint32_t;
     (*dst).width = width;
     (*dst).height = height;
-    zbar_image_set_crop(dst, (*src).crop_x, (*src).crop_y, (*src).crop_w,
-                        (*src).crop_h);
-    if (*src).format as libc::c_ulong == fmt && (*src).width == width &&
-           (*src).height == height {
-        convert_copy(dst, 0 as *const zbar_format_def_t, src,
-                     0 as *const zbar_format_def_t);
-        return dst
+    zbar_image_set_crop(dst, (*src).crop_x, (*src).crop_y, (*src).crop_w, (*src).crop_h);
+    if (*src).format as libc::c_ulong == fmt && (*src).width == width && (*src).height == height {
+        convert_copy(dst, 0 as *const zbar_format_def_t, src, 0 as *const zbar_format_def_t);
+        return dst;
     }
     srcfmt = _zbar_format_lookup((*src).format);
     dstfmt = _zbar_format_lookup((*dst).format);
     if srcfmt.is_null() || dstfmt.is_null() {
         /* FIXME free dst */
-        return 0 as *mut zbar_image_t
+        return 0 as *mut zbar_image_t;
     }
-    if (*srcfmt).group as libc::c_uint == (*dstfmt).group as libc::c_uint &&
-           (*srcfmt).p.cmp == (*dstfmt).p.cmp && (*src).width == width &&
-           (*src).height == height {
-        convert_copy(dst, 0 as *const zbar_format_def_t, src,
-                     0 as *const zbar_format_def_t);
-        return dst
+    if (*srcfmt).group as libc::c_uint == (*dstfmt).group as libc::c_uint
+        && (*srcfmt).p.cmp == (*dstfmt).p.cmp
+        && (*src).width == width
+        && (*src).height == height
+    {
+        convert_copy(dst, 0 as *const zbar_format_def_t, src, 0 as *const zbar_format_def_t);
+        return dst;
     }
-    func =
-        conversions[(*srcfmt).group as usize][(*dstfmt).group as usize].func;
-    (*dst).cleanup =
-        Some(zbar_image_free_data as
-                 unsafe extern "C" fn(_: *mut zbar_image_t) -> ());
+    func = conversions[(*srcfmt).group as usize][(*dstfmt).group as usize].func;
+    (*dst).cleanup = Some(zbar_image_free_data as unsafe extern fn(_: *mut zbar_image_t) -> ());
     func.expect("non-null function pointer")(dst, dstfmt, src, srcfmt);
     if (*dst).data.is_null() {
         /* conversion failed */
         zbar_image_destroy(dst);
-        return 0 as *mut zbar_image_t
+        return 0 as *mut zbar_image_t;
     }
     return dst;
 }
@@ -3503,16 +3186,18 @@ pub unsafe extern "C" fn zbar_image_convert_resize(mut src:
  * constraints
  */
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_convert(mut src: *const zbar_image_t,
-                                            mut fmt: libc::c_ulong)
- -> *mut zbar_image_t {
+pub unsafe extern fn zbar_image_convert(
+    mut src: *const zbar_image_t,
+    mut fmt: libc::c_ulong,
+) -> *mut zbar_image_t {
     return zbar_image_convert_resize(src, fmt, (*src).width, (*src).height);
 }
 #[inline]
-unsafe extern "C" fn has_format(mut fmt: uint32_t, mut fmts: *const uint32_t)
- -> libc::c_int {
+unsafe extern fn has_format(mut fmt: uint32_t, mut fmts: *const uint32_t) -> libc::c_int {
     while *fmts != 0 {
-        if *fmts == fmt { return 1 as libc::c_int }
+        if *fmts == fmt {
+            return 1 as libc::c_int;
+        }
         fmts = fmts.offset(1)
     }
     return 0 as libc::c_int;
@@ -3526,64 +3211,81 @@ unsafe extern "C" fn has_format(mut fmt: uint32_t, mut fmts: *const uint32_t)
 /* size/location a la RGB_BITS() */
 /* chroma subsampling in each axis */
 /* channel ordering flags
-                                         *   bit0: 0=UV, 1=VU
-                                         *   bit1: 0=Y/chroma, 1=chroma/Y
-                                         */
+ *   bit0: 0=UV, 1=VU
+ *   bit1: 0=Y/chroma, 1=chroma/Y
+ */
 /* quick compare equivalent formats */
 /* select least cost conversion from src format to available dsts */
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_best_format(mut src: uint32_t,
-                                           mut dst: *mut uint32_t,
-                                           mut dsts: *const uint32_t)
- -> libc::c_int {
+pub unsafe extern fn _zbar_best_format(
+    mut src: uint32_t,
+    mut dst: *mut uint32_t,
+    mut dsts: *const uint32_t,
+) -> libc::c_int {
     let mut srcfmt: *const zbar_format_def_t = 0 as *const zbar_format_def_t;
     let mut min_cost: libc::c_uint = -(1 as libc::c_int) as libc::c_uint;
-    if !dst.is_null() { *dst = 0 as libc::c_int as uint32_t }
-    if dsts.is_null() { return -(1 as libc::c_int) }
+    if !dst.is_null() {
+        *dst = 0 as libc::c_int as uint32_t
+    }
+    if dsts.is_null() {
+        return -(1 as libc::c_int);
+    }
     if has_format(src, dsts) != 0 {
         if _zbar_verbosity >= 8 as libc::c_int {
-            fprintf(stderr,
-                    b"%s: shared format: %4.4s\n\x00" as *const u8 as
-                        *const libc::c_char,
-                    (*::std::mem::transmute::<&[u8; 18],
-                                              &[libc::c_char; 18]>(b"_zbar_best_format\x00")).as_ptr(),
-                    &mut src as *mut uint32_t as *mut libc::c_char);
+            fprintf(
+                stderr,
+                b"%s: shared format: %4.4s\n\x00" as *const u8 as *const libc::c_char,
+                (*::std::mem::transmute::<&[u8; 18], &[libc::c_char; 18]>(
+                    b"_zbar_best_format\x00",
+                ))
+                .as_ptr(),
+                &mut src as *mut uint32_t as *mut libc::c_char,
+            );
         }
-        if !dst.is_null() { *dst = src }
-        return 0 as libc::c_int
+        if !dst.is_null() {
+            *dst = src
+        }
+        return 0 as libc::c_int;
     }
     srcfmt = _zbar_format_lookup(src);
-    if srcfmt.is_null() { return -(1 as libc::c_int) }
+    if srcfmt.is_null() {
+        return -(1 as libc::c_int);
+    }
     if _zbar_verbosity >= 8 as libc::c_int {
-        fprintf(stderr,
-                b"%s: from %.4s(%08x) to\x00" as *const u8 as
-                    *const libc::c_char,
-                (*::std::mem::transmute::<&[u8; 18],
-                                          &[libc::c_char; 18]>(b"_zbar_best_format\x00")).as_ptr(),
-                &mut src as *mut uint32_t as *mut libc::c_char, src);
+        fprintf(
+            stderr,
+            b"%s: from %.4s(%08x) to\x00" as *const u8 as *const libc::c_char,
+            (*::std::mem::transmute::<&[u8; 18], &[libc::c_char; 18]>(b"_zbar_best_format\x00"))
+                .as_ptr(),
+            &mut src as *mut uint32_t as *mut libc::c_char,
+            src,
+        );
     }
     while *dsts != 0 {
         let mut dstfmt: *const zbar_format_def_t = _zbar_format_lookup(*dsts);
         let mut cost: libc::c_int = 0;
         if !dstfmt.is_null() {
-            if (*srcfmt).group as libc::c_uint ==
-                   (*dstfmt).group as libc::c_uint &&
-                   (*srcfmt).p.cmp == (*dstfmt).p.cmp {
+            if (*srcfmt).group as libc::c_uint == (*dstfmt).group as libc::c_uint
+                && (*srcfmt).p.cmp == (*dstfmt).p.cmp
+            {
                 cost = 0 as libc::c_int
             } else {
-                cost =
-                    conversions[(*srcfmt).group as
-                                    usize][(*dstfmt).group as usize].cost
+                cost = conversions[(*srcfmt).group as usize][(*dstfmt).group as usize].cost
             }
             if _zbar_verbosity >= 8 as libc::c_int {
-                fprintf(stderr,
-                        b" %.4s(%08x)=%d\x00" as *const u8 as
-                            *const libc::c_char, dsts as *mut libc::c_char,
-                        *dsts, cost);
+                fprintf(
+                    stderr,
+                    b" %.4s(%08x)=%d\x00" as *const u8 as *const libc::c_char,
+                    dsts as *mut libc::c_char,
+                    *dsts,
+                    cost,
+                );
             }
             if cost >= 0 as libc::c_int && min_cost > cost as libc::c_uint {
                 min_cost = cost as libc::c_uint;
-                if !dst.is_null() { *dst = *dsts }
+                if !dst.is_null() {
+                    *dst = *dsts
+                }
             }
         }
         dsts = dsts.offset(1)
@@ -3600,45 +3302,74 @@ pub unsafe extern "C" fn _zbar_best_format(mut src: uint32_t,
  * heuristically attempt to minimize the cost of the conversion
  */
 #[no_mangle]
-pub unsafe extern "C" fn zbar_negotiate_format(mut vdo: *mut zbar_video_t,
-                                               mut win: *mut zbar_window_t)
- -> libc::c_int {
-    static mut y800: [uint32_t; 2] =
-        [('Y' as i32 as libc::c_ulong |
-              ('8' as i32 as libc::c_ulong) << 8 as libc::c_int |
-              ('0' as i32 as libc::c_ulong) << 16 as libc::c_int |
-              ('0' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
-         0 as libc::c_int as uint32_t];
+pub unsafe extern fn zbar_negotiate_format(
+    mut vdo: *mut zbar_video_t,
+    mut win: *mut zbar_window_t,
+) -> libc::c_int {
+    static mut y800: [uint32_t; 2] = [
+        ('Y' as i32 as libc::c_ulong
+            | ('8' as i32 as libc::c_ulong) << 8 as libc::c_int
+            | ('0' as i32 as libc::c_ulong) << 16 as libc::c_int
+            | ('0' as i32 as libc::c_ulong) << 24 as libc::c_int) as uint32_t,
+        0 as libc::c_int as uint32_t,
+    ];
     let mut errdst: *mut errinfo_t = 0 as *mut errinfo_t;
     let mut srcs: *const uint32_t = 0 as *const uint32_t;
     let mut dsts: *const uint32_t = 0 as *const uint32_t;
     let mut min_cost: libc::c_uint = -(1 as libc::c_int) as libc::c_uint;
     let mut min_fmt: uint32_t = 0 as libc::c_int as uint32_t;
     let mut fmt: *const uint32_t = 0 as *const uint32_t;
-    if vdo.is_null() && win.is_null() { return 0 as libc::c_int }
-    if !win.is_null() { window_lock(win); }
-    errdst = if !vdo.is_null() { &mut (*vdo).err } else { &mut (*win).err };
+    if vdo.is_null() && win.is_null() {
+        return 0 as libc::c_int;
+    }
+    if !win.is_null() {
+        window_lock(win);
+    }
+    errdst = if !vdo.is_null() {
+        &mut (*vdo).err
+    } else {
+        &mut (*win).err
+    };
     if verify_format_sort() != 0 {
-        if !win.is_null() { window_unlock(win); }
-        return err_capture(errdst as *const libc::c_void, SEV_FATAL,
-                           ZBAR_ERR_INTERNAL,
-                           (*::std::mem::transmute::<&[u8; 22],
-                                                     &[libc::c_char; 22]>(b"zbar_negotiate_format\x00")).as_ptr(),
-                           b"image format list is not sorted!?\x00" as
-                               *const u8 as *const libc::c_char)
+        if !win.is_null() {
+            window_unlock(win);
+        }
+        return err_capture(
+            errdst as *const libc::c_void,
+            SEV_FATAL,
+            ZBAR_ERR_INTERNAL,
+            (*::std::mem::transmute::<&[u8; 22], &[libc::c_char; 22]>(
+                b"zbar_negotiate_format\x00",
+            ))
+            .as_ptr(),
+            b"image format list is not sorted!?\x00" as *const u8 as *const libc::c_char,
+        );
     }
-    if !vdo.is_null() && (*vdo).formats.is_null() ||
-           !win.is_null() && (*win).formats.is_null() {
-        if !win.is_null() { window_unlock(win); }
-        return err_capture(errdst as *const libc::c_void, SEV_ERROR,
-                           ZBAR_ERR_UNSUPPORTED,
-                           (*::std::mem::transmute::<&[u8; 22],
-                                                     &[libc::c_char; 22]>(b"zbar_negotiate_format\x00")).as_ptr(),
-                           b"no input or output formats available\x00" as
-                               *const u8 as *const libc::c_char)
+    if !vdo.is_null() && (*vdo).formats.is_null() || !win.is_null() && (*win).formats.is_null() {
+        if !win.is_null() {
+            window_unlock(win);
+        }
+        return err_capture(
+            errdst as *const libc::c_void,
+            SEV_ERROR,
+            ZBAR_ERR_UNSUPPORTED,
+            (*::std::mem::transmute::<&[u8; 22], &[libc::c_char; 22]>(
+                b"zbar_negotiate_format\x00",
+            ))
+            .as_ptr(),
+            b"no input or output formats available\x00" as *const u8 as *const libc::c_char,
+        );
     }
-    srcs = if !vdo.is_null() { (*vdo).formats } else { y800.as_ptr() };
-    dsts = if !win.is_null() { (*win).formats } else { y800.as_ptr() };
+    srcs = if !vdo.is_null() {
+        (*vdo).formats
+    } else {
+        y800.as_ptr()
+    };
+    dsts = if !win.is_null() {
+        (*win).formats
+    } else {
+        y800.as_ptr()
+    };
     fmt = _zbar_formats.as_ptr();
     while *fmt != 0 {
         /* only consider formats supported by video device */
@@ -3648,28 +3379,41 @@ pub unsafe extern "C" fn zbar_negotiate_format(mut vdo: *mut zbar_video_t,
             cost = _zbar_best_format(*fmt, &mut win_fmt, dsts);
             if cost < 0 as libc::c_int {
                 if _zbar_verbosity >= 4 as libc::c_int {
-                    fprintf(stderr,
-                            b"%s: %.4s(%08x) -> ? (unsupported)\n\x00" as
-                                *const u8 as *const libc::c_char,
-                            (*::std::mem::transmute::<&[u8; 22],
-                                                      &[libc::c_char; 22]>(b"zbar_negotiate_format\x00")).as_ptr(),
-                            fmt as *mut libc::c_char, *fmt);
+                    fprintf(
+                        stderr,
+                        b"%s: %.4s(%08x) -> ? (unsupported)\n\x00" as *const u8
+                            as *const libc::c_char,
+                        (*::std::mem::transmute::<&[u8; 22], &[libc::c_char; 22]>(
+                            b"zbar_negotiate_format\x00",
+                        ))
+                        .as_ptr(),
+                        fmt as *mut libc::c_char,
+                        *fmt,
+                    );
                 }
             } else {
                 if _zbar_verbosity >= 4 as libc::c_int {
-                    fprintf(stderr,
-                            b"%s: %.4s(%08x) -> %.4s(%08x) (%d)\n\x00" as
-                                *const u8 as *const libc::c_char,
-                            (*::std::mem::transmute::<&[u8; 22],
-                                                      &[libc::c_char; 22]>(b"zbar_negotiate_format\x00")).as_ptr(),
-                            fmt as *mut libc::c_char, *fmt,
-                            &mut win_fmt as *mut uint32_t as
-                                *mut libc::c_char, win_fmt, cost);
+                    fprintf(
+                        stderr,
+                        b"%s: %.4s(%08x) -> %.4s(%08x) (%d)\n\x00" as *const u8
+                            as *const libc::c_char,
+                        (*::std::mem::transmute::<&[u8; 22], &[libc::c_char; 22]>(
+                            b"zbar_negotiate_format\x00",
+                        ))
+                        .as_ptr(),
+                        fmt as *mut libc::c_char,
+                        *fmt,
+                        &mut win_fmt as *mut uint32_t as *mut libc::c_char,
+                        win_fmt,
+                        cost,
+                    );
                 }
                 if min_cost > cost as libc::c_uint {
                     min_cost = cost as libc::c_uint;
                     min_fmt = *fmt;
-                    if cost == 0 { break ; }
+                    if cost == 0 {
+                        break;
+                    }
                 }
             }
         }
@@ -3681,12 +3425,12 @@ pub unsafe extern "C" fn zbar_negotiate_format(mut vdo: *mut zbar_video_t,
         (*vdo).formats = (*vdo).emu_formats;
         (*vdo).emu_formats = 0 as *mut uint32_t;
         /*
-        * Use the same cost algorithm to select emulated formats.
-        * This might select a sub-optimal conversion, but, in practice,
-        * it will select a conversion to YUV at libv4l, and a YUY->Y8
-        * in zbar, with it is OK. Yet, it is better to not select the
-        * most performatic conversion than to not support the webcam.
-        */
+         * Use the same cost algorithm to select emulated formats.
+         * This might select a sub-optimal conversion, but, in practice,
+         * it will select a conversion to YUV at libv4l, and a YUY->Y8
+         * in zbar, with it is OK. Yet, it is better to not select the
+         * most performatic conversion than to not support the webcam.
+         */
         fmt = _zbar_formats.as_ptr();
         while *fmt != 0 {
             /* only consider formats supported by video device */
@@ -3696,67 +3440,90 @@ pub unsafe extern "C" fn zbar_negotiate_format(mut vdo: *mut zbar_video_t,
                 cost_0 = _zbar_best_format(*fmt, &mut win_fmt_0, dsts);
                 if cost_0 < 0 as libc::c_int {
                     if _zbar_verbosity >= 4 as libc::c_int {
-                        fprintf(stderr,
-                                b"%s: %.4s(%08x) -> ? (unsupported)\n\x00" as
-                                    *const u8 as *const libc::c_char,
-                                (*::std::mem::transmute::<&[u8; 22],
-                                                          &[libc::c_char; 22]>(b"zbar_negotiate_format\x00")).as_ptr(),
-                                fmt as *mut libc::c_char, *fmt);
+                        fprintf(
+                            stderr,
+                            b"%s: %.4s(%08x) -> ? (unsupported)\n\x00" as *const u8
+                                as *const libc::c_char,
+                            (*::std::mem::transmute::<&[u8; 22], &[libc::c_char; 22]>(
+                                b"zbar_negotiate_format\x00",
+                            ))
+                            .as_ptr(),
+                            fmt as *mut libc::c_char,
+                            *fmt,
+                        );
                     }
                 } else {
                     if _zbar_verbosity >= 4 as libc::c_int {
-                        fprintf(stderr,
-                                b"%s: %.4s(%08x) -> %.4s(%08x) (%d)\n\x00" as
-                                    *const u8 as *const libc::c_char,
-                                (*::std::mem::transmute::<&[u8; 22],
-                                                          &[libc::c_char; 22]>(b"zbar_negotiate_format\x00")).as_ptr(),
-                                fmt as *mut libc::c_char, *fmt,
-                                &mut win_fmt_0 as *mut uint32_t as
-                                    *mut libc::c_char, win_fmt_0, cost_0);
+                        fprintf(
+                            stderr,
+                            b"%s: %.4s(%08x) -> %.4s(%08x) (%d)\n\x00" as *const u8
+                                as *const libc::c_char,
+                            (*::std::mem::transmute::<&[u8; 22], &[libc::c_char; 22]>(
+                                b"zbar_negotiate_format\x00",
+                            ))
+                            .as_ptr(),
+                            fmt as *mut libc::c_char,
+                            *fmt,
+                            &mut win_fmt_0 as *mut uint32_t as *mut libc::c_char,
+                            win_fmt_0,
+                            cost_0,
+                        );
                     }
                     if min_cost > cost_0 as libc::c_uint {
                         min_cost = cost_0 as libc::c_uint;
                         min_fmt = *fmt;
-                        if cost_0 == 0 { break ; }
+                        if cost_0 == 0 {
+                            break;
+                        }
                     }
                 }
             }
             fmt = fmt.offset(1)
         }
     }
-    if !win.is_null() { window_unlock(win); }
-    if min_fmt == 0 {
-        return err_capture(errdst as *const libc::c_void, SEV_ERROR,
-                           ZBAR_ERR_UNSUPPORTED,
-                           (*::std::mem::transmute::<&[u8; 22],
-                                                     &[libc::c_char; 22]>(b"zbar_negotiate_format\x00")).as_ptr(),
-                           b"no supported image formats available\x00" as
-                               *const u8 as *const libc::c_char)
+    if !win.is_null() {
+        window_unlock(win);
     }
-    if vdo.is_null() { return 0 as libc::c_int }
+    if min_fmt == 0 {
+        return err_capture(
+            errdst as *const libc::c_void,
+            SEV_ERROR,
+            ZBAR_ERR_UNSUPPORTED,
+            (*::std::mem::transmute::<&[u8; 22], &[libc::c_char; 22]>(
+                b"zbar_negotiate_format\x00",
+            ))
+            .as_ptr(),
+            b"no supported image formats available\x00" as *const u8 as *const libc::c_char,
+        );
+    }
+    if vdo.is_null() {
+        return 0 as libc::c_int;
+    }
     if _zbar_verbosity >= 2 as libc::c_int {
-        fprintf(stderr,
-                b"%s: setting best format %.4s(%08x) (%d)\n\x00" as *const u8
-                    as *const libc::c_char,
-                (*::std::mem::transmute::<&[u8; 22],
-                                          &[libc::c_char; 22]>(b"zbar_negotiate_format\x00")).as_ptr(),
-                &mut min_fmt as *mut uint32_t as *mut libc::c_char, min_fmt,
-                min_cost);
+        fprintf(
+            stderr,
+            b"%s: setting best format %.4s(%08x) (%d)\n\x00" as *const u8 as *const libc::c_char,
+            (*::std::mem::transmute::<&[u8; 22], &[libc::c_char; 22]>(
+                b"zbar_negotiate_format\x00",
+            ))
+            .as_ptr(),
+            &mut min_fmt as *mut uint32_t as *mut libc::c_char,
+            min_fmt,
+            min_cost,
+        );
     }
     return zbar_video_init(vdo, min_fmt as libc::c_ulong);
 }
-unsafe extern "C" fn run_static_initializers() {
-    _zbar_num_formats =
-        (::std::mem::size_of::<[uint32_t; 38]>() as
-             libc::c_ulong).wrapping_div(::std::mem::size_of::<uint32_t>() as
-                                             libc::c_ulong) as libc::c_int;
-    num_format_defs =
-        (::std::mem::size_of::<[zbar_format_def_t; 31]>() as
-             libc::c_ulong).wrapping_div(::std::mem::size_of::<zbar_format_def_t>()
-                                             as libc::c_ulong) as libc::c_int
+unsafe extern fn run_static_initializers() {
+    _zbar_num_formats = (::std::mem::size_of::<[uint32_t; 38]>() as libc::c_ulong)
+        .wrapping_div(::std::mem::size_of::<uint32_t>() as libc::c_ulong)
+        as libc::c_int;
+    num_format_defs = (::std::mem::size_of::<[zbar_format_def_t; 31]>() as libc::c_ulong)
+        .wrapping_div(::std::mem::size_of::<zbar_format_def_t>() as libc::c_ulong)
+        as libc::c_int
 }
 #[used]
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]
 #[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
 #[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
-static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];
+static INIT_ARRAY: [unsafe extern fn(); 1] = [run_static_initializers];

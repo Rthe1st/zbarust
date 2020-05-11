@@ -67,61 +67,60 @@ extern crate libc;
 pub mod scanner;
 
 pub mod python {
-pub mod decoder;
-pub mod exception;
-pub mod image;
-pub mod imagescanner;
-pub mod processor;
-pub mod r#enum;
-pub mod scanner;
-pub mod symbol;
-pub mod symboliter;
-pub mod symbolset;
-pub mod zbarmodule;
+    pub mod decoder;
+    pub mod r#enum;
+    pub mod exception;
+    pub mod image;
+    pub mod imagescanner;
+    pub mod processor;
+    pub mod scanner;
+    pub mod symbol;
+    pub mod symboliter;
+    pub mod symbolset;
+    pub mod zbarmodule;
 } // mod python
 pub mod zbar {
-pub mod config;
-pub mod convert;
-pub mod decoder2;
-pub mod decoder {
-pub mod codabar;
-pub mod code128;
-pub mod code39;
-pub mod code93;
-pub mod databar;
-pub mod ean;
-pub mod i25;
-pub mod qr_finder;
-} // mod decoder
-pub mod error;
-pub mod image;
-pub mod img_scanner;
-pub mod processor {
-pub mod lock;
-pub mod null;
-pub mod posix;
-} // mod processor
-pub mod qrcode {
-pub mod bch15_5;
-pub mod binarize;
-pub mod isaac;
-pub mod qrdec;
-pub mod qrdectxt;
-pub mod rs;
-pub mod util;
-} // mod qrcode
-pub mod refcnt;
-pub mod scanner;
-pub mod symbol;
-pub mod video {
-pub mod v4l;
-pub mod v4l2;
-} // mod video
-pub mod window {
-pub mod null;
-} // mod window
+    pub mod config;
+    pub mod convert;
+    pub mod decoder2;
+    pub mod decoder {
+        pub mod codabar;
+        pub mod code128;
+        pub mod code39;
+        pub mod code93;
+        pub mod databar;
+        pub mod ean;
+        pub mod i25;
+        pub mod qr_finder;
+    } // mod decoder
+    pub mod error;
+    pub mod image;
+    pub mod img_scanner;
+    pub mod processor {
+        pub mod lock;
+        pub mod null;
+        pub mod posix;
+    } // mod processor
+    pub mod qrcode {
+        pub mod bch15_5;
+        pub mod binarize;
+        pub mod isaac;
+        pub mod qrdec;
+        pub mod qrdectxt;
+        pub mod rs;
+        pub mod util;
+    } // mod qrcode
+    pub mod refcnt;
+    pub mod scanner;
+    pub mod symbol;
+    pub mod video {
+        pub mod v4l;
+        pub mod v4l2;
+    } // mod video
+    pub mod window {
+        pub mod null;
+    } // mod window
 } // mod zbar
 pub mod zbarcam {
-pub mod zbarcam;
+    pub mod zbarcam;
 } // mod zbarcam
-
