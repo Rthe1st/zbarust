@@ -1,22 +1,30 @@
-# ZBar Rust
+# Zbarust
 
 ![Rust](https://github.com/Rthe1st/zbarust/workflows/Rust/badge.svg?branch=master)
 
-A fork of [magiclen's project](https://github.com/magiclen/zbar-rust) to provide high-level and low-level ZBar binding for the Rust language.
+A port of the libzbar C library to Rust.
 
-This fork aims to eventually remove the need for bindings to the ZBar library by gradually rewriting it in rust.
+This whole attempt is because I have a project I want to build in rust that needs
 
-This whole thing is revenge for the fact that I spent several dozen hours of my life trying to get libzbar and rust to build on windows. Root cause of blame may or may not lie in my own incompetency.
+1) To scan barcodes
+2) Needs to run on windows
+
+I spent several dozen hours of my life trying to get libzbar and rust to build together on windows and couldn't make it work.
+
+The primary goal is to make this a function Rust crate for scanning barcodes on windows/linux/mac.
+
+This started of as a fork of [magiclen's project](https://github.com/magiclen/zbar-rust) to provide high-level and low-level ZBar binding for the Rust language. But then c2rust was used to convert the external zbar libary to rust and embed it in the project directly.
 
 ## Compilation
 
-```
+```bash
 export RUSTFLAGS='-Z force-overflow-checks=no'
+cargo build
+cargo test
 ```
-This is needed because the generated rust code triggers an overflow error.
-Not sure if a bug in the C or intentional - but library is function either way.
 
-`cargo build` will compile and link to version of ZBar included in this repo using `build.rs`. This depends on Autotools being installed, iconv being available and probably other stuff.
+This is needed because the generated rust code triggers an overflow error.
+Not sure if a bug in the C or intentional - but library seems to function either way.
 
 ## Examples
 
