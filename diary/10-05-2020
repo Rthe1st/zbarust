@@ -1,0 +1,32 @@
+Previous:
+Tried to link to C lib from rust with a -sys crate
+kind of worked on linux, couldn't get it to work with windows
+
+Decided to link with linux -sys style and then slowly re-write in rust, linking deeper into lib with time
+
+Handdefining struct defs was boring - used bindgen to help
+and then realised, why not try c2rust
+
+building zbar to link looked like
+```
+autoreconf -ivf
+./configure --without-gtk --without-qt --without-java --without-imagemagick --with-jpeg=no --with-x=no --with-video=no
+```
+
+switched from manual re-writting to using c2rust
+c2rust works great
+used bear to intercep autotools build and generate compile.json
+(ran autoconf -ivf, ./configure, then bear make)
+c2rust worked created except:
+    1) an function marked inline AND external caused linking problems because rust could see more then one definition of it
+        zbar_image_free_data in image.rs
+    2) the qr code had an underflow in it, need to disable overflow checks in rust (tests pass anyway - maybe bug even in C)
+            xmax=QR_MAXI(xmax,_p[i][0]);
+            line 575 of qrdec.c
+
+no more need for autotools build system!
+(build will only work on linux as is though - rust code will need to be made portable)
+
+TODO:
+    * remove all non .rs zbar files
+    * move .rs files into main zbarust crate (instead of c2rust_out subcrate)

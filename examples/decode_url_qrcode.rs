@@ -1,7 +1,11 @@
 extern crate image;
 extern crate zbarust;
 
-use zbarust::ZBarImageScanner;
+use zbarust::zbar::img_scanner::{
+    zbar_image_scanner_create
+};
+
+use zbarust::scanner;
 
 use image::GenericImageView;
 
@@ -20,9 +24,9 @@ fn main() {
 
     let mut luma_img_data: Vec<u8> = luma_img.to_vec();
 
-    let scanner = ZBarImageScanner::new();
+    let scanner = unsafe { zbar_image_scanner_create() };
 
-    let mut results = unsafe { (*scanner).scan_y800(&mut luma_img_data, width, height).unwrap() };
+    let mut results = unsafe { scanner::scan_y800(scanner, &mut luma_img_data, width, height).unwrap() };
 
     assert_eq!(1, results.len());
 
