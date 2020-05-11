@@ -1,13 +1,13 @@
 use ::libc;
-extern "C" {
+extern {
     pub type zbar_symbol_set_s;
-    /*@}*/
-    /*------------------------------------------------------------*/
-/* * @name Image interface
- * stores image data samples along with associated format and size
- * metadata
- */
-/*@{*/
+    /* @} */
+    /* ------------------------------------------------------------ */
+    /* * @name Image interface
+     * stores image data samples along with associated format and size
+     * metadata
+     */
+    /* @{ */
     pub type zbar_image_s;
     pub type processor_state_s;
     pub type zbar_image_scanner_s;
@@ -15,14 +15,16 @@ extern "C" {
     pub type zbar_video_s;
     /* * @internal type unsafe error API (don't use) */
     #[no_mangle]
-    fn _zbar_error_spew(object: *const libc::c_void, verbosity: libc::c_int)
-     -> libc::c_int;
+    fn _zbar_error_spew(object: *const libc::c_void, verbosity: libc::c_int) -> libc::c_int;
     #[no_mangle]
     fn __errno_location() -> *mut libc::c_int;
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     #[no_mangle]
     static mut _zbar_verbosity: libc::c_int;
 }
@@ -132,9 +134,8 @@ pub type zbar_image_t = zbar_image_s;
 /* * data handler callback function.
  * called when decoded symbol results are available for an image
  */
-pub type zbar_image_data_handler_t
-    =
-    unsafe extern "C" fn(_: *mut zbar_image_t, _: *const libc::c_void) -> ();
+pub type zbar_image_data_handler_t =
+    unsafe extern fn(_: *mut zbar_image_t, _: *const libc::c_void) -> ();
 /*------------------------------------------------------------------------
  *  Copyright 2007-2009 (c) Jeff Brown <spadix@users.sourceforge.net>
  *
@@ -156,12 +157,12 @@ pub type zbar_image_data_handler_t
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* max time to wait for input before looking for the next frame.
  * only used in unthreaded mode with blocking (non-pollable) video.
  * NB subject to precision of whatever timer is in use
  */
-/*ms*/
+/* ms */
 /* platform specific state wrapper */
 /* specific notification tracking */
 /* high-level API events */
@@ -233,7 +234,7 @@ pub struct proc_waiter_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* simple platform thread abstraction
  */
 pub type zbar_thread_id_t = pthread_t;
@@ -258,7 +259,7 @@ pub type zbar_thread_id_t = pthread_t;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* platform synchronization "event" abstraction
  */
 pub type zbar_event_t = zbar_event_s;
@@ -290,7 +291,7 @@ pub struct zbar_event_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* simple platform mutex abstraction
  */
 pub type zbar_mutex_t = pthread_mutex_t;
@@ -413,14 +414,14 @@ pub struct zbar_thread_s {
  */
 /* * retrieve the detail string for the last processor error. */
 /* * retrieve the type code for the last processor error. */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Video interface
  * @anchor c-video
  * mid-level video source abstraction.
  * captures images from a video device
  */
-/*@{*/
+/* @{ */
 /* * opaque video object. */
 /* * constructor. */
 /* * destructor. */
@@ -493,14 +494,14 @@ pub struct zbar_thread_s {
  */
 /* * retrieve the detail string for the last video error. */
 /* * retrieve the type code for the last video error. */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Window interface
  * @anchor c-window
  * mid-level output window abstraction.
  * displays images to user-specified platform specific output window
  */
-/*@{*/
+/* @{ */
 /* * opaque window object. */
 /* * constructor. */
 /* * destructor. */
@@ -540,14 +541,14 @@ pub struct zbar_thread_s {
  * barcode scanning.  if a format conversion is necessary, it will
  * heuristically attempt to minimize the cost of the conversion
  */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Image Scanner interface
  * @anchor c-imagescanner
  * mid-level image scanner interface.
  * reads barcodes from 2-D images
  */
-/*@{*/
+/* @{ */
 /* * opaque image scanner object. */
 pub type zbar_image_scanner_t = zbar_image_scanner_s;
 pub type zbar_window_t = zbar_window_s;
@@ -573,7 +574,7 @@ pub type zbar_video_t = zbar_video_s;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* "zERR" (LE) */
 /* application must terminate */
 /* might be able to recover and continue */
@@ -610,11 +611,13 @@ pub const ZBAR_MOD_VIDEO: errmodule_e = 1;
 pub const ZBAR_MOD_PROCESSOR: errmodule_e = 0;
 pub type zbar_processor_t = zbar_processor_s;
 #[inline]
-unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
-                                 mut sev: errsev_t, mut type_0: zbar_error_t,
-                                 mut func: *const libc::c_char,
-                                 mut detail: *const libc::c_char)
- -> libc::c_int {
+unsafe extern fn err_capture(
+    mut container: *const libc::c_void,
+    mut sev: errsev_t,
+    mut type_0: zbar_error_t,
+    mut func: *const libc::c_char,
+    mut detail: *const libc::c_char,
+) -> libc::c_int {
     let mut err: *mut errinfo_t = container as *mut errinfo_t;
     if (*err).magic == 0x5252457a as libc::c_int as libc::c_uint {
     } else {
@@ -626,8 +629,7 @@ unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
                       (*::std::mem::transmute::<&[u8; 82],
                                                 &[libc::c_char; 82]>(b"int err_capture(const void *, errsev_t, zbar_error_t, const char *, const char *)\x00")).as_ptr());
     }
-    if type_0 as libc::c_uint ==
-           ZBAR_ERR_SYSTEM as libc::c_int as libc::c_uint {
+    if type_0 as libc::c_uint == ZBAR_ERR_SYSTEM as libc::c_int as libc::c_uint {
         (*err).errnum = *__errno_location()
     }
     (*err).sev = sev;
@@ -668,61 +670,76 @@ unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 #[inline]
-unsafe extern "C" fn null_error(mut m: *mut libc::c_void,
-                                mut func: *const libc::c_char)
- -> libc::c_int {
-    return err_capture(m, SEV_ERROR, ZBAR_ERR_UNSUPPORTED, func,
-                       b"not compiled with output window support\x00" as
-                           *const u8 as *const libc::c_char);
+unsafe extern fn null_error(
+    mut m: *mut libc::c_void,
+    mut func: *const libc::c_char,
+) -> libc::c_int {
+    return err_capture(
+        m,
+        SEV_ERROR,
+        ZBAR_ERR_UNSUPPORTED,
+        func,
+        b"not compiled with output window support\x00" as *const u8 as *const libc::c_char,
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_open(mut proc_0:
-                                                  *mut zbar_processor_t,
-                                              mut name: *mut libc::c_char,
-                                              mut w: libc::c_uint,
-                                              mut h: libc::c_uint)
- -> libc::c_int {
-    return null_error(proc_0 as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 21],
-                                                &[libc::c_char; 21]>(b"_zbar_processor_open\x00")).as_ptr());
+pub unsafe extern fn _zbar_processor_open(
+    mut proc_0: *mut zbar_processor_t,
+    mut name: *mut libc::c_char,
+    mut w: libc::c_uint,
+    mut h: libc::c_uint,
+) -> libc::c_int {
+    return null_error(
+        proc_0 as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 21], &[libc::c_char; 21]>(b"_zbar_processor_open\x00"))
+            .as_ptr(),
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_close(mut proc_0:
-                                                   *mut zbar_processor_t)
- -> libc::c_int {
-    return null_error(proc_0 as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 22],
-                                                &[libc::c_char; 22]>(b"_zbar_processor_close\x00")).as_ptr());
+pub unsafe extern fn _zbar_processor_close(mut proc_0: *mut zbar_processor_t) -> libc::c_int {
+    return null_error(
+        proc_0 as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 22], &[libc::c_char; 22]>(b"_zbar_processor_close\x00"))
+            .as_ptr(),
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_set_visible(mut proc_0:
-                                                         *mut zbar_processor_t,
-                                                     mut vis: libc::c_int)
- -> libc::c_int {
-    return null_error(proc_0 as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 28],
-                                                &[libc::c_char; 28]>(b"_zbar_processor_set_visible\x00")).as_ptr());
+pub unsafe extern fn _zbar_processor_set_visible(
+    mut proc_0: *mut zbar_processor_t,
+    mut vis: libc::c_int,
+) -> libc::c_int {
+    return null_error(
+        proc_0 as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 28], &[libc::c_char; 28]>(
+            b"_zbar_processor_set_visible\x00",
+        ))
+        .as_ptr(),
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_set_size(mut proc_0:
-                                                      *mut zbar_processor_t,
-                                                  mut width: libc::c_uint,
-                                                  mut height: libc::c_uint)
- -> libc::c_int {
-    return null_error(proc_0 as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 25],
-                                                &[libc::c_char; 25]>(b"_zbar_processor_set_size\x00")).as_ptr());
+pub unsafe extern fn _zbar_processor_set_size(
+    mut proc_0: *mut zbar_processor_t,
+    mut width: libc::c_uint,
+    mut height: libc::c_uint,
+) -> libc::c_int {
+    return null_error(
+        proc_0 as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 25], &[libc::c_char; 25]>(b"_zbar_processor_set_size\x00"))
+            .as_ptr(),
+    );
 }
 /* processor lock API */
 /* platform API */
 /* windowing platform API */
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_invalidate(mut proc_0:
-                                                        *mut zbar_processor_t)
- -> libc::c_int {
-    return null_error(proc_0 as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 27],
-                                                &[libc::c_char; 27]>(b"_zbar_processor_invalidate\x00")).as_ptr());
+pub unsafe extern fn _zbar_processor_invalidate(mut proc_0: *mut zbar_processor_t) -> libc::c_int {
+    return null_error(
+        proc_0 as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 27], &[libc::c_char; 27]>(
+            b"_zbar_processor_invalidate\x00",
+        ))
+        .as_ptr(),
+    );
 }

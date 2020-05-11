@@ -1,9 +1,7 @@
 extern crate image;
 extern crate zbarust;
 
-use zbarust::zbar::img_scanner::{
-    zbar_image_scanner_create
-};
+use zbarust::zbar::img_scanner::zbar_image_scanner_create;
 
 use zbarust::scanner;
 
@@ -26,7 +24,8 @@ fn main() {
 
     let scanner = unsafe { zbar_image_scanner_create() };
 
-    let mut results = unsafe { scanner::scan_y800(scanner, &mut luma_img_data, width, height).unwrap() };
+    let mut results =
+        unsafe { scanner::scan_y800(scanner, &mut luma_img_data, width, height).unwrap() };
 
     assert_eq!(1, results.len());
 

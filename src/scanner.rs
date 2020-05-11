@@ -3,13 +3,11 @@ use libc::{c_char, c_int, c_uint, c_ulong, c_void};
 use crate::zbar;
 use std::mem;
 
-use zbar::img_scanner::{
-    zbar_image_scanner_s, zbar_image_scanner_create, zbar_scan_image
-};
 use zbar::img_scanner;
+use zbar::img_scanner::{zbar_image_scanner_create, zbar_image_scanner_s, zbar_scan_image};
 
 use zbar::image::{
-    zbar_image_create, zbar_image_set_data, zbar_image_set_format, zbar_image_set_size
+    zbar_image_create, zbar_image_set_data, zbar_image_set_format, zbar_image_set_size,
 };
 
 use zbar::image as zbar_image;
@@ -48,28 +46,25 @@ pub fn scan<D: AsRef<[u8]>>(
     height: libc::c_uint,
     format: libc::c_ulong,
 ) -> Result<Vec<ZBarImageScanResult>, &'static str> {
-
     let data = data.as_ref();
 
-    let mut image = unsafe{ zbar_image_create() };
+    let mut image = unsafe { zbar_image_create() };
 
-    unsafe{
-
+    unsafe {
         zbar_image_set_size(image, width, height);
         zbar_image_set_format(image, format);
-        zbar_image_set_data(image, data.as_ptr() as *const c_void,
+        zbar_image_set_data(
+            image,
+            data.as_ptr() as *const c_void,
             data.len() as c_ulong,
             Some(zbar_image::zbar_image_free_data),
         );
-
     };
 
     let n = unsafe {
         zbar_scan_image(
             scanner,
-            mem::transmute::<*mut zbar_image::zbar_image_s,*mut img_scanner::zbar_image_s>(
-                image
-            )
+            mem::transmute::<*mut zbar_image::zbar_image_s, *mut img_scanner::zbar_image_s>(image),
         )
     };
 
@@ -81,8 +76,10 @@ pub fn scan<D: AsRef<[u8]>>(
 
     let mut symbol = unsafe { zbar_image::zbar_image_first_symbol(image) };
 
-    let mut symbol = unsafe{
-        mem::transmute::<*const zbar_image::zbar_symbol_s,*const zbar_symbol::zbar_symbol_s>(symbol)
+    let mut symbol = unsafe {
+        mem::transmute::<*const zbar_image::zbar_symbol_s, *const zbar_symbol::zbar_symbol_s>(
+            symbol,
+        )
     };
 
     while !symbol.is_null() {
@@ -106,4 +103,3 @@ pub fn scan<D: AsRef<[u8]>>(
 
     Ok(result_array)
 }
-

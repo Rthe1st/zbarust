@@ -1,34 +1,34 @@
 use ::libc;
-extern "C" {
+extern {
     pub type _IO_wide_data;
     pub type _IO_codecvt;
     pub type _IO_marker;
     pub type PyMemberDef;
-    /*@}*/
-    /*------------------------------------------------------------*/
-/* * @name Decoder interface
- * @anchor c-decoder
- * low-level bar width stream decoder interface.
- * identifies symbols and extracts encoded data
- */
-/*@{*/
+    /* @} */
+    /* ------------------------------------------------------------ */
+    /* * @name Decoder interface
+     * @anchor c-decoder
+     * low-level bar width stream decoder interface.
+     * identifies symbols and extracts encoded data
+     */
+    /* @{ */
     pub type zbar_decoder_s;
-    /*@}*/
-    /*------------------------------------------------------------*/
-/* * @name Scanner interface
- * @anchor c-scanner
- * low-level linear intensity sample stream scanner interface.
- * identifies "bar" edges and measures width between them.
- * optionally passes to bar width decoder
- */
-/*@{*/
+    /* @} */
+    /* ------------------------------------------------------------ */
+    /* * @name Scanner interface
+     * @anchor c-scanner
+     * low-level linear intensity sample stream scanner interface.
+     * identifies "bar" edges and measures width between them.
+     * optionally passes to bar width decoder
+     */
+    /* @{ */
     pub type zbar_scanner_s;
     /*
-_Py_NoneStruct is an object of undefined type which can be used in contexts
-where NULL (nil) is not suitable (since NULL often means 'error').
+    _Py_NoneStruct is an object of undefined type which can be used in contexts
+    where NULL (nil) is not suitable (since NULL often means 'error').
 
-Don't forget to apply Py_INCREF() when returning this value!!!
-*/
+    Don't forget to apply Py_INCREF() when returning this value!!!
+    */
     #[no_mangle]
     static mut _Py_NoneStruct: PyObject;
     #[no_mangle]
@@ -42,47 +42,47 @@ Don't forget to apply Py_INCREF() when returning this value!!!
     #[no_mangle]
     fn PyErr_Occurred() -> *mut PyObject;
     #[no_mangle]
-    fn PyArg_ParseTupleAndKeywords(_: *mut PyObject, _: *mut PyObject,
-                                   _: *const libc::c_char,
-                                   _: *mut *mut libc::c_char, _: ...)
-     -> libc::c_int;
+    fn PyArg_ParseTupleAndKeywords(
+        _: *mut PyObject,
+        _: *mut PyObject,
+        _: *const libc::c_char,
+        _: *mut *mut libc::c_char,
+        _: ...
+    ) -> libc::c_int;
     /* * constructor.
- * if decoder is non-NULL it will be attached to scanner
- * and called automatically at each new edge
- * current color is initialized to ::ZBAR_SPACE
- * (so an initial BAR->SPACE transition may be discarded)
- */
+     * if decoder is non-NULL it will be attached to scanner
+     * and called automatically at each new edge
+     * current color is initialized to ::ZBAR_SPACE
+     * (so an initial BAR->SPACE transition may be discarded)
+     */
     #[no_mangle]
-    fn zbar_scanner_create(decoder: *mut zbar_decoder_t)
-     -> *mut zbar_scanner_t;
+    fn zbar_scanner_create(decoder: *mut zbar_decoder_t) -> *mut zbar_scanner_t;
     /* * destructor. */
     #[no_mangle]
     fn zbar_scanner_destroy(scanner: *mut zbar_scanner_t);
     /* * clear all scanner state.
- * also resets an associated decoder
- */
+     * also resets an associated decoder
+     */
     #[no_mangle]
     fn zbar_scanner_reset(scanner: *mut zbar_scanner_t) -> zbar_symbol_type_t;
     /* * mark start of a new scan pass. resets color to ::ZBAR_SPACE.
- * also updates an associated decoder.
- * @returns any decode results flushed from the pipeline
- * @note when not using callback handlers, the return value should
- * be checked the same as zbar_scan_y()
- * @note call zbar_scanner_flush() at least twice before calling this
- * method to ensure no decode results are lost
- */
+     * also updates an associated decoder.
+     * @returns any decode results flushed from the pipeline
+     * @note when not using callback handlers, the return value should
+     * be checked the same as zbar_scan_y()
+     * @note call zbar_scanner_flush() at least twice before calling this
+     * method to ensure no decode results are lost
+     */
     #[no_mangle]
-    fn zbar_scanner_new_scan(scanner: *mut zbar_scanner_t)
-     -> zbar_symbol_type_t;
+    fn zbar_scanner_new_scan(scanner: *mut zbar_scanner_t) -> zbar_symbol_type_t;
     /* * process next sample intensity value.
- * intensity (y) is in arbitrary relative units.
- * @returns result of zbar_decode_width() if a decoder is attached,
- * otherwise @returns (::ZBAR_PARTIAL) when new edge is detected
- * or 0 (::ZBAR_NONE) if no new edge is detected
- */
+     * intensity (y) is in arbitrary relative units.
+     * @returns result of zbar_decode_width() if a decoder is attached,
+     * otherwise @returns (::ZBAR_PARTIAL) when new edge is detected
+     * or 0 (::ZBAR_NONE) if no new edge is detected
+     */
     #[no_mangle]
-    fn zbar_scan_y(scanner: *mut zbar_scanner_t, y: libc::c_int)
-     -> zbar_symbol_type_t;
+    fn zbar_scan_y(scanner: *mut zbar_scanner_t, y: libc::c_int) -> zbar_symbol_type_t;
     /* * retrieve last scanned width. */
     #[no_mangle]
     fn zbar_scanner_get_width(scanner: *const zbar_scanner_t) -> libc::c_uint;
@@ -134,7 +134,7 @@ pub type FILE = _IO_FILE;
 pub type ssize_t = __ssize_t;
 /* include for defines */
 /* Some versions of HP-UX & Solaris need inttypes.h for int32_t,
-   INT32_MAX, etc. */
+INT32_MAX, etc. */
 /* *************************************************************************
 Symbols and macros to supply platform-independent interfaces to basic
 C language & library operations whose spellings vary across platforms.
@@ -189,8 +189,8 @@ Used in:  PY_LONG_LONG
  */
 /* Signed variants of the above */
 /* If PYLONG_BITS_IN_DIGIT is not defined then we'll use 30-bit digits if all
-   the necessary integer types are available, and we're on a 64-bit platform
-   (as determined by SIZEOF_VOID_P); otherwise we use 15-bit digits. */
+the necessary integer types are available, and we're on a 64-bit platform
+(as determined by SIZEOF_VOID_P); otherwise we use 15-bit digits. */
 /* uintptr_t is the C9X name for an unsigned integral type such that a
  * legitimate void* can be cast to uintptr_t and then back to void* again
  * without loss of information.  Similarly for intptr_t, wrt a signed
@@ -339,50 +339,38 @@ method blocks.
 /* Py3k buffer interface */
 /* owned reference */
 /* This is Py_ssize_t so it can be
-                             pointed to by strides in simple case.*/
+pointed to by strides in simple case.*/
 /* static store for shape and strides of
-                                  mono-dimensional buffers. */
+mono-dimensional buffers. */
 /* Flags for getting buffers */
-/*  we used to include an E, backwards compatible alias  */
+/* we used to include an E, backwards compatible alias */
 /* end Py3k buffer interface */
 /* For numbers without flag bit Py_TPFLAGS_CHECKTYPES set, all
-       arguments are guaranteed to be of the object's type (modulo
-       coercion hacks -- i.e. if the type's coercion function
-       returns other types, then these are allowed as well).  Numbers that
-       have the Py_TPFLAGS_CHECKTYPES flag bit set should check *both*
-       arguments for proper type and implement the necessary conversions
-       in the slot functions themselves. */
+arguments are guaranteed to be of the object's type (modulo
+coercion hacks -- i.e. if the type's coercion function
+returns other types, then these are allowed as well).  Numbers that
+have the Py_TPFLAGS_CHECKTYPES flag bit set should check *both*
+arguments for proper type and implement the necessary conversions
+in the slot functions themselves. */
 /* Added in release 2.0 */
 /* Added in release 2.2 */
-    /* The following require the Py_TPFLAGS_HAVE_CLASS flag */
+/* The following require the Py_TPFLAGS_HAVE_CLASS flag */
 /* Added in release 2.5 */
 /* Added in release 2.0 */
-pub type destructor = Option<unsafe extern "C" fn(_: *mut PyObject) -> ()>;
+pub type destructor = Option<unsafe extern fn(_: *mut PyObject) -> ()>;
 pub type PyObject = _object;
-pub type inquiry
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> libc::c_int>;
-pub type freefunc = Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>;
-pub type newfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut _typeobject, _: *mut PyObject,
-                                _: *mut PyObject) -> *mut PyObject>;
-pub type allocfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut _typeobject, _: Py_ssize_t)
-               -> *mut PyObject>;
-pub type initproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type descrsetfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type descrgetfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> *mut PyObject>;
+pub type inquiry = Option<unsafe extern fn(_: *mut PyObject) -> libc::c_int>;
+pub type freefunc = Option<unsafe extern fn(_: *mut libc::c_void) -> ()>;
+pub type newfunc = Option<
+    unsafe extern fn(_: *mut _typeobject, _: *mut PyObject, _: *mut PyObject) -> *mut PyObject,
+>;
+pub type allocfunc = Option<unsafe extern fn(_: *mut _typeobject, _: Py_ssize_t) -> *mut PyObject>;
+pub type initproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type descrsetfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type descrgetfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyGetSetDef {
@@ -393,14 +381,10 @@ pub struct PyGetSetDef {
     pub closure: *mut libc::c_void,
 }
 /* Descriptors */
-pub type setter
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut libc::c_void) -> libc::c_int>;
-pub type getter
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut libc::c_void)
-               -> *mut PyObject>;
+pub type setter = Option<
+    unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut libc::c_void) -> libc::c_int,
+>;
+pub type getter = Option<unsafe extern fn(_: *mut PyObject, _: *mut libc::c_void) -> *mut PyObject>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyMethodDef {
@@ -411,30 +395,18 @@ pub struct PyMethodDef {
 }
 /* Method object interface */
 /* This is about the type 'builtin_function_or_method',
-   not Python methods in user-defined classes.  See classobject.h
-   for the latter. */
-pub type PyCFunction
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> *mut PyObject>;
-pub type iternextfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> *mut PyObject>;
-pub type getiterfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> *mut PyObject>;
-pub type richcmpfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: libc::c_int) -> *mut PyObject>;
-pub type traverseproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: visitproc,
-                                _: *mut libc::c_void) -> libc::c_int>;
-pub type visitproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut libc::c_void)
-               -> libc::c_int>;
+not Python methods in user-defined classes.  See classobject.h
+for the latter. */
+pub type PyCFunction =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
+pub type iternextfunc = Option<unsafe extern fn(_: *mut PyObject) -> *mut PyObject>;
+pub type getiterfunc = Option<unsafe extern fn(_: *mut PyObject) -> *mut PyObject>;
+pub type richcmpfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: libc::c_int) -> *mut PyObject>;
+pub type traverseproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: visitproc, _: *mut libc::c_void) -> libc::c_int>;
+pub type visitproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut libc::c_void) -> libc::c_int>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyBufferProcs {
@@ -445,9 +417,7 @@ pub struct PyBufferProcs {
     pub bf_getbuffer: getbufferproc,
     pub bf_releasebuffer: releasebufferproc,
 }
-pub type releasebufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut Py_buffer) -> ()>;
+pub type releasebufferproc = Option<unsafe extern fn(_: *mut PyObject, _: *mut Py_buffer) -> ()>;
 pub type Py_buffer = bufferinfo;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -465,44 +435,27 @@ pub struct bufferinfo {
     pub smalltable: [Py_ssize_t; 2],
     pub internal: *mut libc::c_void,
 }
-pub type getbufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut Py_buffer,
-                                _: libc::c_int) -> libc::c_int>;
-pub type charbufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: *mut *mut libc::c_char) -> Py_ssize_t>;
-pub type segcountproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut Py_ssize_t)
-               -> Py_ssize_t>;
-pub type writebufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: *mut *mut libc::c_void) -> Py_ssize_t>;
-pub type readbufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: *mut *mut libc::c_void) -> Py_ssize_t>;
-pub type setattrofunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type getattrofunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> *mut PyObject>;
-pub type reprfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> *mut PyObject>;
-pub type ternaryfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> *mut PyObject>;
-pub type hashfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> libc::c_long>;
+pub type getbufferproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut Py_buffer, _: libc::c_int) -> libc::c_int>;
+pub type charbufferproc = Option<
+    unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: *mut *mut libc::c_char) -> Py_ssize_t,
+>;
+pub type segcountproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut Py_ssize_t) -> Py_ssize_t>;
+pub type writebufferproc = Option<
+    unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: *mut *mut libc::c_void) -> Py_ssize_t,
+>;
+pub type readbufferproc = Option<
+    unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: *mut *mut libc::c_void) -> Py_ssize_t,
+>;
+pub type setattrofunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type getattrofunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
+pub type reprfunc = Option<unsafe extern fn(_: *mut PyObject) -> *mut PyObject>;
+pub type ternaryfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
+pub type hashfunc = Option<unsafe extern fn(_: *mut PyObject) -> libc::c_long>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyMappingMethods {
@@ -510,17 +463,10 @@ pub struct PyMappingMethods {
     pub mp_subscript: binaryfunc,
     pub mp_ass_subscript: objobjargproc,
 }
-pub type objobjargproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type binaryfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> *mut PyObject>;
-pub type lenfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> Py_ssize_t>;
+pub type objobjargproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type binaryfunc = Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
+pub type lenfunc = Option<unsafe extern fn(_: *mut PyObject) -> Py_ssize_t>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PySequenceMethods {
@@ -535,27 +481,20 @@ pub struct PySequenceMethods {
     pub sq_inplace_concat: binaryfunc,
     pub sq_inplace_repeat: ssizeargfunc,
 }
-pub type ssizeargfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t)
-               -> *mut PyObject>;
-pub type objobjproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> libc::c_int>;
-pub type ssizessizeobjargproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: Py_ssize_t, _: *mut PyObject)
-               -> libc::c_int>;
-pub type ssizeobjargproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type ssizessizeargfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: Py_ssize_t) -> *mut PyObject>;
+pub type ssizeargfunc = Option<unsafe extern fn(_: *mut PyObject, _: Py_ssize_t) -> *mut PyObject>;
+pub type objobjproc = Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type ssizessizeobjargproc = Option<
+    unsafe extern fn(
+        _: *mut PyObject,
+        _: Py_ssize_t,
+        _: Py_ssize_t,
+        _: *mut PyObject,
+    ) -> libc::c_int,
+>;
+pub type ssizeobjargproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: *mut PyObject) -> libc::c_int>;
+pub type ssizessizeargfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: Py_ssize_t) -> *mut PyObject>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyNumberMethods {
@@ -599,29 +538,17 @@ pub struct PyNumberMethods {
     pub nb_inplace_true_divide: binaryfunc,
     pub nb_index: unaryfunc,
 }
-pub type unaryfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> *mut PyObject>;
-pub type coercion
-    =
-    Option<unsafe extern "C" fn(_: *mut *mut PyObject, _: *mut *mut PyObject)
-               -> libc::c_int>;
-pub type cmpfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> libc::c_int>;
-pub type setattrfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut libc::c_char,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type getattrfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut libc::c_char)
-               -> *mut PyObject>;
-pub type printfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut FILE,
-                                _: libc::c_int) -> libc::c_int>;
+pub type unaryfunc = Option<unsafe extern fn(_: *mut PyObject) -> *mut PyObject>;
+pub type coercion =
+    Option<unsafe extern fn(_: *mut *mut PyObject, _: *mut *mut PyObject) -> libc::c_int>;
+pub type cmpfunc = Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type setattrfunc = Option<
+    unsafe extern fn(_: *mut PyObject, _: *mut libc::c_char, _: *mut PyObject) -> libc::c_int,
+>;
+pub type getattrfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut libc::c_char) -> *mut PyObject>;
+pub type printfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut FILE, _: libc::c_int) -> libc::c_int>;
 pub type PyTypeObject = _typeobject;
 /* Integer object interface */
 /*
@@ -664,7 +591,7 @@ pub struct PyIntObject {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* * @file
  * ZBar Barcode Reader C API definition
  */
@@ -706,7 +633,7 @@ pub struct PyIntObject {
  *   extracts barcodes from a stream of bar and space widths
  */
 /* * @name Global library interfaces */
-/*@{*/
+/* @{ */
 /* * "color" of element: bar or space. */
 pub type zbar_color_e = libc::c_uint;
 /* *< dark area or colored bar segment */
@@ -717,25 +644,25 @@ pub type zbar_color_t = zbar_color_e;
 /* * decoded symbol type. */
 pub type zbar_symbol_type_e = libc::c_uint;
 /* * add-on flag mask.
-     * @deprecated in 0.11, GS1 add-ons are represented using composite
-     * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
-     * or ::ZBAR_EAN5
-     */
+ * @deprecated in 0.11, GS1 add-ons are represented using composite
+ * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
+ * or ::ZBAR_EAN5
+ */
 pub const ZBAR_ADDON: zbar_symbol_type_e = 1792;
 /* * 5-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
-     * 5-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
+ * 5-digit GS1 add-ons
+ */
 pub const ZBAR_ADDON5: zbar_symbol_type_e = 1280;
 /* * 2-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
-     * 2-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
+ * 2-digit GS1 add-ons
+ */
 pub const ZBAR_ADDON2: zbar_symbol_type_e = 512;
 /* *< Code 128 */
 /* * mask for base symbol type.
-     * @deprecated in 0.11, remove this from existing code
-     */
+ * @deprecated in 0.11, remove this from existing code
+ */
 pub const ZBAR_SYMBOL: zbar_symbol_type_e = 255;
 /* *< Code 93. @since 0.11 */
 pub const ZBAR_CODE128: zbar_symbol_type_e = 128;
@@ -825,40 +752,43 @@ pub struct zbarScanner {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
-static mut scanner_doc: [libc::c_char; 107] =
-    [108, 111, 119, 32, 108, 101, 118, 101, 108, 32, 105, 110, 116, 101, 110,
-     115, 105, 116, 121, 32, 115, 97, 109, 112, 108, 101, 32, 115, 116, 114,
-     101, 97, 109, 32, 115, 99, 97, 110, 110, 101, 114, 46, 32, 32, 105, 100,
-     101, 110, 116, 105, 102, 105, 101, 115, 32, 34, 98, 97, 114, 34, 32, 101,
-     100, 103, 101, 115, 97, 110, 100, 32, 109, 101, 97, 115, 117, 114, 101,
-     115, 32, 119, 105, 100, 116, 104, 32, 98, 101, 116, 119, 101, 101, 110,
-     32, 116, 104, 101, 109, 46, 10, 10, 70, 73, 88, 77, 69, 46, 0];
-unsafe extern "C" fn scanner_new(mut type_0: *mut PyTypeObject,
-                                 mut args: *mut PyObject,
-                                 mut kwds: *mut PyObject)
- -> *mut zbarScanner {
+ *------------------------------------------------------------------------ */
+static mut scanner_doc: [libc::c_char; 107] = [
+    108, 111, 119, 32, 108, 101, 118, 101, 108, 32, 105, 110, 116, 101, 110, 115, 105, 116, 121,
+    32, 115, 97, 109, 112, 108, 101, 32, 115, 116, 114, 101, 97, 109, 32, 115, 99, 97, 110, 110,
+    101, 114, 46, 32, 32, 105, 100, 101, 110, 116, 105, 102, 105, 101, 115, 32, 34, 98, 97, 114,
+    34, 32, 101, 100, 103, 101, 115, 97, 110, 100, 32, 109, 101, 97, 115, 117, 114, 101, 115, 32,
+    119, 105, 100, 116, 104, 32, 98, 101, 116, 119, 101, 101, 110, 32, 116, 104, 101, 109, 46, 10,
+    10, 70, 73, 88, 77, 69, 46, 0,
+];
+unsafe extern fn scanner_new(
+    mut type_0: *mut PyTypeObject,
+    mut args: *mut PyObject,
+    mut kwds: *mut PyObject,
+) -> *mut zbarScanner {
     let mut decoder: *mut zbarDecoder = 0 as *mut zbarDecoder;
-    static mut kwlist: [*mut libc::c_char; 2] =
-        [b"decoder\x00" as *const u8 as *const libc::c_char as
-             *mut libc::c_char,
-         0 as *const libc::c_char as *mut libc::c_char];
-    if PyArg_ParseTupleAndKeywords(args, kwds,
-                                   b"|O!\x00" as *const u8 as
-                                       *const libc::c_char,
-                                   kwlist.as_mut_ptr(),
-                                   &mut decoder as *mut *mut zbarDecoder,
-                                   zbarDecoder_Type) == 0 {
-        return 0 as *mut zbarScanner
+    static mut kwlist: [*mut libc::c_char; 2] = [
+        b"decoder\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        0 as *const libc::c_char as *mut libc::c_char,
+    ];
+    if PyArg_ParseTupleAndKeywords(
+        args,
+        kwds,
+        b"|O!\x00" as *const u8 as *const libc::c_char,
+        kwlist.as_mut_ptr(),
+        &mut decoder as *mut *mut zbarDecoder,
+        zbarDecoder_Type,
+    ) == 0
+    {
+        return 0 as *mut zbarScanner;
     }
-    let mut self_0: *mut zbarScanner =
-        (*type_0).tp_alloc.expect("non-null function pointer")(type_0,
-                                                               0 as
-                                                                   libc::c_int
-                                                                   as
-                                                                   Py_ssize_t)
-            as *mut zbarScanner;
-    if self_0.is_null() { return 0 as *mut zbarScanner }
+    let mut self_0: *mut zbarScanner = (*type_0).tp_alloc.expect("non-null function pointer")(
+        type_0,
+        0 as libc::c_int as Py_ssize_t,
+    ) as *mut zbarScanner;
+    if self_0.is_null() {
+        return 0 as *mut zbarScanner;
+    }
     let mut zdcode: *mut zbar_decoder_t = 0 as *mut zbar_decoder_t;
     if !decoder.is_null() {
         let ref mut fresh0 = (*(decoder as *mut PyObject)).ob_refcnt;
@@ -871,438 +801,398 @@ unsafe extern "C" fn scanner_new(mut type_0: *mut PyTypeObject,
         let ref mut fresh1 = (*(self_0 as *mut PyObject)).ob_refcnt;
         *fresh1 -= 1;
         if !(*fresh1 != 0 as libc::c_int as libc::c_long) {
-            Some((*(*(self_0 as
-                          *mut PyObject)).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(self_0
-                                                                                                                                           as
-                                                                                                                                           *mut PyObject);
+            Some(
+                (*(*(self_0 as *mut PyObject)).ob_type)
+                    .tp_dealloc
+                    .expect("non-null function pointer"),
+            )
+            .expect("non-null function pointer")(self_0 as *mut PyObject);
         }
-        return 0 as *mut zbarScanner
+        return 0 as *mut zbarScanner;
     }
     return self_0;
 }
-unsafe extern "C" fn scanner_traverse(mut self_0: *mut zbarScanner,
-                                      mut visit: visitproc,
-                                      mut arg: *mut libc::c_void)
- -> libc::c_int {
+unsafe extern fn scanner_traverse(
+    mut self_0: *mut zbarScanner,
+    mut visit: visitproc,
+    mut arg: *mut libc::c_void,
+) -> libc::c_int {
     if !(*self_0).decoder.is_null() {
         let mut vret: libc::c_int =
-            visit.expect("non-null function pointer")((*self_0).decoder as
-                                                          *mut PyObject, arg);
-        if vret != 0 { return vret }
+            visit.expect("non-null function pointer")((*self_0).decoder as *mut PyObject, arg);
+        if vret != 0 {
+            return vret;
+        }
     }
     return 0 as libc::c_int;
 }
-unsafe extern "C" fn scanner_clear(mut self_0: *mut zbarScanner)
- -> libc::c_int {
+unsafe extern fn scanner_clear(mut self_0: *mut zbarScanner) -> libc::c_int {
     if !(*self_0).decoder.is_null() {
         let mut _py_tmp: *mut PyObject = (*self_0).decoder as *mut PyObject;
         (*self_0).decoder = 0 as *mut zbarDecoder;
         (*_py_tmp).ob_refcnt -= 1;
         if !((*_py_tmp).ob_refcnt != 0 as libc::c_int as libc::c_long) {
-            Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(_py_tmp);
+            Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer"))
+                .expect("non-null function pointer")(_py_tmp);
         }
     }
     return 0 as libc::c_int;
 }
-unsafe extern "C" fn scanner_dealloc(mut self_0: *mut zbarScanner) {
+unsafe extern fn scanner_dealloc(mut self_0: *mut zbarScanner) {
     scanner_clear(self_0);
     zbar_scanner_destroy((*self_0).zscn);
-    (*(*(self_0 as
-             *mut PyObject)).ob_type).tp_free.expect("non-null function pointer")(self_0
-                                                                                      as
-                                                                                      *mut PyObject
-                                                                                      as
-                                                                                      *mut libc::c_void);
+    (*(*(self_0 as *mut PyObject)).ob_type).tp_free.expect("non-null function pointer")(
+        self_0 as *mut PyObject as *mut libc::c_void,
+    );
 }
-unsafe extern "C" fn scanner_get_width(mut self_0: *mut zbarScanner,
-                                       mut closure: *mut libc::c_void)
- -> *mut PyObject {
+unsafe extern fn scanner_get_width(
+    mut self_0: *mut zbarScanner,
+    mut closure: *mut libc::c_void,
+) -> *mut PyObject {
     let mut width: libc::c_uint = zbar_scanner_get_width((*self_0).zscn);
     return PyInt_FromLong(width as libc::c_long);
 }
-unsafe extern "C" fn scanner_get_color(mut self_0: *mut zbarScanner,
-                                       mut closure: *mut libc::c_void)
- -> *mut zbarEnumItem {
+unsafe extern fn scanner_get_color(
+    mut self_0: *mut zbarScanner,
+    mut closure: *mut libc::c_void,
+) -> *mut zbarEnumItem {
     let mut zcol: zbar_color_t = zbar_scanner_get_color((*self_0).zscn);
     let mut color: *mut zbarEnumItem = color_enum[zcol as usize];
     let ref mut fresh2 = (*(color as *mut PyObject)).ob_refcnt;
     *fresh2 += 1;
     return color;
 }
-static mut scanner_getset: [PyGetSetDef; 3] =
-    unsafe {
-        [{
-             let mut init =
-                 PyGetSetDef{name:
-                                 b"color\x00" as *const u8 as
-                                     *const libc::c_char as *mut libc::c_char,
-                             get:
-                                 ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                         *mut zbarScanner,
-                                                                                     _:
-                                                                                         *mut libc::c_void)
-                                                                    ->
-                                                                        *mut zbarEnumItem>,
-                                                         getter>(Some(scanner_get_color
-                                                                          as
-                                                                          unsafe extern "C" fn(_:
-                                                                                                   *mut zbarScanner,
-                                                                                               _:
-                                                                                                   *mut libc::c_void)
-                                                                              ->
-                                                                                  *mut zbarEnumItem)),
-                             set: None,
-                             doc:
-                                 0 as *const libc::c_char as
-                                     *mut libc::c_char,
-                             closure:
-                                 0 as *const libc::c_void as
-                                     *mut libc::c_void,};
-             init
-         },
-         {
-             let mut init =
-                 PyGetSetDef{name:
-                                 b"width\x00" as *const u8 as
-                                     *const libc::c_char as *mut libc::c_char,
-                             get:
-                                 ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                         *mut zbarScanner,
-                                                                                     _:
-                                                                                         *mut libc::c_void)
-                                                                    ->
-                                                                        *mut PyObject>,
-                                                         getter>(Some(scanner_get_width
-                                                                          as
-                                                                          unsafe extern "C" fn(_:
-                                                                                                   *mut zbarScanner,
-                                                                                               _:
-                                                                                                   *mut libc::c_void)
-                                                                              ->
-                                                                                  *mut PyObject)),
-                             set: None,
-                             doc:
-                                 0 as *const libc::c_char as
-                                     *mut libc::c_char,
-                             closure:
-                                 0 as *const libc::c_void as
-                                     *mut libc::c_void,};
-             init
-         },
-         {
-             let mut init =
-                 PyGetSetDef{name:
-                                 0 as *const libc::c_char as
-                                     *mut libc::c_char,
-                             get: None,
-                             set: None,
-                             doc:
-                                 0 as *const libc::c_char as
-                                     *mut libc::c_char,
-                             closure:
-                                 0 as *const libc::c_void as
-                                     *mut libc::c_void,};
-             init
-         }]
-    };
-unsafe extern "C" fn scanner_reset(mut self_0: *mut zbarScanner,
-                                   mut args: *mut PyObject,
-                                   mut kwds: *mut PyObject) -> *mut PyObject {
-    static mut kwlist: [*mut libc::c_char; 1] =
-        [0 as *const libc::c_char as *mut libc::c_char];
-    if PyArg_ParseTupleAndKeywords(args, kwds,
-                                   b"\x00" as *const u8 as
-                                       *const libc::c_char,
-                                   kwlist.as_mut_ptr()) == 0 {
-        return 0 as *mut PyObject
+static mut scanner_getset: [PyGetSetDef; 3] = unsafe {
+    [
+        {
+            let mut init = PyGetSetDef {
+                name: b"color\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                get: ::std::mem::transmute::<
+                    Option<
+                        unsafe extern fn(
+                            _: *mut zbarScanner,
+                            _: *mut libc::c_void,
+                        ) -> *mut zbarEnumItem,
+                    >,
+                    getter,
+                >(Some(
+                    scanner_get_color
+                        as unsafe extern fn(
+                            _: *mut zbarScanner,
+                            _: *mut libc::c_void,
+                        ) -> *mut zbarEnumItem,
+                )),
+                set: None,
+                doc: 0 as *const libc::c_char as *mut libc::c_char,
+                closure: 0 as *const libc::c_void as *mut libc::c_void,
+            };
+            init
+        },
+        {
+            let mut init = PyGetSetDef {
+                name: b"width\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                get: ::std::mem::transmute::<
+                    Option<
+                        unsafe extern fn(
+                            _: *mut zbarScanner,
+                            _: *mut libc::c_void,
+                        ) -> *mut PyObject,
+                    >,
+                    getter,
+                >(Some(
+                    scanner_get_width
+                        as unsafe extern fn(
+                            _: *mut zbarScanner,
+                            _: *mut libc::c_void,
+                        ) -> *mut PyObject,
+                )),
+                set: None,
+                doc: 0 as *const libc::c_char as *mut libc::c_char,
+                closure: 0 as *const libc::c_void as *mut libc::c_void,
+            };
+            init
+        },
+        {
+            let mut init = PyGetSetDef {
+                name: 0 as *const libc::c_char as *mut libc::c_char,
+                get: None,
+                set: None,
+                doc: 0 as *const libc::c_char as *mut libc::c_char,
+                closure: 0 as *const libc::c_void as *mut libc::c_void,
+            };
+            init
+        },
+    ]
+};
+unsafe extern fn scanner_reset(
+    mut self_0: *mut zbarScanner,
+    mut args: *mut PyObject,
+    mut kwds: *mut PyObject,
+) -> *mut PyObject {
+    static mut kwlist: [*mut libc::c_char; 1] = [0 as *const libc::c_char as *mut libc::c_char];
+    if PyArg_ParseTupleAndKeywords(
+        args,
+        kwds,
+        b"\x00" as *const u8 as *const libc::c_char,
+        kwlist.as_mut_ptr(),
+    ) == 0
+    {
+        return 0 as *mut PyObject;
     }
     zbar_scanner_reset((*self_0).zscn);
     let ref mut fresh3 = (*(&mut _Py_NoneStruct as *mut PyObject)).ob_refcnt;
     *fresh3 += 1;
     return &mut _Py_NoneStruct;
 }
-unsafe extern "C" fn scanner_new_scan(mut self_0: *mut zbarScanner,
-                                      mut args: *mut PyObject,
-                                      mut kwds: *mut PyObject)
- -> *mut PyObject {
-    static mut kwlist: [*mut libc::c_char; 1] =
-        [0 as *const libc::c_char as *mut libc::c_char];
-    if PyArg_ParseTupleAndKeywords(args, kwds,
-                                   b"\x00" as *const u8 as
-                                       *const libc::c_char,
-                                   kwlist.as_mut_ptr()) == 0 {
-        return 0 as *mut PyObject
+unsafe extern fn scanner_new_scan(
+    mut self_0: *mut zbarScanner,
+    mut args: *mut PyObject,
+    mut kwds: *mut PyObject,
+) -> *mut PyObject {
+    static mut kwlist: [*mut libc::c_char; 1] = [0 as *const libc::c_char as *mut libc::c_char];
+    if PyArg_ParseTupleAndKeywords(
+        args,
+        kwds,
+        b"\x00" as *const u8 as *const libc::c_char,
+        kwlist.as_mut_ptr(),
+    ) == 0
+    {
+        return 0 as *mut PyObject;
     }
     zbar_scanner_new_scan((*self_0).zscn);
     let ref mut fresh4 = (*(&mut _Py_NoneStruct as *mut PyObject)).ob_refcnt;
     *fresh4 += 1;
     return &mut _Py_NoneStruct;
 }
-unsafe extern "C" fn scanner_scan_y(mut self_0: *mut zbarScanner,
-                                    mut args: *mut PyObject,
-                                    mut kwds: *mut PyObject)
- -> *mut zbarEnumItem {
+unsafe extern fn scanner_scan_y(
+    mut self_0: *mut zbarScanner,
+    mut args: *mut PyObject,
+    mut kwds: *mut PyObject,
+) -> *mut zbarEnumItem {
     /* FIXME should accept sequence of values */
     let mut y: libc::c_int = 0 as libc::c_int;
-    static mut kwlist: [*mut libc::c_char; 2] =
-        [b"y\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-         0 as *const libc::c_char as *mut libc::c_char];
-    if PyArg_ParseTupleAndKeywords(args, kwds,
-                                   b"i\x00" as *const u8 as
-                                       *const libc::c_char,
-                                   kwlist.as_mut_ptr(),
-                                   &mut y as *mut libc::c_int) == 0 {
-        return 0 as *mut zbarEnumItem
+    static mut kwlist: [*mut libc::c_char; 2] = [
+        b"y\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        0 as *const libc::c_char as *mut libc::c_char,
+    ];
+    if PyArg_ParseTupleAndKeywords(
+        args,
+        kwds,
+        b"i\x00" as *const u8 as *const libc::c_char,
+        kwlist.as_mut_ptr(),
+        &mut y as *mut libc::c_int,
+    ) == 0
+    {
+        return 0 as *mut zbarEnumItem;
     }
     let mut sym: zbar_symbol_type_t = zbar_scan_y((*self_0).zscn, y);
     if !PyErr_Occurred().is_null() {
         /* propagate errors during callback */
-        return 0 as *mut zbarEnumItem
+        return 0 as *mut zbarEnumItem;
     }
     if sym as libc::c_uint == ZBAR_NONE as libc::c_int as libc::c_uint {
         /* hardcode most common case */
         let ref mut fresh5 = (*(symbol_NONE as *mut PyObject)).ob_refcnt;
         *fresh5 += 1;
-        return symbol_NONE
+        return symbol_NONE;
     }
     return zbarSymbol_LookupEnum(sym);
 }
-static mut scanner_methods: [PyMethodDef; 4] =
-    unsafe {
-        [{
-             let mut init =
-                 PyMethodDef{ml_name:
-                                 b"reset\x00" as *const u8 as
-                                     *const libc::c_char,
-                             ml_meth:
-                                 ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                         *mut zbarScanner,
-                                                                                     _:
-                                                                                         *mut PyObject,
-                                                                                     _:
-                                                                                         *mut PyObject)
-                                                                    ->
-                                                                        *mut PyObject>,
-                                                         PyCFunction>(Some(scanner_reset
-                                                                               as
-                                                                               unsafe extern "C" fn(_:
-                                                                                                        *mut zbarScanner,
-                                                                                                    _:
-                                                                                                        *mut PyObject,
-                                                                                                    _:
-                                                                                                        *mut PyObject)
-                                                                                   ->
-                                                                                       *mut PyObject)),
-                             ml_flags:
-                                 0x1 as libc::c_int | 0x2 as libc::c_int,
-                             ml_doc: 0 as *const libc::c_char,};
-             init
-         },
-         {
-             let mut init =
-                 PyMethodDef{ml_name:
-                                 b"new_scan\x00" as *const u8 as
-                                     *const libc::c_char,
-                             ml_meth:
-                                 ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                         *mut zbarScanner,
-                                                                                     _:
-                                                                                         *mut PyObject,
-                                                                                     _:
-                                                                                         *mut PyObject)
-                                                                    ->
-                                                                        *mut PyObject>,
-                                                         PyCFunction>(Some(scanner_new_scan
-                                                                               as
-                                                                               unsafe extern "C" fn(_:
-                                                                                                        *mut zbarScanner,
-                                                                                                    _:
-                                                                                                        *mut PyObject,
-                                                                                                    _:
-                                                                                                        *mut PyObject)
-                                                                                   ->
-                                                                                       *mut PyObject)),
-                             ml_flags:
-                                 0x1 as libc::c_int | 0x2 as libc::c_int,
-                             ml_doc: 0 as *const libc::c_char,};
-             init
-         },
-         {
-             let mut init =
-                 PyMethodDef{ml_name:
-                                 b"scan_y\x00" as *const u8 as
-                                     *const libc::c_char,
-                             ml_meth:
-                                 ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                         *mut zbarScanner,
-                                                                                     _:
-                                                                                         *mut PyObject,
-                                                                                     _:
-                                                                                         *mut PyObject)
-                                                                    ->
-                                                                        *mut zbarEnumItem>,
-                                                         PyCFunction>(Some(scanner_scan_y
-                                                                               as
-                                                                               unsafe extern "C" fn(_:
-                                                                                                        *mut zbarScanner,
-                                                                                                    _:
-                                                                                                        *mut PyObject,
-                                                                                                    _:
-                                                                                                        *mut PyObject)
-                                                                                   ->
-                                                                                       *mut zbarEnumItem)),
-                             ml_flags:
-                                 0x1 as libc::c_int | 0x2 as libc::c_int,
-                             ml_doc: 0 as *const libc::c_char,};
-             init
-         },
-         {
-             let mut init =
-                 PyMethodDef{ml_name: 0 as *const libc::c_char,
-                             ml_meth: None,
-                             ml_flags: 0,
-                             ml_doc: 0 as *const libc::c_char,};
-             init
-         }]
-    };
-#[no_mangle]
-pub static mut zbarScanner_Type: PyTypeObject =
-    unsafe {
+static mut scanner_methods: [PyMethodDef; 4] = unsafe {
+    [
         {
-            let mut init =
-                _typeobject{ob_refcnt: 1 as libc::c_int as Py_ssize_t,
-                            ob_type:
-                                0 as *const _typeobject as *mut _typeobject,
-                            ob_size: 0,
-                            tp_name:
-                                b"zbar.Scanner\x00" as *const u8 as
-                                    *const libc::c_char,
-                            tp_basicsize:
-                                ::std::mem::size_of::<zbarScanner>() as
-                                    libc::c_ulong as Py_ssize_t,
-                            tp_itemsize: 0,
-                            tp_dealloc:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarScanner)
-                                                                   -> ()>,
-                                                        destructor>(Some(scanner_dealloc
-                                                                             as
-                                                                             unsafe extern "C" fn(_:
-                                                                                                      *mut zbarScanner)
-                                                                                 ->
-                                                                                     ())),
-                            tp_print: None,
-                            tp_getattr: None,
-                            tp_setattr: None,
-                            tp_compare: None,
-                            tp_repr: None,
-                            tp_as_number:
-                                0 as *const PyNumberMethods as
-                                    *mut PyNumberMethods,
-                            tp_as_sequence:
-                                0 as *const PySequenceMethods as
-                                    *mut PySequenceMethods,
-                            tp_as_mapping:
-                                0 as *const PyMappingMethods as
-                                    *mut PyMappingMethods,
-                            tp_hash: None,
-                            tp_call: None,
-                            tp_str: None,
-                            tp_getattro: None,
-                            tp_setattro: None,
-                            tp_as_buffer:
-                                0 as *const PyBufferProcs as
-                                    *mut PyBufferProcs,
-                            tp_flags:
-                                (1 as libc::c_long) << 0 as libc::c_int |
-                                    (1 as libc::c_long) << 1 as libc::c_int |
-                                    (1 as libc::c_long) << 3 as libc::c_int |
-                                    (1 as libc::c_long) << 5 as libc::c_int |
-                                    (1 as libc::c_long) << 6 as libc::c_int |
-                                    (1 as libc::c_long) << 7 as libc::c_int |
-                                    (1 as libc::c_long) << 8 as libc::c_int |
-                                    0 as libc::c_int as libc::c_long |
-                                    (1 as libc::c_long) << 17 as libc::c_int |
-                                    0 as libc::c_int as libc::c_long |
-                                    (1 as libc::c_long) << 10 as libc::c_int |
-                                    (1 as libc::c_long) << 14 as libc::c_int,
-                            tp_doc: scanner_doc.as_ptr() as *mut _,
-                            tp_traverse:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarScanner,
-                                                                                    _:
-                                                                                        visitproc,
-                                                                                    _:
-                                                                                        *mut libc::c_void)
-                                                                   ->
-                                                                       libc::c_int>,
-                                                        traverseproc>(Some(scanner_traverse
-                                                                               as
-                                                                               unsafe extern "C" fn(_:
-                                                                                                        *mut zbarScanner,
-                                                                                                    _:
-                                                                                                        visitproc,
-                                                                                                    _:
-                                                                                                        *mut libc::c_void)
-                                                                                   ->
-                                                                                       libc::c_int)),
-                            tp_clear:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarScanner)
-                                                                   ->
-                                                                       libc::c_int>,
-                                                        inquiry>(Some(scanner_clear
-                                                                          as
-                                                                          unsafe extern "C" fn(_:
-                                                                                                   *mut zbarScanner)
-                                                                              ->
-                                                                                  libc::c_int)),
-                            tp_richcompare: None,
-                            tp_weaklistoffset: 0,
-                            tp_iter: None,
-                            tp_iternext: None,
-                            tp_methods: scanner_methods.as_ptr() as *mut _,
-                            tp_members:
-                                0 as *const PyMemberDef as *mut PyMemberDef,
-                            tp_getset: scanner_getset.as_ptr() as *mut _,
-                            tp_base:
-                                0 as *const _typeobject as *mut _typeobject,
-                            tp_dict: 0 as *const PyObject as *mut PyObject,
-                            tp_descr_get: None,
-                            tp_descr_set: None,
-                            tp_dictoffset: 0,
-                            tp_init: None,
-                            tp_alloc: None,
-                            tp_new:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut PyTypeObject,
-                                                                                    _:
-                                                                                        *mut PyObject,
-                                                                                    _:
-                                                                                        *mut PyObject)
-                                                                   ->
-                                                                       *mut zbarScanner>,
-                                                        newfunc>(Some(scanner_new
-                                                                          as
-                                                                          unsafe extern "C" fn(_:
-                                                                                                   *mut PyTypeObject,
-                                                                                               _:
-                                                                                                   *mut PyObject,
-                                                                                               _:
-                                                                                                   *mut PyObject)
-                                                                              ->
-                                                                                  *mut zbarScanner)),
-                            tp_free: None,
-                            tp_is_gc: None,
-                            tp_bases: 0 as *const PyObject as *mut PyObject,
-                            tp_mro: 0 as *const PyObject as *mut PyObject,
-                            tp_cache: 0 as *const PyObject as *mut PyObject,
-                            tp_subclasses:
-                                0 as *const PyObject as *mut PyObject,
-                            tp_weaklist:
-                                0 as *const PyObject as *mut PyObject,
-                            tp_del: None,
-                            tp_version_tag: 0,};
+            let mut init = PyMethodDef {
+                ml_name: b"reset\x00" as *const u8 as *const libc::c_char,
+                ml_meth: ::std::mem::transmute::<
+                    Option<
+                        unsafe extern fn(
+                            _: *mut zbarScanner,
+                            _: *mut PyObject,
+                            _: *mut PyObject,
+                        ) -> *mut PyObject,
+                    >,
+                    PyCFunction,
+                >(Some(
+                    scanner_reset
+                        as unsafe extern fn(
+                            _: *mut zbarScanner,
+                            _: *mut PyObject,
+                            _: *mut PyObject,
+                        ) -> *mut PyObject,
+                )),
+                ml_flags: 0x1 as libc::c_int | 0x2 as libc::c_int,
+                ml_doc: 0 as *const libc::c_char,
+            };
             init
-        }
-    };
+        },
+        {
+            let mut init = PyMethodDef {
+                ml_name: b"new_scan\x00" as *const u8 as *const libc::c_char,
+                ml_meth: ::std::mem::transmute::<
+                    Option<
+                        unsafe extern fn(
+                            _: *mut zbarScanner,
+                            _: *mut PyObject,
+                            _: *mut PyObject,
+                        ) -> *mut PyObject,
+                    >,
+                    PyCFunction,
+                >(Some(
+                    scanner_new_scan
+                        as unsafe extern fn(
+                            _: *mut zbarScanner,
+                            _: *mut PyObject,
+                            _: *mut PyObject,
+                        ) -> *mut PyObject,
+                )),
+                ml_flags: 0x1 as libc::c_int | 0x2 as libc::c_int,
+                ml_doc: 0 as *const libc::c_char,
+            };
+            init
+        },
+        {
+            let mut init = PyMethodDef {
+                ml_name: b"scan_y\x00" as *const u8 as *const libc::c_char,
+                ml_meth: ::std::mem::transmute::<
+                    Option<
+                        unsafe extern fn(
+                            _: *mut zbarScanner,
+                            _: *mut PyObject,
+                            _: *mut PyObject,
+                        ) -> *mut zbarEnumItem,
+                    >,
+                    PyCFunction,
+                >(Some(
+                    scanner_scan_y
+                        as unsafe extern fn(
+                            _: *mut zbarScanner,
+                            _: *mut PyObject,
+                            _: *mut PyObject,
+                        ) -> *mut zbarEnumItem,
+                )),
+                ml_flags: 0x1 as libc::c_int | 0x2 as libc::c_int,
+                ml_doc: 0 as *const libc::c_char,
+            };
+            init
+        },
+        {
+            let mut init = PyMethodDef {
+                ml_name: 0 as *const libc::c_char,
+                ml_meth: None,
+                ml_flags: 0,
+                ml_doc: 0 as *const libc::c_char,
+            };
+            init
+        },
+    ]
+};
+#[no_mangle]
+pub static mut zbarScanner_Type: PyTypeObject = unsafe {
+    {
+        let mut init = _typeobject {
+            ob_refcnt: 1 as libc::c_int as Py_ssize_t,
+            ob_type: 0 as *const _typeobject as *mut _typeobject,
+            ob_size: 0,
+            tp_name: b"zbar.Scanner\x00" as *const u8 as *const libc::c_char,
+            tp_basicsize: ::std::mem::size_of::<zbarScanner>() as libc::c_ulong as Py_ssize_t,
+            tp_itemsize: 0,
+            tp_dealloc: ::std::mem::transmute::<
+                Option<unsafe extern fn(_: *mut zbarScanner) -> ()>,
+                destructor,
+            >(Some(
+                scanner_dealloc as unsafe extern fn(_: *mut zbarScanner) -> (),
+            )),
+            tp_print: None,
+            tp_getattr: None,
+            tp_setattr: None,
+            tp_compare: None,
+            tp_repr: None,
+            tp_as_number: 0 as *const PyNumberMethods as *mut PyNumberMethods,
+            tp_as_sequence: 0 as *const PySequenceMethods as *mut PySequenceMethods,
+            tp_as_mapping: 0 as *const PyMappingMethods as *mut PyMappingMethods,
+            tp_hash: None,
+            tp_call: None,
+            tp_str: None,
+            tp_getattro: None,
+            tp_setattro: None,
+            tp_as_buffer: 0 as *const PyBufferProcs as *mut PyBufferProcs,
+            tp_flags: (1 as libc::c_long) << 0 as libc::c_int
+                | (1 as libc::c_long) << 1 as libc::c_int
+                | (1 as libc::c_long) << 3 as libc::c_int
+                | (1 as libc::c_long) << 5 as libc::c_int
+                | (1 as libc::c_long) << 6 as libc::c_int
+                | (1 as libc::c_long) << 7 as libc::c_int
+                | (1 as libc::c_long) << 8 as libc::c_int
+                | 0 as libc::c_int as libc::c_long
+                | (1 as libc::c_long) << 17 as libc::c_int
+                | 0 as libc::c_int as libc::c_long
+                | (1 as libc::c_long) << 10 as libc::c_int
+                | (1 as libc::c_long) << 14 as libc::c_int,
+            tp_doc: scanner_doc.as_ptr() as *mut _,
+            tp_traverse: ::std::mem::transmute::<
+                Option<
+                    unsafe extern fn(
+                        _: *mut zbarScanner,
+                        _: visitproc,
+                        _: *mut libc::c_void,
+                    ) -> libc::c_int,
+                >,
+                traverseproc,
+            >(Some(
+                scanner_traverse
+                    as unsafe extern fn(
+                        _: *mut zbarScanner,
+                        _: visitproc,
+                        _: *mut libc::c_void,
+                    ) -> libc::c_int,
+            )),
+            tp_clear: ::std::mem::transmute::<
+                Option<unsafe extern fn(_: *mut zbarScanner) -> libc::c_int>,
+                inquiry,
+            >(Some(
+                scanner_clear as unsafe extern fn(_: *mut zbarScanner) -> libc::c_int,
+            )),
+            tp_richcompare: None,
+            tp_weaklistoffset: 0,
+            tp_iter: None,
+            tp_iternext: None,
+            tp_methods: scanner_methods.as_ptr() as *mut _,
+            tp_members: 0 as *const PyMemberDef as *mut PyMemberDef,
+            tp_getset: scanner_getset.as_ptr() as *mut _,
+            tp_base: 0 as *const _typeobject as *mut _typeobject,
+            tp_dict: 0 as *const PyObject as *mut PyObject,
+            tp_descr_get: None,
+            tp_descr_set: None,
+            tp_dictoffset: 0,
+            tp_init: None,
+            tp_alloc: None,
+            tp_new: ::std::mem::transmute::<
+                Option<
+                    unsafe extern fn(
+                        _: *mut PyTypeObject,
+                        _: *mut PyObject,
+                        _: *mut PyObject,
+                    ) -> *mut zbarScanner,
+                >,
+                newfunc,
+            >(Some(
+                scanner_new
+                    as unsafe extern fn(
+                        _: *mut PyTypeObject,
+                        _: *mut PyObject,
+                        _: *mut PyObject,
+                    ) -> *mut zbarScanner,
+            )),
+            tp_free: None,
+            tp_is_gc: None,
+            tp_bases: 0 as *const PyObject as *mut PyObject,
+            tp_mro: 0 as *const PyObject as *mut PyObject,
+            tp_cache: 0 as *const PyObject as *mut PyObject,
+            tp_subclasses: 0 as *const PyObject as *mut PyObject,
+            tp_weaklist: 0 as *const PyObject as *mut PyObject,
+            tp_del: None,
+            tp_version_tag: 0,
+        };
+        init
+    }
+};

@@ -1,49 +1,52 @@
 use ::libc;
-extern "C" {
+extern {
     pub type zbar_symbol_set_s;
-    /*@}*/
-    /*------------------------------------------------------------*/
-/* * @name Image interface
- * stores image data samples along with associated format and size
- * metadata
- */
-/*@{*/
+    /* @} */
+    /* ------------------------------------------------------------ */
+    /* * @name Image interface
+     * stores image data samples along with associated format and size
+     * metadata
+     */
+    /* @{ */
     pub type zbar_image_s;
     pub type processor_state_s;
     pub type zbar_image_scanner_s;
     pub type zbar_window_s;
     pub type zbar_video_s;
     /* * image destructor.  all images created by or returned to the
- * application should be destroyed using this function.  when an image
- * is destroyed, the associated data cleanup handler will be invoked
- * if available
- * @note make no assumptions about the image or the data buffer.
- * they may not be destroyed/cleaned immediately if the library
- * is still using them.  if necessary, use the cleanup handler hook
- * to keep track of image data buffers
- */
+     * application should be destroyed using this function.  when an image
+     * is destroyed, the associated data cleanup handler will be invoked
+     * if available
+     * @note make no assumptions about the image or the data buffer.
+     * they may not be destroyed/cleaned immediately if the library
+     * is still using them.  if necessary, use the cleanup handler hook
+     * to keep track of image data buffers
+     */
     #[no_mangle]
     fn zbar_image_destroy(image: *mut zbar_image_t);
     #[no_mangle]
     fn calloc(_: libc::c_ulong, _: libc::c_ulong) -> *mut libc::c_void;
     #[no_mangle]
-    fn _zbar_process_image(_: *mut zbar_processor_t, _: *mut zbar_image_t)
-     -> libc::c_int;
+    fn _zbar_process_image(_: *mut zbar_processor_t, _: *mut zbar_image_t) -> libc::c_int;
     #[no_mangle]
-    fn _zbar_processor_input_wait(_: *mut zbar_processor_t,
-                                  _: *mut zbar_event_t, _: libc::c_int)
-     -> libc::c_int;
+    fn _zbar_processor_input_wait(
+        _: *mut zbar_processor_t,
+        _: *mut zbar_event_t,
+        _: libc::c_int,
+    ) -> libc::c_int;
     #[no_mangle]
     fn zbar_video_get_fd(video: *const zbar_video_t) -> libc::c_int;
     #[no_mangle]
     fn zbar_video_next_image(video: *mut zbar_video_t) -> *mut zbar_image_t;
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     #[no_mangle]
-    fn clock_gettime(__clock_id: clockid_t, __tp: *mut timespec)
-     -> libc::c_int;
+    fn clock_gettime(__clock_id: clockid_t, __tp: *mut timespec) -> libc::c_int;
     #[no_mangle]
     fn pthread_self() -> pthread_t;
     #[no_mangle]
@@ -55,8 +58,11 @@ extern "C" {
     #[no_mangle]
     fn _zbar_event_trigger(_: *mut zbar_event_t);
     #[no_mangle]
-    fn _zbar_event_wait(_: *mut zbar_event_t, _: *mut zbar_mutex_t,
-                        _: *mut zbar_timer_t) -> libc::c_int;
+    fn _zbar_event_wait(
+        _: *mut zbar_event_t,
+        _: *mut zbar_mutex_t,
+        _: *mut zbar_timer_t,
+    ) -> libc::c_int;
 }
 pub type __uint32_t = libc::c_uint;
 pub type __time_t = libc::c_long;
@@ -185,9 +191,8 @@ pub type zbar_image_t = zbar_image_s;
 /* * data handler callback function.
  * called when decoded symbol results are available for an image
  */
-pub type zbar_image_data_handler_t
-    =
-    unsafe extern "C" fn(_: *mut zbar_image_t, _: *const libc::c_void) -> ();
+pub type zbar_image_data_handler_t =
+    unsafe extern fn(_: *mut zbar_image_t, _: *const libc::c_void) -> ();
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct zbar_processor_s {
@@ -254,7 +259,7 @@ pub type zbar_thread_id_t = pthread_t;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* platform synchronization "event" abstraction
  */
 pub type zbar_event_t = zbar_event_s;
@@ -286,7 +291,7 @@ pub struct zbar_event_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* simple platform mutex abstraction
  */
 pub type zbar_mutex_t = pthread_mutex_t;
@@ -373,14 +378,14 @@ pub struct zbar_thread_s {
  */
 /* * retrieve the detail string for the last processor error. */
 /* * retrieve the type code for the last processor error. */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Video interface
  * @anchor c-video
  * mid-level video source abstraction.
  * captures images from a video device
  */
-/*@{*/
+/* @{ */
 /* * opaque video object. */
 /* * constructor. */
 /* * destructor. */
@@ -453,14 +458,14 @@ pub struct zbar_thread_s {
  */
 /* * retrieve the detail string for the last video error. */
 /* * retrieve the type code for the last video error. */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Window interface
  * @anchor c-window
  * mid-level output window abstraction.
  * displays images to user-specified platform specific output window
  */
-/*@{*/
+/* @{ */
 /* * opaque window object. */
 /* * constructor. */
 /* * destructor. */
@@ -500,14 +505,14 @@ pub struct zbar_thread_s {
  * barcode scanning.  if a format conversion is necessary, it will
  * heuristically attempt to minimize the cost of the conversion
  */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Image Scanner interface
  * @anchor c-imagescanner
  * mid-level image scanner interface.
  * reads barcodes from 2-D images
  */
-/*@{*/
+/* @{ */
 /* * opaque image scanner object. */
 pub type zbar_image_scanner_t = zbar_image_scanner_s;
 pub type zbar_window_t = zbar_window_s;
@@ -533,7 +538,7 @@ pub type zbar_video_t = zbar_video_s;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* "zERR" (LE) */
 /* application must terminate */
 /* might be able to recover and continue */
@@ -598,7 +603,7 @@ pub type zbar_processor_t = zbar_processor_s;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* gettimeofday */
 /* platform timer abstraction
  *
@@ -612,48 +617,50 @@ pub type zbar_processor_t = zbar_processor_s;
  */
 pub type zbar_timer_t = timespec;
 #[inline]
-unsafe extern "C" fn _zbar_thread_is_self(mut tid: zbar_thread_id_t)
- -> libc::c_int {
+unsafe extern fn _zbar_thread_is_self(mut tid: zbar_thread_id_t) -> libc::c_int {
     return pthread_equal(tid, pthread_self());
 }
 #[inline]
-unsafe extern "C" fn _zbar_thread_self() -> zbar_thread_id_t {
+unsafe extern fn _zbar_thread_self() -> zbar_thread_id_t {
     return pthread_self();
 }
 #[inline]
-unsafe extern "C" fn pthread_equal(mut __thread1: pthread_t,
-                                   mut __thread2: pthread_t) -> libc::c_int {
+unsafe extern fn pthread_equal(mut __thread1: pthread_t, mut __thread2: pthread_t) -> libc::c_int {
     return (__thread1 == __thread2) as libc::c_int;
 }
 #[inline]
-unsafe extern "C" fn _zbar_mutex_lock(mut lock: *mut zbar_mutex_t)
- -> libc::c_int {
+unsafe extern fn _zbar_mutex_lock(mut lock: *mut zbar_mutex_t) -> libc::c_int {
     let mut rc: libc::c_int = pthread_mutex_lock(lock);
     /* FIXME save system code */
     /*rc = err_capture(proc, SEV_ERROR, ZBAR_ERR_LOCKING, __func__,
-                       "unable to lock processor");*/
+    "unable to lock processor");*/
     return rc;
 }
 #[inline]
-unsafe extern "C" fn _zbar_mutex_unlock(mut lock: *mut zbar_mutex_t)
- -> libc::c_int {
+unsafe extern fn _zbar_mutex_unlock(mut lock: *mut zbar_mutex_t) -> libc::c_int {
     let mut rc: libc::c_int = pthread_mutex_unlock(lock);
     /* FIXME save system code */
     return rc;
 }
 #[inline]
-unsafe extern "C" fn _zbar_timer_check(mut timer: *mut zbar_timer_t)
- -> libc::c_int {
-    let mut now: timespec = timespec{tv_sec: 0, tv_nsec: 0,};
+unsafe extern fn _zbar_timer_check(mut timer: *mut zbar_timer_t) -> libc::c_int {
+    let mut now: timespec = timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
     let mut delay: libc::c_int = 0;
-    if timer.is_null() { return -(1 as libc::c_int) }
+    if timer.is_null() {
+        return -(1 as libc::c_int);
+    }
     clock_gettime(0 as libc::c_int, &mut now);
-    delay =
-        (((*timer).tv_sec - now.tv_sec) * 1000 as libc::c_int as libc::c_long
-             +
-             ((*timer).tv_nsec - now.tv_nsec) /
-                 1000000 as libc::c_int as libc::c_long) as libc::c_int;
-    return if delay >= 0 as libc::c_int { delay } else { 0 as libc::c_int };
+    delay = (((*timer).tv_sec - now.tv_sec) * 1000 as libc::c_int as libc::c_long
+        + ((*timer).tv_nsec - now.tv_nsec) / 1000000 as libc::c_int as libc::c_long)
+        as libc::c_int;
+    return if delay >= 0 as libc::c_int {
+        delay
+    } else {
+        0 as libc::c_int
+    };
 }
 /*------------------------------------------------------------------------
  *  Copyright 2007-2009 (c) Jeff Brown <spadix@users.sourceforge.net>
@@ -676,7 +683,7 @@ unsafe extern "C" fn _zbar_timer_check(mut timer: *mut zbar_timer_t)
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* the processor api lock is a recursive mutex with added capabilities
  * to completely drop all lock levels before blocking and atomically
  * unblock a waiting set.  the lock is implemented using a variation
@@ -690,39 +697,40 @@ unsafe extern "C" fn _zbar_timer_check(mut timer: *mut zbar_timer_t)
  * http://www.profcon.com/profcon/cargill/jgf/9809/SpecificNotification.html
  */
 #[inline]
-unsafe extern "C" fn proc_waiter_queue(mut proc_0: *mut zbar_processor_t)
- -> *mut proc_waiter_t {
+unsafe extern fn proc_waiter_queue(mut proc_0: *mut zbar_processor_t) -> *mut proc_waiter_t {
     let mut waiter: *mut proc_waiter_t = (*proc_0).free_waiter;
     if !waiter.is_null() {
         (*proc_0).free_waiter = (*waiter).next;
         (*waiter).events = 0 as libc::c_int as libc::c_uint
     } else {
-        waiter =
-            calloc(1 as libc::c_int as libc::c_ulong,
-                   ::std::mem::size_of::<proc_waiter_t>() as libc::c_ulong) as
-                *mut proc_waiter_t;
+        waiter = calloc(
+            1 as libc::c_int as libc::c_ulong,
+            ::std::mem::size_of::<proc_waiter_t>() as libc::c_ulong,
+        ) as *mut proc_waiter_t;
         _zbar_event_init(&mut (*waiter).notify);
     }
     (*waiter).next = 0 as *mut proc_waiter_s;
     (*waiter).requester = _zbar_thread_self();
     if !(*proc_0).wait_head.is_null() {
         (*(*proc_0).wait_tail).next = waiter
-    } else { (*proc_0).wait_head = waiter }
+    } else {
+        (*proc_0).wait_head = waiter
+    }
     (*proc_0).wait_tail = waiter;
     return waiter;
 }
 #[inline]
-unsafe extern "C" fn proc_waiter_dequeue(mut proc_0: *mut zbar_processor_t)
- -> *mut proc_waiter_t {
+unsafe extern fn proc_waiter_dequeue(mut proc_0: *mut zbar_processor_t) -> *mut proc_waiter_t {
     let mut prev: *mut proc_waiter_t = (*proc_0).wait_next;
     let mut waiter: *mut proc_waiter_t = 0 as *mut proc_waiter_t;
     if !prev.is_null() {
         waiter = (*prev).next
-    } else { waiter = (*proc_0).wait_head }
-    while !waiter.is_null() &&
-              (*waiter).events &
-                  (0x1 as libc::c_int | 0x2 as libc::c_int) as libc::c_uint !=
-                  0 {
+    } else {
+        waiter = (*proc_0).wait_head
+    }
+    while !waiter.is_null()
+        && (*waiter).events & (0x1 as libc::c_int | 0x2 as libc::c_int) as libc::c_uint != 0
+    {
         prev = waiter;
         (*proc_0).wait_next = waiter;
         waiter = (*waiter).next
@@ -730,8 +738,12 @@ unsafe extern "C" fn proc_waiter_dequeue(mut proc_0: *mut zbar_processor_t)
     if !waiter.is_null() {
         if !prev.is_null() {
             (*prev).next = (*waiter).next
-        } else { (*proc_0).wait_head = (*waiter).next }
-        if (*waiter).next.is_null() { (*proc_0).wait_tail = prev }
+        } else {
+            (*proc_0).wait_head = (*waiter).next
+        }
+        if (*waiter).next.is_null() {
+            (*proc_0).wait_tail = prev
+        }
         (*waiter).next = 0 as *mut proc_waiter_s;
         (*proc_0).lock_level = 1 as libc::c_int;
         (*proc_0).lock_owner = (*waiter).requester
@@ -739,126 +751,137 @@ unsafe extern "C" fn proc_waiter_dequeue(mut proc_0: *mut zbar_processor_t)
     return waiter;
 }
 #[inline]
-unsafe extern "C" fn proc_waiter_release(mut proc_0: *mut zbar_processor_t,
-                                         mut waiter: *mut proc_waiter_t) {
+unsafe extern fn proc_waiter_release(
+    mut proc_0: *mut zbar_processor_t,
+    mut waiter: *mut proc_waiter_t,
+) {
     if !waiter.is_null() {
         (*waiter).next = (*proc_0).free_waiter;
         (*proc_0).free_waiter = waiter
     };
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_lock(mut proc_0:
-                                                  *mut zbar_processor_t)
- -> libc::c_int {
+pub unsafe extern fn _zbar_processor_lock(mut proc_0: *mut zbar_processor_t) -> libc::c_int {
     if (*proc_0).lock_level == 0 {
         (*proc_0).lock_owner = _zbar_thread_self();
         (*proc_0).lock_level = 1 as libc::c_int;
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     if _zbar_thread_is_self((*proc_0).lock_owner) != 0 {
         (*proc_0).lock_level += 1;
-        return 0 as libc::c_int
+        return 0 as libc::c_int;
     }
     let mut waiter: *mut proc_waiter_t = proc_waiter_queue(proc_0);
-    _zbar_event_wait(&mut (*waiter).notify, &mut (*proc_0).mutex,
-                     0 as *mut zbar_timer_t);
+    _zbar_event_wait(&mut (*waiter).notify, &mut (*proc_0).mutex, 0 as *mut zbar_timer_t);
     if (*proc_0).lock_level == 1 as libc::c_int {
     } else {
-        __assert_fail(b"proc->lock_level == 1\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"zbar/processor/lock.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      116 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 45],
-                                                &[libc::c_char; 45]>(b"int _zbar_processor_lock(zbar_processor_t *)\x00")).as_ptr());
+        __assert_fail(
+            b"proc->lock_level == 1\x00" as *const u8 as *const libc::c_char,
+            b"zbar/processor/lock.c\x00" as *const u8 as *const libc::c_char,
+            116 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 45], &[libc::c_char; 45]>(
+                b"int _zbar_processor_lock(zbar_processor_t *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     if _zbar_thread_is_self((*proc_0).lock_owner) != 0 {
     } else {
-        __assert_fail(b"_zbar_thread_is_self(proc->lock_owner)\x00" as
-                          *const u8 as *const libc::c_char,
-                      b"zbar/processor/lock.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      117 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 45],
-                                                &[libc::c_char; 45]>(b"int _zbar_processor_lock(zbar_processor_t *)\x00")).as_ptr());
+        __assert_fail(
+            b"_zbar_thread_is_self(proc->lock_owner)\x00" as *const u8 as *const libc::c_char,
+            b"zbar/processor/lock.c\x00" as *const u8 as *const libc::c_char,
+            117 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 45], &[libc::c_char; 45]>(
+                b"int _zbar_processor_lock(zbar_processor_t *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     proc_waiter_release(proc_0, waiter);
     return 0 as libc::c_int;
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_unlock(mut proc_0:
-                                                    *mut zbar_processor_t,
-                                                mut all: libc::c_int)
- -> libc::c_int {
+pub unsafe extern fn _zbar_processor_unlock(
+    mut proc_0: *mut zbar_processor_t,
+    mut all: libc::c_int,
+) -> libc::c_int {
     if (*proc_0).lock_level > 0 as libc::c_int {
     } else {
-        __assert_fail(b"proc->lock_level > 0\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"zbar/processor/lock.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      126 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 52],
-                                                &[libc::c_char; 52]>(b"int _zbar_processor_unlock(zbar_processor_t *, int)\x00")).as_ptr());
+        __assert_fail(
+            b"proc->lock_level > 0\x00" as *const u8 as *const libc::c_char,
+            b"zbar/processor/lock.c\x00" as *const u8 as *const libc::c_char,
+            126 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 52], &[libc::c_char; 52]>(
+                b"int _zbar_processor_unlock(zbar_processor_t *, int)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     if _zbar_thread_is_self((*proc_0).lock_owner) != 0 {
     } else {
-        __assert_fail(b"_zbar_thread_is_self(proc->lock_owner)\x00" as
-                          *const u8 as *const libc::c_char,
-                      b"zbar/processor/lock.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      127 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 52],
-                                                &[libc::c_char; 52]>(b"int _zbar_processor_unlock(zbar_processor_t *, int)\x00")).as_ptr());
+        __assert_fail(
+            b"_zbar_thread_is_self(proc->lock_owner)\x00" as *const u8 as *const libc::c_char,
+            b"zbar/processor/lock.c\x00" as *const u8 as *const libc::c_char,
+            127 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 52], &[libc::c_char; 52]>(
+                b"int _zbar_processor_unlock(zbar_processor_t *, int)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     if all != 0 {
         (*proc_0).lock_level = 0 as libc::c_int
-    } else { (*proc_0).lock_level -= 1 }
+    } else {
+        (*proc_0).lock_level -= 1
+    }
     if (*proc_0).lock_level == 0 {
         let mut waiter: *mut proc_waiter_t = proc_waiter_dequeue(proc_0);
-        if !waiter.is_null() { _zbar_event_trigger(&mut (*waiter).notify); }
+        if !waiter.is_null() {
+            _zbar_event_trigger(&mut (*waiter).notify);
+        }
     }
     return 0 as libc::c_int;
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_notify(mut proc_0:
-                                                    *mut zbar_processor_t,
-                                                mut events: libc::c_uint) {
+pub unsafe extern fn _zbar_processor_notify(
+    mut proc_0: *mut zbar_processor_t,
+    mut events: libc::c_uint,
+) {
     (*proc_0).wait_next = 0 as *mut proc_waiter_t;
     let mut waiter: *mut proc_waiter_t = 0 as *mut proc_waiter_t;
     waiter = (*proc_0).wait_head;
     while !waiter.is_null() {
         (*waiter).events =
-            (*waiter).events & !events |
-                events & 0x80 as libc::c_int as libc::c_uint;
+            (*waiter).events & !events | events & 0x80 as libc::c_int as libc::c_uint;
         waiter = (*waiter).next
     }
     if (*proc_0).lock_level == 0 {
         waiter = proc_waiter_dequeue(proc_0);
-        if !waiter.is_null() { _zbar_event_trigger(&mut (*waiter).notify); }
+        if !waiter.is_null() {
+            _zbar_event_trigger(&mut (*waiter).notify);
+        }
     };
 }
 #[inline]
-unsafe extern "C" fn proc_wait_unthreaded(mut proc_0: *mut zbar_processor_t,
-                                          mut waiter: *mut proc_waiter_t,
-                                          mut timeout: *mut zbar_timer_t)
- -> libc::c_int {
-    let mut blocking: libc::c_int =
-        ((*proc_0).streaming != 0 &&
-             zbar_video_get_fd((*proc_0).video) < 0 as libc::c_int) as
-            libc::c_int;
+unsafe extern fn proc_wait_unthreaded(
+    mut proc_0: *mut zbar_processor_t,
+    mut waiter: *mut proc_waiter_t,
+    mut timeout: *mut zbar_timer_t,
+) -> libc::c_int {
+    let mut blocking: libc::c_int = ((*proc_0).streaming != 0
+        && zbar_video_get_fd((*proc_0).video) < 0 as libc::c_int)
+        as libc::c_int;
     _zbar_mutex_unlock(&mut (*proc_0).mutex);
     let mut rc: libc::c_int = 1 as libc::c_int;
-    while rc > 0 as libc::c_int &&
-              (*waiter).events &
-                  (0x1 as libc::c_int | 0x2 as libc::c_int) as libc::c_uint !=
-                  0 {
+    while rc > 0 as libc::c_int
+        && (*waiter).events & (0x1 as libc::c_int | 0x2 as libc::c_int) as libc::c_uint != 0
+    {
         /* FIXME lax w/the locking (though shouldn't matter...) */
         if blocking != 0 {
-            let mut img: *mut zbar_image_t =
-                zbar_video_next_image((*proc_0).video);
+            let mut img: *mut zbar_image_t = zbar_video_next_image((*proc_0).video);
             if img.is_null() {
                 rc = -(1 as libc::c_int);
-                break ;
+                break;
             } else {
                 /* FIXME reacquire API lock! (refactor w/video thread?) */
                 _zbar_mutex_lock(&mut (*proc_0).mutex);
@@ -868,13 +891,10 @@ unsafe extern "C" fn proc_wait_unthreaded(mut proc_0: *mut zbar_processor_t,
             }
         }
         let mut reltime: libc::c_int = _zbar_timer_check(timeout);
-        if blocking != 0 &&
-               (reltime < 0 as libc::c_int || reltime > 15 as libc::c_int) {
+        if blocking != 0 && (reltime < 0 as libc::c_int || reltime > 15 as libc::c_int) {
             reltime = 15 as libc::c_int
         }
-        rc =
-            _zbar_processor_input_wait(proc_0, 0 as *mut zbar_event_t,
-                                       reltime)
+        rc = _zbar_processor_input_wait(proc_0, 0 as *mut zbar_event_t, reltime)
     }
     _zbar_mutex_lock(&mut (*proc_0).mutex);
     return rc;
@@ -900,12 +920,12 @@ unsafe extern "C" fn proc_wait_unthreaded(mut proc_0: *mut zbar_processor_t,
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* max time to wait for input before looking for the next frame.
  * only used in unthreaded mode with blocking (non-pollable) video.
  * NB subject to precision of whatever timer is in use
  */
-/*ms*/
+/* ms */
 /* platform specific state wrapper */
 /* specific notification tracking */
 /* high-level API events */
@@ -936,23 +956,22 @@ unsafe extern "C" fn proc_wait_unthreaded(mut proc_0: *mut zbar_processor_t,
 /* API serialization lock */
 /* processor lock API */
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_processor_wait(mut proc_0:
-                                                  *mut zbar_processor_t,
-                                              mut events: libc::c_uint,
-                                              mut timeout: *mut zbar_timer_t)
- -> libc::c_int {
+pub unsafe extern fn _zbar_processor_wait(
+    mut proc_0: *mut zbar_processor_t,
+    mut events: libc::c_uint,
+    mut timeout: *mut zbar_timer_t,
+) -> libc::c_int {
     _zbar_mutex_lock(&mut (*proc_0).mutex);
     let mut save_level: libc::c_int = (*proc_0).lock_level;
     let mut waiter: *mut proc_waiter_t = proc_waiter_queue(proc_0);
-    (*waiter).events =
-        events & (0x1 as libc::c_int | 0x2 as libc::c_int) as libc::c_uint;
+    (*waiter).events = events & (0x1 as libc::c_int | 0x2 as libc::c_int) as libc::c_uint;
     _zbar_processor_unlock(proc_0, 1 as libc::c_int);
     let mut rc: libc::c_int = 0;
     if (*proc_0).threaded != 0 {
-        rc =
-            _zbar_event_wait(&mut (*waiter).notify, &mut (*proc_0).mutex,
-                             timeout)
-    } else { rc = proc_wait_unthreaded(proc_0, waiter, timeout) }
+        rc = _zbar_event_wait(&mut (*waiter).notify, &mut (*proc_0).mutex, timeout)
+    } else {
+        rc = proc_wait_unthreaded(proc_0, waiter, timeout)
+    }
     if rc <= 0 as libc::c_int || (*proc_0).threaded == 0 {
         /* reacquire api lock */
         (*waiter).events &= 0x80 as libc::c_int as libc::c_uint;
@@ -970,33 +989,35 @@ pub unsafe extern "C" fn _zbar_processor_wait(mut proc_0:
                                                         &[libc::c_char; 75]>(b"int _zbar_processor_wait(zbar_processor_t *, unsigned int, zbar_timer_t *)\x00")).as_ptr());
             }
         } else {
-            _zbar_event_wait(&mut (*waiter).notify, &mut (*proc_0).mutex,
-                             0 as *mut zbar_timer_t);
+            _zbar_event_wait(&mut (*waiter).notify, &mut (*proc_0).mutex, 0 as *mut zbar_timer_t);
         }
     }
-    if rc > 0 as libc::c_int &&
-           (*waiter).events & 0x80 as libc::c_int as libc::c_uint != 0 {
+    if rc > 0 as libc::c_int && (*waiter).events & 0x80 as libc::c_int as libc::c_uint != 0 {
         rc = -(1 as libc::c_int)
     }
     if (*proc_0).lock_level == 1 as libc::c_int {
     } else {
-        __assert_fail(b"proc->lock_level == 1\x00" as *const u8 as
-                          *const libc::c_char,
-                      b"zbar/processor/lock.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      220 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 75],
-                                                &[libc::c_char; 75]>(b"int _zbar_processor_wait(zbar_processor_t *, unsigned int, zbar_timer_t *)\x00")).as_ptr());
+        __assert_fail(
+            b"proc->lock_level == 1\x00" as *const u8 as *const libc::c_char,
+            b"zbar/processor/lock.c\x00" as *const u8 as *const libc::c_char,
+            220 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 75], &[libc::c_char; 75]>(
+                b"int _zbar_processor_wait(zbar_processor_t *, unsigned int, zbar_timer_t *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     if _zbar_thread_is_self((*proc_0).lock_owner) != 0 {
     } else {
-        __assert_fail(b"_zbar_thread_is_self(proc->lock_owner)\x00" as
-                          *const u8 as *const libc::c_char,
-                      b"zbar/processor/lock.c\x00" as *const u8 as
-                          *const libc::c_char,
-                      221 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 75],
-                                                &[libc::c_char; 75]>(b"int _zbar_processor_wait(zbar_processor_t *, unsigned int, zbar_timer_t *)\x00")).as_ptr());
+        __assert_fail(
+            b"_zbar_thread_is_self(proc->lock_owner)\x00" as *const u8 as *const libc::c_char,
+            b"zbar/processor/lock.c\x00" as *const u8 as *const libc::c_char,
+            221 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 75], &[libc::c_char; 75]>(
+                b"int _zbar_processor_wait(zbar_processor_t *, unsigned int, zbar_timer_t *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     (*proc_0).lock_level = save_level;
     proc_waiter_release(proc_0, waiter);

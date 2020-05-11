@@ -1,24 +1,26 @@
 use ::libc;
-extern "C" {
-    /*@}*/
-    /*------------------------------------------------------------*/
-/* * @name Image interface
- * stores image data samples along with associated format and size
- * metadata
- */
-/*@{*/
+extern {
+    /* @} */
+    /* ------------------------------------------------------------ */
+    /* * @name Image interface
+     * stores image data samples along with associated format and size
+     * metadata
+     */
+    /* @{ */
     pub type zbar_image_s;
     pub type window_state_s;
     /* * @internal type unsafe error API (don't use) */
     #[no_mangle]
-    fn _zbar_error_spew(object: *const libc::c_void, verbosity: libc::c_int)
-     -> libc::c_int;
+    fn _zbar_error_spew(object: *const libc::c_void, verbosity: libc::c_int) -> libc::c_int;
     #[no_mangle]
     fn __errno_location() -> *mut libc::c_int;
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     #[no_mangle]
     static mut _zbar_verbosity: libc::c_int;
 }
@@ -109,7 +111,7 @@ pub type zbar_image_t = zbar_image_s;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct zbar_window_s {
@@ -137,23 +139,25 @@ pub struct zbar_window_s {
     pub time: libc::c_ulong,
     pub time_avg: libc::c_ulong,
     pub state: *mut window_state_t,
-    pub init: Option<unsafe extern "C" fn(_: *mut zbar_window_t,
-                                          _: *mut zbar_image_t,
-                                          _: libc::c_int) -> libc::c_int>,
-    pub draw_image: Option<unsafe extern "C" fn(_: *mut zbar_window_t,
-                                                _: *mut zbar_image_t)
-                               -> libc::c_int>,
-    pub cleanup: Option<unsafe extern "C" fn(_: *mut zbar_window_t)
-                            -> libc::c_int>,
+    pub init: Option<
+        unsafe extern fn(
+            _: *mut zbar_window_t,
+            _: *mut zbar_image_t,
+            _: libc::c_int,
+        ) -> libc::c_int,
+    >,
+    pub draw_image:
+        Option<unsafe extern fn(_: *mut zbar_window_t, _: *mut zbar_image_t) -> libc::c_int>,
+    pub cleanup: Option<unsafe extern fn(_: *mut zbar_window_t) -> libc::c_int>,
 }
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Window interface
  * @anchor c-window
  * mid-level output window abstraction.
  * displays images to user-specified platform specific output window
  */
-/*@{*/
+/* @{ */
 /* * opaque window object. */
 pub type zbar_window_t = zbar_window_s;
 pub type window_state_t = window_state_s;
@@ -178,7 +182,7 @@ pub type window_state_t = window_state_s;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* simple platform mutex abstraction
  */
 pub type zbar_mutex_t = pthread_mutex_t;
@@ -203,7 +207,7 @@ pub type zbar_mutex_t = pthread_mutex_t;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* "zERR" (LE) */
 /* application must terminate */
 /* might be able to recover and continue */
@@ -239,11 +243,13 @@ pub const ZBAR_MOD_WINDOW: errmodule_e = 2;
 pub const ZBAR_MOD_VIDEO: errmodule_e = 1;
 pub const ZBAR_MOD_PROCESSOR: errmodule_e = 0;
 #[inline]
-unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
-                                 mut sev: errsev_t, mut type_0: zbar_error_t,
-                                 mut func: *const libc::c_char,
-                                 mut detail: *const libc::c_char)
- -> libc::c_int {
+unsafe extern fn err_capture(
+    mut container: *const libc::c_void,
+    mut sev: errsev_t,
+    mut type_0: zbar_error_t,
+    mut func: *const libc::c_char,
+    mut detail: *const libc::c_char,
+) -> libc::c_int {
     let mut err: *mut errinfo_t = container as *mut errinfo_t;
     if (*err).magic == 0x5252457a as libc::c_int as libc::c_uint {
     } else {
@@ -255,8 +261,7 @@ unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
                       (*::std::mem::transmute::<&[u8; 82],
                                                 &[libc::c_char; 82]>(b"int err_capture(const void *, errsev_t, zbar_error_t, const char *, const char *)\x00")).as_ptr());
     }
-    if type_0 as libc::c_uint ==
-           ZBAR_ERR_SYSTEM as libc::c_int as libc::c_uint {
+    if type_0 as libc::c_uint == ZBAR_ERR_SYSTEM as libc::c_int as libc::c_uint {
         (*err).errnum = *__errno_location()
     }
     (*err).sev = sev;
@@ -297,108 +302,136 @@ unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 #[inline]
-unsafe extern "C" fn null_error(mut m: *mut libc::c_void,
-                                mut func: *const libc::c_char)
- -> libc::c_int {
-    return err_capture(m, SEV_ERROR, ZBAR_ERR_UNSUPPORTED, func,
-                       b"not compiled with output window support\x00" as
-                           *const u8 as *const libc::c_char);
+unsafe extern fn null_error(
+    mut m: *mut libc::c_void,
+    mut func: *const libc::c_char,
+) -> libc::c_int {
+    return err_capture(
+        m,
+        SEV_ERROR,
+        ZBAR_ERR_UNSUPPORTED,
+        func,
+        b"not compiled with output window support\x00" as *const u8 as *const libc::c_char,
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_window_attach(mut w: *mut zbar_window_t,
-                                             mut display: *mut libc::c_void,
-                                             mut win: libc::c_ulong)
- -> libc::c_int {
-    return null_error(w as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 20],
-                                                &[libc::c_char; 20]>(b"_zbar_window_attach\x00")).as_ptr());
+pub unsafe extern fn _zbar_window_attach(
+    mut w: *mut zbar_window_t,
+    mut display: *mut libc::c_void,
+    mut win: libc::c_ulong,
+) -> libc::c_int {
+    return null_error(
+        w as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 20], &[libc::c_char; 20]>(b"_zbar_window_attach\x00"))
+            .as_ptr(),
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_window_expose(mut w: *mut zbar_window_t,
-                                             mut x: libc::c_int,
-                                             mut y: libc::c_int,
-                                             mut width: libc::c_int,
-                                             mut height: libc::c_int)
- -> libc::c_int {
-    return null_error(w as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 20],
-                                                &[libc::c_char; 20]>(b"_zbar_window_expose\x00")).as_ptr());
+pub unsafe extern fn _zbar_window_expose(
+    mut w: *mut zbar_window_t,
+    mut x: libc::c_int,
+    mut y: libc::c_int,
+    mut width: libc::c_int,
+    mut height: libc::c_int,
+) -> libc::c_int {
+    return null_error(
+        w as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 20], &[libc::c_char; 20]>(b"_zbar_window_expose\x00"))
+            .as_ptr(),
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_window_resize(mut w: *mut zbar_window_t)
- -> libc::c_int {
+pub unsafe extern fn _zbar_window_resize(mut w: *mut zbar_window_t) -> libc::c_int {
     return 0 as libc::c_int;
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_window_clear(mut w: *mut zbar_window_t)
- -> libc::c_int {
-    return null_error(w as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 19],
-                                                &[libc::c_char; 19]>(b"_zbar_window_clear\x00")).as_ptr());
+pub unsafe extern fn _zbar_window_clear(mut w: *mut zbar_window_t) -> libc::c_int {
+    return null_error(
+        w as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 19], &[libc::c_char; 19]>(b"_zbar_window_clear\x00"))
+            .as_ptr(),
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_window_begin(mut w: *mut zbar_window_t)
- -> libc::c_int {
-    return null_error(w as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 19],
-                                                &[libc::c_char; 19]>(b"_zbar_window_begin\x00")).as_ptr());
+pub unsafe extern fn _zbar_window_begin(mut w: *mut zbar_window_t) -> libc::c_int {
+    return null_error(
+        w as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 19], &[libc::c_char; 19]>(b"_zbar_window_begin\x00"))
+            .as_ptr(),
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_window_end(mut w: *mut zbar_window_t)
- -> libc::c_int {
-    return null_error(w as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 17],
-                                                &[libc::c_char; 17]>(b"_zbar_window_end\x00")).as_ptr());
+pub unsafe extern fn _zbar_window_end(mut w: *mut zbar_window_t) -> libc::c_int {
+    return null_error(
+        w as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 17], &[libc::c_char; 17]>(b"_zbar_window_end\x00"))
+            .as_ptr(),
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_window_draw_marker(mut w: *mut zbar_window_t,
-                                                  mut rgb: uint32_t,
-                                                  mut p: point_t)
- -> libc::c_int {
-    return null_error(w as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 25],
-                                                &[libc::c_char; 25]>(b"_zbar_window_draw_marker\x00")).as_ptr());
+pub unsafe extern fn _zbar_window_draw_marker(
+    mut w: *mut zbar_window_t,
+    mut rgb: uint32_t,
+    mut p: point_t,
+) -> libc::c_int {
+    return null_error(
+        w as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 25], &[libc::c_char; 25]>(b"_zbar_window_draw_marker\x00"))
+            .as_ptr(),
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_window_draw_polygon(mut w: *mut zbar_window_t,
-                                                   mut rgb: uint32_t,
-                                                   mut pts: *const point_t,
-                                                   mut npts: libc::c_int)
- -> libc::c_int {
-    return null_error(w as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 26],
-                                                &[libc::c_char; 26]>(b"_zbar_window_draw_polygon\x00")).as_ptr());
+pub unsafe extern fn _zbar_window_draw_polygon(
+    mut w: *mut zbar_window_t,
+    mut rgb: uint32_t,
+    mut pts: *const point_t,
+    mut npts: libc::c_int,
+) -> libc::c_int {
+    return null_error(
+        w as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 26], &[libc::c_char; 26]>(
+            b"_zbar_window_draw_polygon\x00",
+        ))
+        .as_ptr(),
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_window_draw_text(mut w: *mut zbar_window_t,
-                                                mut rgb: uint32_t,
-                                                mut p: point_t,
-                                                mut text: *const libc::c_char)
- -> libc::c_int {
-    return null_error(w as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 23],
-                                                &[libc::c_char; 23]>(b"_zbar_window_draw_text\x00")).as_ptr());
+pub unsafe extern fn _zbar_window_draw_text(
+    mut w: *mut zbar_window_t,
+    mut rgb: uint32_t,
+    mut p: point_t,
+    mut text: *const libc::c_char,
+) -> libc::c_int {
+    return null_error(
+        w as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 23], &[libc::c_char; 23]>(b"_zbar_window_draw_text\x00"))
+            .as_ptr(),
+    );
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_window_fill_rect(mut w: *mut zbar_window_t,
-                                                mut rgb: uint32_t,
-                                                mut org: point_t,
-                                                mut size: point_t)
- -> libc::c_int {
-    return null_error(w as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 23],
-                                                &[libc::c_char; 23]>(b"_zbar_window_fill_rect\x00")).as_ptr());
+pub unsafe extern fn _zbar_window_fill_rect(
+    mut w: *mut zbar_window_t,
+    mut rgb: uint32_t,
+    mut org: point_t,
+    mut size: point_t,
+) -> libc::c_int {
+    return null_error(
+        w as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 23], &[libc::c_char; 23]>(b"_zbar_window_fill_rect\x00"))
+            .as_ptr(),
+    );
 }
 /* window.draw has to be thread safe wrt/other apis
  * FIXME should be a semaphore
  */
 /* PAL interface */
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_window_draw_logo(mut w: *mut zbar_window_t)
- -> libc::c_int {
-    return null_error(w as *mut libc::c_void,
-                      (*::std::mem::transmute::<&[u8; 23],
-                                                &[libc::c_char; 23]>(b"_zbar_window_draw_logo\x00")).as_ptr());
+pub unsafe extern fn _zbar_window_draw_logo(mut w: *mut zbar_window_t) -> libc::c_int {
+    return null_error(
+        w as *mut libc::c_void,
+        (*::std::mem::transmute::<&[u8; 23], &[libc::c_char; 23]>(b"_zbar_window_draw_logo\x00"))
+            .as_ptr(),
+    );
 }

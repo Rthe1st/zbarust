@@ -1,11 +1,13 @@
 use ::libc;
-extern "C" {
+extern {
     #[no_mangle]
-    fn strtol(__nptr: *const libc::c_char, __endptr: *mut *mut libc::c_char,
-              __base: libc::c_int) -> libc::c_long;
+    fn strtol(
+        __nptr: *const libc::c_char,
+        __endptr: *mut *mut libc::c_char,
+        __base: libc::c_int,
+    ) -> libc::c_long;
     #[no_mangle]
-    fn strncmp(_: *const libc::c_char, _: *const libc::c_char,
-               _: libc::c_ulong) -> libc::c_int;
+    fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
     #[no_mangle]
     fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
     #[no_mangle]
@@ -73,21 +75,21 @@ pub const ZBAR_CFG_ENABLE: zbar_config_e = 0;
 /* *< Code 93. @since 0.11 */
 /* *< Code 128 */
 /* * mask for base symbol type.
-     * @deprecated in 0.11, remove this from existing code
-     */
+ * @deprecated in 0.11, remove this from existing code
+ */
 /* * 2-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
-     * 2-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
+ * 2-digit GS1 add-ons
+ */
 /* * 5-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
-     * 5-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
+ * 5-digit GS1 add-ons
+ */
 /* * add-on flag mask.
-     * @deprecated in 0.11, GS1 add-ons are represented using composite
-     * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
-     * or ::ZBAR_EAN5
-     */
+ * @deprecated in 0.11, GS1 add-ons are represented using composite
+ * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
+ * or ::ZBAR_EAN5
+ */
 /* * decoder configuration options.
  * @since 0.4
  */
@@ -132,246 +134,336 @@ pub type zbar_config_t = zbar_config_e;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* strtol */
 /* strchr, strncmp, strlen */
 #[no_mangle]
-pub unsafe extern "C" fn zbar_parse_config(mut cfgstr: *const libc::c_char,
-                                           mut sym: *mut zbar_symbol_type_t,
-                                           mut cfg: *mut zbar_config_t,
-                                           mut val: *mut libc::c_int)
- -> libc::c_int {
-    let mut dot: *const libc::c_char =
-        0 as *const libc::c_char; /* FIXME lame */
-    let mut eq: *const libc::c_char =
-        0 as
-            *const libc::c_char; /* handle this here so we can override later */
+pub unsafe extern fn zbar_parse_config(
+    mut cfgstr: *const libc::c_char,
+    mut sym: *mut zbar_symbol_type_t,
+    mut cfg: *mut zbar_config_t,
+    mut val: *mut libc::c_int,
+) -> libc::c_int {
+    let mut dot: *const libc::c_char = 0 as *const libc::c_char; /* FIXME lame */
+    let mut eq: *const libc::c_char = 0 as *const libc::c_char; /* handle this here so we can override later */
     let mut len: libc::c_int = 0;
     let mut negate: libc::c_char = 0;
-    if cfgstr.is_null() { return 1 as libc::c_int }
+    if cfgstr.is_null() {
+        return 1 as libc::c_int;
+    }
     dot = strchr(cfgstr, '.' as i32);
     if !dot.is_null() {
         let mut len_0: libc::c_int =
             dot.wrapping_offset_from(cfgstr) as libc::c_long as libc::c_int;
-        if len_0 == 0 ||
-               len_0 == 1 as libc::c_int &&
-                   strncmp(cfgstr,
-                           b"*\x00" as *const u8 as *const libc::c_char,
-                           len_0 as libc::c_ulong) == 0 {
+        if len_0 == 0
+            || len_0 == 1 as libc::c_int
+                && strncmp(
+                    cfgstr,
+                    b"*\x00" as *const u8 as *const libc::c_char,
+                    len_0 as libc::c_ulong,
+                ) == 0
+        {
             *sym = ZBAR_NONE
         } else if len_0 < 2 as libc::c_int {
-            return 1 as libc::c_int
+            return 1 as libc::c_int;
         } else {
-            if strncmp(cfgstr,
-                       b"qrcode\x00" as *const u8 as *const libc::c_char,
-                       len_0 as libc::c_ulong) == 0 {
+            if strncmp(
+                cfgstr,
+                b"qrcode\x00" as *const u8 as *const libc::c_char,
+                len_0 as libc::c_ulong,
+            ) == 0
+            {
                 *sym = ZBAR_QRCODE
-            } else if strncmp(cfgstr,
-                              b"db\x00" as *const u8 as *const libc::c_char,
-                              len_0 as libc::c_ulong) == 0 {
+            } else if strncmp(
+                cfgstr,
+                b"db\x00" as *const u8 as *const libc::c_char,
+                len_0 as libc::c_ulong,
+            ) == 0
+            {
                 *sym = ZBAR_DATABAR
             } else if len_0 < 3 as libc::c_int {
-                return 1 as libc::c_int
+                return 1 as libc::c_int;
             } else {
-                if strncmp(cfgstr,
-                           b"upca\x00" as *const u8 as *const libc::c_char,
-                           len_0 as libc::c_ulong) == 0 {
+                if strncmp(
+                    cfgstr,
+                    b"upca\x00" as *const u8 as *const libc::c_char,
+                    len_0 as libc::c_ulong,
+                ) == 0
+                {
                     *sym = ZBAR_UPCA
-                } else if strncmp(cfgstr,
-                                  b"upce\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len_0 as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"upce\x00" as *const u8 as *const libc::c_char,
+                    len_0 as libc::c_ulong,
+                ) == 0
+                {
                     *sym = ZBAR_UPCE
-                } else if strncmp(cfgstr,
-                                  b"ean13\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len_0 as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"ean13\x00" as *const u8 as *const libc::c_char,
+                    len_0 as libc::c_ulong,
+                ) == 0
+                {
                     *sym = ZBAR_EAN13
-                } else if strncmp(cfgstr,
-                                  b"ean8\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len_0 as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"ean8\x00" as *const u8 as *const libc::c_char,
+                    len_0 as libc::c_ulong,
+                ) == 0
+                {
                     *sym = ZBAR_EAN8
-                } else if strncmp(cfgstr,
-                                  b"ean5\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len_0 as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"ean5\x00" as *const u8 as *const libc::c_char,
+                    len_0 as libc::c_ulong,
+                ) == 0
+                {
                     *sym = ZBAR_EAN5
-                } else if strncmp(cfgstr,
-                                  b"ean2\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len_0 as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"ean2\x00" as *const u8 as *const libc::c_char,
+                    len_0 as libc::c_ulong,
+                ) == 0
+                {
                     *sym = ZBAR_EAN2
-                } else if strncmp(cfgstr,
-                                  b"composite\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len_0 as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"composite\x00" as *const u8 as *const libc::c_char,
+                    len_0 as libc::c_ulong,
+                ) == 0
+                {
                     *sym = ZBAR_COMPOSITE
-                } else if strncmp(cfgstr,
-                                  b"i25\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len_0 as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"i25\x00" as *const u8 as *const libc::c_char,
+                    len_0 as libc::c_ulong,
+                ) == 0
+                {
                     *sym = ZBAR_I25
                 } else if len_0 < 4 as libc::c_int {
-                    return 1 as libc::c_int
+                    return 1 as libc::c_int;
                 } else {
-                    if strncmp(cfgstr,
-                               b"scanner\x00" as *const u8 as
-                                   *const libc::c_char,
-                               len_0 as libc::c_ulong) == 0 {
+                    if strncmp(
+                        cfgstr,
+                        b"scanner\x00" as *const u8 as *const libc::c_char,
+                        len_0 as libc::c_ulong,
+                    ) == 0
+                    {
                         *sym = ZBAR_PARTIAL
-                    } else if strncmp(cfgstr,
-                                      b"isbn13\x00" as *const u8 as
-                                          *const libc::c_char,
-                                      len_0 as libc::c_ulong) == 0 {
+                    } else if strncmp(
+                        cfgstr,
+                        b"isbn13\x00" as *const u8 as *const libc::c_char,
+                        len_0 as libc::c_ulong,
+                    ) == 0
+                    {
                         *sym = ZBAR_ISBN13
-                    } else if strncmp(cfgstr,
-                                      b"isbn10\x00" as *const u8 as
-                                          *const libc::c_char,
-                                      len_0 as libc::c_ulong) == 0 {
+                    } else if strncmp(
+                        cfgstr,
+                        b"isbn10\x00" as *const u8 as *const libc::c_char,
+                        len_0 as libc::c_ulong,
+                    ) == 0
+                    {
                         *sym = ZBAR_ISBN10
-                    } else if strncmp(cfgstr,
-                                      b"db-exp\x00" as *const u8 as
-                                          *const libc::c_char,
-                                      len_0 as libc::c_ulong) == 0 {
+                    } else if strncmp(
+                        cfgstr,
+                        b"db-exp\x00" as *const u8 as *const libc::c_char,
+                        len_0 as libc::c_ulong,
+                    ) == 0
+                    {
                         *sym = ZBAR_DATABAR_EXP
-                    } else if strncmp(cfgstr,
-                                      b"codabar\x00" as *const u8 as
-                                          *const libc::c_char,
-                                      len_0 as libc::c_ulong) == 0 {
+                    } else if strncmp(
+                        cfgstr,
+                        b"codabar\x00" as *const u8 as *const libc::c_char,
+                        len_0 as libc::c_ulong,
+                    ) == 0
+                    {
                         *sym = ZBAR_CODABAR
                     } else if len_0 < 6 as libc::c_int {
-                        return 1 as libc::c_int
+                        return 1 as libc::c_int;
                     } else {
-                        if strncmp(cfgstr,
-                                   b"code93\x00" as *const u8 as
-                                       *const libc::c_char,
-                                   len_0 as libc::c_ulong) == 0 {
+                        if strncmp(
+                            cfgstr,
+                            b"code93\x00" as *const u8 as *const libc::c_char,
+                            len_0 as libc::c_ulong,
+                        ) == 0
+                        {
                             *sym = ZBAR_CODE93
-                        } else if strncmp(cfgstr,
-                                          b"code39\x00" as *const u8 as
-                                              *const libc::c_char,
-                                          len_0 as libc::c_ulong) == 0 {
+                        } else if strncmp(
+                            cfgstr,
+                            b"code39\x00" as *const u8 as *const libc::c_char,
+                            len_0 as libc::c_ulong,
+                        ) == 0
+                        {
                             *sym = ZBAR_CODE39
-                        } else if strncmp(cfgstr,
-                                          b"pdf417\x00" as *const u8 as
-                                              *const libc::c_char,
-                                          len_0 as libc::c_ulong) == 0 {
+                        } else if strncmp(
+                            cfgstr,
+                            b"pdf417\x00" as *const u8 as *const libc::c_char,
+                            len_0 as libc::c_ulong,
+                        ) == 0
+                        {
                             *sym = ZBAR_PDF417
                         } else if len_0 < 7 as libc::c_int {
-                            return 1 as libc::c_int
+                            return 1 as libc::c_int;
                         } else {
-                            if strncmp(cfgstr,
-                                       b"code128\x00" as *const u8 as
-                                           *const libc::c_char,
-                                       len_0 as libc::c_ulong) == 0 {
+                            if strncmp(
+                                cfgstr,
+                                b"code128\x00" as *const u8 as *const libc::c_char,
+                                len_0 as libc::c_ulong,
+                            ) == 0
+                            {
                                 *sym = ZBAR_CODE128
-                            } else if strncmp(cfgstr,
-                                              b"databar\x00" as *const u8 as
-                                                  *const libc::c_char,
-                                              len_0 as libc::c_ulong) == 0 {
+                            } else if strncmp(
+                                cfgstr,
+                                b"databar\x00" as *const u8 as *const libc::c_char,
+                                len_0 as libc::c_ulong,
+                            ) == 0
+                            {
                                 *sym = ZBAR_DATABAR
-                            } else if strncmp(cfgstr,
-                                              b"databar-exp\x00" as *const u8
-                                                  as *const libc::c_char,
-                                              len_0 as libc::c_ulong) == 0 {
+                            } else if strncmp(
+                                cfgstr,
+                                b"databar-exp\x00" as *const u8 as *const libc::c_char,
+                                len_0 as libc::c_ulong,
+                            ) == 0
+                            {
                                 *sym = ZBAR_DATABAR_EXP
-                            } else { return 1 as libc::c_int }
+                            } else {
+                                return 1 as libc::c_int;
+                            }
                         }
                     }
                 }
             }
         }
         cfgstr = dot.offset(1 as libc::c_int as isize)
-    } else { *sym = ZBAR_NONE }
+    } else {
+        *sym = ZBAR_NONE
+    }
     len = strlen(cfgstr) as libc::c_int;
     eq = strchr(cfgstr, '=' as i32);
     if !eq.is_null() {
         len = eq.wrapping_offset_from(cfgstr) as libc::c_long as libc::c_int
-    } else { *val = 1 as libc::c_int }
+    } else {
+        *val = 1 as libc::c_int
+    }
     negate = 0 as libc::c_int as libc::c_char;
-    if len > 3 as libc::c_int &&
-           strncmp(cfgstr, b"no-\x00" as *const u8 as *const libc::c_char,
-                   3 as libc::c_int as libc::c_ulong) == 0 {
+    if len > 3 as libc::c_int
+        && strncmp(
+            cfgstr,
+            b"no-\x00" as *const u8 as *const libc::c_char,
+            3 as libc::c_int as libc::c_ulong,
+        ) == 0
+    {
         negate = 1 as libc::c_int as libc::c_char;
         cfgstr = cfgstr.offset(3 as libc::c_int as isize);
         len -= 3 as libc::c_int
     }
     if len < 1 as libc::c_int {
-        return 1 as libc::c_int
+        return 1 as libc::c_int;
     } else {
-        if strncmp(cfgstr,
-                   b"y-density\x00" as *const u8 as *const libc::c_char,
-                   len as libc::c_ulong) == 0 {
+        if strncmp(
+            cfgstr,
+            b"y-density\x00" as *const u8 as *const libc::c_char,
+            len as libc::c_ulong,
+        ) == 0
+        {
             *cfg = ZBAR_CFG_Y_DENSITY
-        } else if strncmp(cfgstr,
-                          b"x-density\x00" as *const u8 as
-                              *const libc::c_char, len as libc::c_ulong) == 0
-         {
+        } else if strncmp(
+            cfgstr,
+            b"x-density\x00" as *const u8 as *const libc::c_char,
+            len as libc::c_ulong,
+        ) == 0
+        {
             *cfg = ZBAR_CFG_X_DENSITY
         } else if len < 2 as libc::c_int {
-            return 1 as libc::c_int
+            return 1 as libc::c_int;
         } else {
-            if strncmp(cfgstr,
-                       b"enable\x00" as *const u8 as *const libc::c_char,
-                       len as libc::c_ulong) == 0 {
+            if strncmp(
+                cfgstr,
+                b"enable\x00" as *const u8 as *const libc::c_char,
+                len as libc::c_ulong,
+            ) == 0
+            {
                 *cfg = ZBAR_CFG_ENABLE
             } else if len < 3 as libc::c_int {
-                return 1 as libc::c_int
+                return 1 as libc::c_int;
             } else {
-                if strncmp(cfgstr,
-                           b"disable\x00" as *const u8 as *const libc::c_char,
-                           len as libc::c_ulong) == 0 {
+                if strncmp(
+                    cfgstr,
+                    b"disable\x00" as *const u8 as *const libc::c_char,
+                    len as libc::c_ulong,
+                ) == 0
+                {
                     *cfg = ZBAR_CFG_ENABLE;
                     negate = (negate == 0) as libc::c_int as libc::c_char
-                    /* no-disable ?!? */
-                } else if strncmp(cfgstr,
-                                  b"min-length\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len as libc::c_ulong) == 0 {
+                /* no-disable ?!? */
+                } else if strncmp(
+                    cfgstr,
+                    b"min-length\x00" as *const u8 as *const libc::c_char,
+                    len as libc::c_ulong,
+                ) == 0
+                {
                     *cfg = ZBAR_CFG_MIN_LEN
-                } else if strncmp(cfgstr,
-                                  b"max-length\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"max-length\x00" as *const u8 as *const libc::c_char,
+                    len as libc::c_ulong,
+                ) == 0
+                {
                     *cfg = ZBAR_CFG_MAX_LEN
-                } else if strncmp(cfgstr,
-                                  b"ascii\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"ascii\x00" as *const u8 as *const libc::c_char,
+                    len as libc::c_ulong,
+                ) == 0
+                {
                     *cfg = ZBAR_CFG_ASCII
-                } else if strncmp(cfgstr,
-                                  b"add-check\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"add-check\x00" as *const u8 as *const libc::c_char,
+                    len as libc::c_ulong,
+                ) == 0
+                {
                     *cfg = ZBAR_CFG_ADD_CHECK
-                } else if strncmp(cfgstr,
-                                  b"emit-check\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"emit-check\x00" as *const u8 as *const libc::c_char,
+                    len as libc::c_ulong,
+                ) == 0
+                {
                     *cfg = ZBAR_CFG_EMIT_CHECK
-                } else if strncmp(cfgstr,
-                                  b"uncertainty\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"uncertainty\x00" as *const u8 as *const libc::c_char,
+                    len as libc::c_ulong,
+                ) == 0
+                {
                     *cfg = ZBAR_CFG_UNCERTAINTY
-                } else if strncmp(cfgstr,
-                                  b"position\x00" as *const u8 as
-                                      *const libc::c_char,
-                                  len as libc::c_ulong) == 0 {
+                } else if strncmp(
+                    cfgstr,
+                    b"position\x00" as *const u8 as *const libc::c_char,
+                    len as libc::c_ulong,
+                ) == 0
+                {
                     *cfg = ZBAR_CFG_POSITION
-                } else { return 1 as libc::c_int }
+                } else {
+                    return 1 as libc::c_int;
+                }
             }
         }
     }
     if !eq.is_null() {
         *__errno_location() = 0 as libc::c_int;
-        *val =
-            strtol(eq.offset(1 as libc::c_int as isize),
-                   0 as *mut *mut libc::c_char, 0 as libc::c_int) as
-                libc::c_int;
-        if *__errno_location() != 0 { return 1 as libc::c_int }
+        *val = strtol(
+            eq.offset(1 as libc::c_int as isize),
+            0 as *mut *mut libc::c_char,
+            0 as libc::c_int,
+        ) as libc::c_int;
+        if *__errno_location() != 0 {
+            return 1 as libc::c_int;
+        }
     }
-    if negate != 0 { *val = (*val == 0) as libc::c_int }
+    if negate != 0 {
+        *val = (*val == 0) as libc::c_int
+    }
     return 0 as libc::c_int;
 }

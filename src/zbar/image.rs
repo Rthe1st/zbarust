@@ -1,5 +1,5 @@
 use ::libc;
-extern "C" {
+extern {
     pub type _IO_wide_data;
     pub type _IO_codecvt;
     pub type _IO_marker;
@@ -15,22 +15,22 @@ extern "C" {
     #[no_mangle]
     fn fclose(__stream: *mut FILE) -> libc::c_int;
     #[no_mangle]
-    fn fopen(__filename: *const libc::c_char, __modes: *const libc::c_char)
-     -> *mut FILE;
+    fn fopen(__filename: *const libc::c_char, __modes: *const libc::c_char) -> *mut FILE;
     #[no_mangle]
     fn fprintf(_: *mut FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
     #[no_mangle]
-    fn snprintf(_: *mut libc::c_char, _: libc::c_ulong,
-                _: *const libc::c_char, _: ...) -> libc::c_int;
+    fn snprintf(
+        _: *mut libc::c_char,
+        _: libc::c_ulong,
+        _: *const libc::c_char,
+        _: ...
+    ) -> libc::c_int;
     #[no_mangle]
-    fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t,
-              __s: *mut FILE) -> size_t;
+    fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
     #[no_mangle]
-    fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong)
-     -> *mut libc::c_void;
+    fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
     #[no_mangle]
-    fn strcpy(_: *mut libc::c_char, _: *const libc::c_char)
-     -> *mut libc::c_char;
+    fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
     #[no_mangle]
     fn strlen(_: *const libc::c_char) -> libc::c_ulong;
     #[no_mangle]
@@ -38,12 +38,14 @@ extern "C" {
     #[no_mangle]
     fn __errno_location() -> *mut libc::c_int;
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     #[no_mangle]
-    fn zbar_symbol_set_ref(symbols: *const zbar_symbol_set_t,
-                           refs: libc::c_int);
+    fn zbar_symbol_set_ref(symbols: *const zbar_symbol_set_t, refs: libc::c_int);
     #[no_mangle]
     static mut _zbar_verbosity: libc::c_int;
     #[no_mangle]
@@ -96,25 +98,25 @@ pub type FILE = _IO_FILE;
 /* * decoded symbol type. */
 pub type zbar_symbol_type_e = libc::c_uint;
 /* * add-on flag mask.
-     * @deprecated in 0.11, GS1 add-ons are represented using composite
-     * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
-     * or ::ZBAR_EAN5
-     */
+ * @deprecated in 0.11, GS1 add-ons are represented using composite
+ * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
+ * or ::ZBAR_EAN5
+ */
 pub const ZBAR_ADDON: zbar_symbol_type_e = 1792;
 /* * 5-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
-     * 5-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
+ * 5-digit GS1 add-ons
+ */
 pub const ZBAR_ADDON5: zbar_symbol_type_e = 1280;
 /* * 2-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
-     * 2-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
+ * 2-digit GS1 add-ons
+ */
 pub const ZBAR_ADDON2: zbar_symbol_type_e = 512;
 /* *< Code 128 */
 /* * mask for base symbol type.
-     * @deprecated in 0.11, remove this from existing code
-     */
+ * @deprecated in 0.11, remove this from existing code
+ */
 pub const ZBAR_SYMBOL: zbar_symbol_type_e = 255;
 /* *< Code 93. @since 0.11 */
 pub const ZBAR_CODE128: zbar_symbol_type_e = 128;
@@ -192,7 +194,7 @@ pub type zbar_orientation_t = zbar_orientation_e;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* number of filtered symbols */
 /* first of decoded symbol results */
 /* last of unfiltered symbol results */
@@ -247,7 +249,7 @@ pub type zbar_symbol_t = zbar_symbol_s;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 pub type refcnt_t = libc::c_int;
 pub type point_t = point_s;
 #[derive(Copy, Clone)]
@@ -277,7 +279,7 @@ pub struct point_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* unpack size/location of component */
 /* coarse image format categorization.
  * to limit conversion variations
@@ -308,15 +310,15 @@ pub type zbar_image_t = zbar_image_s;
 /* * read back an image in the format written by zbar_image_write()
  * @note TBD
  */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Processor interface
  * @anchor c-processor
  * high-level self-contained image processor.
  * processes video and images for barcodes, optionally displaying
  * images to a library owned output window
  */
-/*@{*/
+/* @{ */
 /* * opaque standalone processor object. */
 /* * constructor.
  * if threaded is set and threading is available the processor
@@ -437,19 +439,17 @@ pub type zbar_image_t = zbar_image_s;
  */
 /* * retrieve the detail string for the last processor error. */
 /* * retrieve the type code for the last processor error. */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Video interface
  * @anchor c-video
  * mid-level video source abstraction.
  * captures images from a video device
  */
-/*@{*/
+/* @{ */
 /* * opaque video object. */
 pub type zbar_video_t = zbar_video_s;
-pub type zbar_image_cleanup_handler_t
-    =
-    unsafe extern "C" fn(_: *mut zbar_image_t) -> ();
+pub type zbar_image_cleanup_handler_t = unsafe extern fn(_: *mut zbar_image_t) -> ();
 pub type zimg_hdr_t = zimg_hdr_s;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -469,24 +469,23 @@ pub struct zimg_hdr_s {
 /* size/location a la RGB_BITS() */
 /* chroma subsampling in each axis */
 /* channel ordering flags
-                                         *   bit0: 0=UV, 1=VU
-                                         *   bit1: 0=Y/chroma, 1=chroma/Y
-                                         */
+ *   bit0: 0=UV, 1=VU
+ *   bit1: 0=Y/chroma, 1=chroma/Y
+ */
 /* quick compare equivalent formats */
 #[inline]
-unsafe extern "C" fn _zbar_image_refcnt(mut img: *mut zbar_image_t,
-                                        mut delta: libc::c_int) {
-    if _zbar_refcnt(&mut (*img).refcnt, delta) == 0 &&
-           delta <= 0 as libc::c_int {
+unsafe extern fn _zbar_image_refcnt(mut img: *mut zbar_image_t, mut delta: libc::c_int) {
+    if _zbar_refcnt(&mut (*img).refcnt, delta) == 0 && delta <= 0 as libc::c_int {
         if (*img).cleanup.is_some() {
             (*img).cleanup.expect("non-null function pointer")(img);
         }
-        if (*img).src.is_null() { _zbar_image_free(img); }
+        if (*img).src.is_null() {
+            _zbar_image_free(img);
+        }
     };
 }
 #[inline]
-unsafe extern "C" fn _zbar_image_copy_size(mut dst: *mut zbar_image_t,
-                                           mut src: *const zbar_image_t) {
+unsafe extern fn _zbar_image_copy_size(mut dst: *mut zbar_image_t, mut src: *const zbar_image_t) {
     (*dst).width = (*src).width;
     (*dst).height = (*src).height;
     (*dst).crop_x = (*src).crop_x;
@@ -515,20 +514,20 @@ unsafe extern "C" fn _zbar_image_copy_size(mut dst: *mut zbar_image_t,
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_create() -> *mut zbar_image_t {
-    let mut img: *mut zbar_image_t =
-        calloc(1 as libc::c_int as libc::c_ulong,
-               ::std::mem::size_of::<zbar_image_t>() as libc::c_ulong) as
-            *mut zbar_image_t;
+pub unsafe extern fn zbar_image_create() -> *mut zbar_image_t {
+    let mut img: *mut zbar_image_t = calloc(
+        1 as libc::c_int as libc::c_ulong,
+        ::std::mem::size_of::<zbar_image_t>() as libc::c_ulong,
+    ) as *mut zbar_image_t;
     _zbar_refcnt_init();
     _zbar_image_refcnt(img, 1 as libc::c_int);
     (*img).srcidx = -(1 as libc::c_int);
     return img;
 }
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_image_free(mut img: *mut zbar_image_t) {
+pub unsafe extern fn _zbar_image_free(mut img: *mut zbar_image_t) {
     if !(*img).syms.is_null() {
         zbar_symbol_set_ref((*img).syms, -(1 as libc::c_int));
         (*img).syms = 0 as *mut zbar_symbol_set_t
@@ -536,77 +535,85 @@ pub unsafe extern "C" fn _zbar_image_free(mut img: *mut zbar_image_t) {
     free(img as *mut libc::c_void);
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_destroy(mut img: *mut zbar_image_t) {
+pub unsafe extern fn zbar_image_destroy(mut img: *mut zbar_image_t) {
     _zbar_image_refcnt(img, -(1 as libc::c_int));
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_ref(mut img: *mut zbar_image_t,
-                                        mut refs: libc::c_int) {
+pub unsafe extern fn zbar_image_ref(mut img: *mut zbar_image_t, mut refs: libc::c_int) {
     _zbar_image_refcnt(img, refs);
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_get_format(mut img: *const zbar_image_t)
- -> libc::c_ulong {
+pub unsafe extern fn zbar_image_get_format(mut img: *const zbar_image_t) -> libc::c_ulong {
     return (*img).format as libc::c_ulong;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_get_sequence(mut img: *const zbar_image_t)
- -> libc::c_uint {
+pub unsafe extern fn zbar_image_get_sequence(mut img: *const zbar_image_t) -> libc::c_uint {
     return (*img).seq;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_get_width(mut img: *const zbar_image_t)
- -> libc::c_uint {
+pub unsafe extern fn zbar_image_get_width(mut img: *const zbar_image_t) -> libc::c_uint {
     return (*img).width;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_get_height(mut img: *const zbar_image_t)
- -> libc::c_uint {
+pub unsafe extern fn zbar_image_get_height(mut img: *const zbar_image_t) -> libc::c_uint {
     return (*img).height;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_get_size(mut img: *const zbar_image_t,
-                                             mut w: *mut libc::c_uint,
-                                             mut h: *mut libc::c_uint) {
-    if !w.is_null() { *w = (*img).width }
-    if !h.is_null() { *h = (*img).height };
+pub unsafe extern fn zbar_image_get_size(
+    mut img: *const zbar_image_t,
+    mut w: *mut libc::c_uint,
+    mut h: *mut libc::c_uint,
+) {
+    if !w.is_null() {
+        *w = (*img).width
+    }
+    if !h.is_null() {
+        *h = (*img).height
+    };
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_get_crop(mut img: *const zbar_image_t,
-                                             mut x: *mut libc::c_uint,
-                                             mut y: *mut libc::c_uint,
-                                             mut w: *mut libc::c_uint,
-                                             mut h: *mut libc::c_uint) {
-    if !x.is_null() { *x = (*img).crop_x }
-    if !y.is_null() { *y = (*img).crop_y }
-    if !w.is_null() { *w = (*img).crop_w }
-    if !h.is_null() { *h = (*img).crop_h };
+pub unsafe extern fn zbar_image_get_crop(
+    mut img: *const zbar_image_t,
+    mut x: *mut libc::c_uint,
+    mut y: *mut libc::c_uint,
+    mut w: *mut libc::c_uint,
+    mut h: *mut libc::c_uint,
+) {
+    if !x.is_null() {
+        *x = (*img).crop_x
+    }
+    if !y.is_null() {
+        *y = (*img).crop_y
+    }
+    if !w.is_null() {
+        *w = (*img).crop_w
+    }
+    if !h.is_null() {
+        *h = (*img).crop_h
+    };
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_get_data(mut img: *const zbar_image_t)
- -> *const libc::c_void {
+pub unsafe extern fn zbar_image_get_data(mut img: *const zbar_image_t) -> *const libc::c_void {
     return (*img).data;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_get_data_length(mut img:
-                                                        *const zbar_image_t)
- -> libc::c_ulong {
+pub unsafe extern fn zbar_image_get_data_length(mut img: *const zbar_image_t) -> libc::c_ulong {
     return (*img).datalen;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_set_format(mut img: *mut zbar_image_t,
-                                               mut fmt: libc::c_ulong) {
+pub unsafe extern fn zbar_image_set_format(mut img: *mut zbar_image_t, mut fmt: libc::c_ulong) {
     (*img).format = fmt as uint32_t;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_set_sequence(mut img: *mut zbar_image_t,
-                                                 mut seq: libc::c_uint) {
+pub unsafe extern fn zbar_image_set_sequence(mut img: *mut zbar_image_t, mut seq: libc::c_uint) {
     (*img).seq = seq;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_set_size(mut img: *mut zbar_image_t,
-                                             mut w: libc::c_uint,
-                                             mut h: libc::c_uint) {
+pub unsafe extern fn zbar_image_set_size(
+    mut img: *mut zbar_image_t,
+    mut w: libc::c_uint,
+    mut h: libc::c_uint,
+) {
     (*img).crop_y = 0 as libc::c_int as libc::c_uint;
     (*img).crop_x = (*img).crop_y;
     (*img).crop_w = w;
@@ -615,19 +622,29 @@ pub unsafe extern "C" fn zbar_image_set_size(mut img: *mut zbar_image_t,
     (*img).height = (*img).crop_h;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_set_crop(mut img: *mut zbar_image_t,
-                                             mut x: libc::c_uint,
-                                             mut y: libc::c_uint,
-                                             mut w: libc::c_uint,
-                                             mut h: libc::c_uint) {
+pub unsafe extern fn zbar_image_set_crop(
+    mut img: *mut zbar_image_t,
+    mut x: libc::c_uint,
+    mut y: libc::c_uint,
+    mut w: libc::c_uint,
+    mut h: libc::c_uint,
+) {
     let mut img_w: libc::c_uint = (*img).width;
-    if x > img_w { x = img_w }
-    if x.wrapping_add(w) > img_w { w = img_w.wrapping_sub(x) }
+    if x > img_w {
+        x = img_w
+    }
+    if x.wrapping_add(w) > img_w {
+        w = img_w.wrapping_sub(x)
+    }
     (*img).crop_x = x;
     (*img).crop_w = w;
     let mut img_h: libc::c_uint = (*img).height;
-    if y > img_h { y = img_h }
-    if y.wrapping_add(h) > img_h { h = img_h.wrapping_sub(y) }
+    if y > img_h {
+        y = img_h
+    }
+    if y.wrapping_add(h) > img_h {
+        h = img_h.wrapping_sub(y)
+    }
     (*img).crop_y = y;
     (*img).crop_h = h;
 }
@@ -635,24 +652,31 @@ pub unsafe extern "C" fn zbar_image_set_crop(mut img: *mut zbar_image_t,
 #[no_mangle]
 // #[inline]
 #[linkage = "external"]
-pub unsafe extern "C" fn zbar_image_free_data(mut img: *mut zbar_image_t) {
-    if img.is_null() { return }
+pub unsafe extern fn zbar_image_free_data(mut img: *mut zbar_image_t) {
+    if img.is_null() {
+        return;
+    }
     if !(*img).src.is_null() {
         let mut newimg: *mut zbar_image_t = 0 as *mut zbar_image_t;
         /* replace video image w/new copy */
         if (*img).refcnt != 0 {
         } else {
-            __assert_fail(b"img->refcnt\x00" as *const u8 as
-                              *const libc::c_char,
-                          b"zbar/image.c\x00" as *const u8 as
-                              *const libc::c_char,
-                          154 as libc::c_int as libc::c_uint,
-                          (*::std::mem::transmute::<&[u8; 42],
-                                                    &[libc::c_char; 42]>(b"void zbar_image_free_data(zbar_image_t *)\x00")).as_ptr()); /* FIXME needs lock */
+            __assert_fail(
+                b"img->refcnt\x00" as *const u8 as *const libc::c_char,
+                b"zbar/image.c\x00" as *const u8 as *const libc::c_char,
+                154 as libc::c_int as libc::c_uint,
+                (*::std::mem::transmute::<&[u8; 42], &[libc::c_char; 42]>(
+                    b"void zbar_image_free_data(zbar_image_t *)\x00",
+                ))
+                .as_ptr(),
+            ); /* FIXME needs lock */
         }
         newimg = zbar_image_create();
-        memcpy(newimg as *mut libc::c_void, img as *const libc::c_void,
-               ::std::mem::size_of::<zbar_image_t>() as libc::c_ulong);
+        memcpy(
+            newimg as *mut libc::c_void,
+            img as *const libc::c_void,
+            ::std::mem::size_of::<zbar_image_t>() as libc::c_ulong,
+        );
         /* recycle video image */
         (*newimg).cleanup.expect("non-null function pointer")(newimg);
         /* detach old image from src */
@@ -660,48 +684,48 @@ pub unsafe extern "C" fn zbar_image_free_data(mut img: *mut zbar_image_t) {
         (*img).src = 0 as *mut zbar_video_t;
         (*img).srcidx = -(1 as libc::c_int)
     } else if (*img).cleanup.is_some() && !(*img).data.is_null() {
-        if (*img).cleanup !=
-               Some(zbar_image_free_data as
-                        unsafe extern "C" fn(_: *mut zbar_image_t) -> ()) {
+        if (*img).cleanup
+            != Some(zbar_image_free_data as unsafe extern fn(_: *mut zbar_image_t) -> ())
+        {
             /* using function address to detect this case is a bad idea;
              * windows link libraries add an extra layer of indirection...
              * this works around that problem (bug #2796277)
              */
-            let mut cleanup: Option<zbar_image_cleanup_handler_t> =
-                (*img).cleanup;
+            let mut cleanup: Option<zbar_image_cleanup_handler_t> = (*img).cleanup;
             (*img).cleanup =
-                Some(zbar_image_free_data as
-                         unsafe extern "C" fn(_: *mut zbar_image_t) -> ());
+                Some(zbar_image_free_data as unsafe extern fn(_: *mut zbar_image_t) -> ());
             cleanup.expect("non-null function pointer")(img);
-        } else { free((*img).data as *mut libc::c_void); }
+        } else {
+            free((*img).data as *mut libc::c_void);
+        }
     }
     (*img).data = 0 as *const libc::c_void;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_set_data(mut img: *mut zbar_image_t,
-                                             mut data: *const libc::c_void,
-                                             mut len: libc::c_ulong,
-                                             mut cleanup:
-                                                 Option<zbar_image_cleanup_handler_t>) {
+pub unsafe extern fn zbar_image_set_data(
+    mut img: *mut zbar_image_t,
+    mut data: *const libc::c_void,
+    mut len: libc::c_ulong,
+    mut cleanup: Option<zbar_image_cleanup_handler_t>,
+) {
     zbar_image_free_data(img);
     (*img).data = data;
     (*img).datalen = len;
     (*img).cleanup = cleanup;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_set_userdata(mut img: *mut zbar_image_t,
-                                                 mut userdata:
-                                                     *mut libc::c_void) {
+pub unsafe extern fn zbar_image_set_userdata(
+    mut img: *mut zbar_image_t,
+    mut userdata: *mut libc::c_void,
+) {
     (*img).userdata = userdata;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_get_userdata(mut img: *const zbar_image_t)
- -> *mut libc::c_void {
+pub unsafe extern fn zbar_image_get_userdata(mut img: *const zbar_image_t) -> *mut libc::c_void {
     return (*img).userdata;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_copy(mut src: *const zbar_image_t)
- -> *mut zbar_image_t {
+pub unsafe extern fn zbar_image_copy(mut src: *const zbar_image_t) -> *mut zbar_image_t {
     let mut dst: *mut zbar_image_t = zbar_image_create();
     (*dst).format = (*src).format;
     _zbar_image_copy_size(dst, src);
@@ -709,47 +733,54 @@ pub unsafe extern "C" fn zbar_image_copy(mut src: *const zbar_image_t)
     (*dst).data = malloc((*src).datalen);
     if !(*dst).data.is_null() {
     } else {
-        __assert_fail(b"dst->data\x00" as *const u8 as *const libc::c_char,
-                      b"zbar/image.c\x00" as *const u8 as *const libc::c_char,
-                      209 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 52],
-                                                &[libc::c_char; 52]>(b"zbar_image_t *zbar_image_copy(const zbar_image_t *)\x00")).as_ptr());
+        __assert_fail(
+            b"dst->data\x00" as *const u8 as *const libc::c_char,
+            b"zbar/image.c\x00" as *const u8 as *const libc::c_char,
+            209 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 52], &[libc::c_char; 52]>(
+                b"zbar_image_t *zbar_image_copy(const zbar_image_t *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
     memcpy((*dst).data as *mut libc::c_void, (*src).data, (*src).datalen);
-    (*dst).cleanup =
-        Some(zbar_image_free_data as
-                 unsafe extern "C" fn(_: *mut zbar_image_t) -> ());
+    (*dst).cleanup = Some(zbar_image_free_data as unsafe extern fn(_: *mut zbar_image_t) -> ());
     return dst;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_get_symbols(mut img: *const zbar_image_t)
- -> *const zbar_symbol_set_t {
+pub unsafe extern fn zbar_image_get_symbols(
+    mut img: *const zbar_image_t,
+) -> *const zbar_symbol_set_t {
     return (*img).syms;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_set_symbols(mut img: *mut zbar_image_t,
-                                                mut syms:
-                                                    *const zbar_symbol_set_t) {
-    if !syms.is_null() { zbar_symbol_set_ref(syms, 1 as libc::c_int); }
+pub unsafe extern fn zbar_image_set_symbols(
+    mut img: *mut zbar_image_t,
+    mut syms: *const zbar_symbol_set_t,
+) {
+    if !syms.is_null() {
+        zbar_symbol_set_ref(syms, 1 as libc::c_int);
+    }
     if !(*img).syms.is_null() {
         zbar_symbol_set_ref((*img).syms, -(1 as libc::c_int));
     }
     (*img).syms = syms as *mut zbar_symbol_set_t;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_first_symbol(mut img: *const zbar_image_t)
- -> *const zbar_symbol_t {
+pub unsafe extern fn zbar_image_first_symbol(mut img: *const zbar_image_t) -> *const zbar_symbol_t {
     return if !(*img).syms.is_null() {
-               (*(*img).syms).head
-           } else { 0 as *mut zbar_symbol_t };
+        (*(*img).syms).head
+    } else {
+        0 as *mut zbar_symbol_t
+    };
 }
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Symbol interface
  * decoded barcode symbol result object.  stores type, data, and image
  * location of decoded symbol.  all memory is owned by the library
  */
-/*@{*/
+/* @{ */
 /* * @typedef zbar_symbol_t
  * opaque decoded symbol object.
  */
@@ -843,14 +874,14 @@ pub unsafe extern "C" fn zbar_image_first_symbol(mut img: *const zbar_image_t)
  * @returns the buffer pointer
  * @since 0.6
  */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Symbol Set interface
  * container for decoded result symbols associated with an image
  * or a composite symbol.
  * @since 0.10
  */
-/*@{*/
+/* @{ */
 /* * @typedef zbar_symbol_set_t
  * opaque symbol iterator object.
  * @since 0.10
@@ -875,13 +906,13 @@ pub unsafe extern "C" fn zbar_image_first_symbol(mut img: *const zbar_image_t)
  * @returns NULL if the set is empty
  * @since 0.11
  */
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Image interface
  * stores image data samples along with associated format and size
  * metadata
  */
-/*@{*/
+/* @{ */
 /* * opaque image object. */
 /* * cleanup handler callback function.
  * called to free sample data when an image is destroyed.
@@ -1026,62 +1057,77 @@ pub unsafe extern "C" fn zbar_image_first_symbol(mut img: *const zbar_image_t)
  * @returns 0 on success or a system error code on failure
  */
 #[no_mangle]
-pub unsafe extern "C" fn zbar_image_write(mut img: *const zbar_image_t,
-                                          mut filebase: *const libc::c_char)
- -> libc::c_int {
+pub unsafe extern fn zbar_image_write(
+    mut img: *const zbar_image_t,
+    mut filebase: *const libc::c_char,
+) -> libc::c_int {
     let mut len: libc::c_int =
-        strlen(filebase).wrapping_add(16 as libc::c_int as libc::c_ulong) as
-            libc::c_int;
-    let mut filename: *mut libc::c_char =
-        malloc(len as libc::c_ulong) as *mut libc::c_char;
+        strlen(filebase).wrapping_add(16 as libc::c_int as libc::c_ulong) as libc::c_int;
+    let mut filename: *mut libc::c_char = malloc(len as libc::c_ulong) as *mut libc::c_char;
     let mut n: libc::c_int = 0 as libc::c_int;
     let mut rc: libc::c_int = 0 as libc::c_int;
     let mut f: *mut FILE = 0 as *mut FILE;
-    let mut hdr: zimg_hdr_t =
-        zimg_hdr_t{magic: 0, format: 0, width: 0, height: 0, size: 0,};
+    let mut hdr: zimg_hdr_t = zimg_hdr_t {
+        magic: 0,
+        format: 0,
+        width: 0,
+        height: 0,
+        size: 0,
+    };
     strcpy(filename, filebase);
-    if (*img).format & 0xff as libc::c_int as libc::c_uint >=
-           ' ' as i32 as libc::c_uint {
-        n =
-            snprintf(filename, len as libc::c_ulong,
-                     b"%s.%.4s.zimg\x00" as *const u8 as *const libc::c_char,
-                     filebase,
-                     &(*img).format as *const uint32_t as *mut libc::c_char)
+    if (*img).format & 0xff as libc::c_int as libc::c_uint >= ' ' as i32 as libc::c_uint {
+        n = snprintf(
+            filename,
+            len as libc::c_ulong,
+            b"%s.%.4s.zimg\x00" as *const u8 as *const libc::c_char,
+            filebase,
+            &(*img).format as *const uint32_t as *mut libc::c_char,
+        )
     } else {
-        n =
-            snprintf(filename, len as libc::c_ulong,
-                     b"%s.%08x.zimg\x00" as *const u8 as *const libc::c_char,
-                     filebase, (*img).format)
+        n = snprintf(
+            filename,
+            len as libc::c_ulong,
+            b"%s.%08x.zimg\x00" as *const u8 as *const libc::c_char,
+            filebase,
+            (*img).format,
+        )
     }
     if n < len - 1 as libc::c_int {
     } else {
-        __assert_fail(b"n < len - 1\x00" as *const u8 as *const libc::c_char,
-                      b"zbar/image.c\x00" as *const u8 as *const libc::c_char,
-                      256 as libc::c_int as libc::c_uint,
-                      (*::std::mem::transmute::<&[u8; 57],
-                                                &[libc::c_char; 57]>(b"int zbar_image_write(const zbar_image_t *, const char *)\x00")).as_ptr());
+        __assert_fail(
+            b"n < len - 1\x00" as *const u8 as *const libc::c_char,
+            b"zbar/image.c\x00" as *const u8 as *const libc::c_char,
+            256 as libc::c_int as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 57], &[libc::c_char; 57]>(
+                b"int zbar_image_write(const zbar_image_t *, const char *)\x00",
+            ))
+            .as_ptr(),
+        );
     }
-    *filename.offset((len - 1 as libc::c_int) as isize) =
-        '\u{0}' as i32 as libc::c_char;
+    *filename.offset((len - 1 as libc::c_int) as isize) = '\u{0}' as i32 as libc::c_char;
     if _zbar_verbosity >= 1 as libc::c_int {
-        fprintf(stderr,
-                b"%s: dumping %.4s(%08x) image to %s\n\x00" as *const u8 as
-                    *const libc::c_char,
-                (*::std::mem::transmute::<&[u8; 17],
-                                          &[libc::c_char; 17]>(b"zbar_image_write\x00")).as_ptr(),
-                &(*img).format as *const uint32_t as *mut libc::c_char,
-                (*img).format, filename);
+        fprintf(
+            stderr,
+            b"%s: dumping %.4s(%08x) image to %s\n\x00" as *const u8 as *const libc::c_char,
+            (*::std::mem::transmute::<&[u8; 17], &[libc::c_char; 17]>(b"zbar_image_write\x00"))
+                .as_ptr(),
+            &(*img).format as *const uint32_t as *mut libc::c_char,
+            (*img).format,
+            filename,
+        );
     }
     f = fopen(filename, b"w\x00" as *const u8 as *const libc::c_char);
     if f.is_null() {
         rc = *__errno_location();
         if _zbar_verbosity >= 1 as libc::c_int {
-            fprintf(stderr,
-                    b"%s: ERROR opening %s: %s\n\x00" as *const u8 as
-                        *const libc::c_char,
-                    (*::std::mem::transmute::<&[u8; 17],
-                                              &[libc::c_char; 17]>(b"zbar_image_write\x00")).as_ptr(),
-                    filename, strerror(rc));
+            fprintf(
+                stderr,
+                b"%s: ERROR opening %s: %s\n\x00" as *const u8 as *const libc::c_char,
+                (*::std::mem::transmute::<&[u8; 17], &[libc::c_char; 17]>(b"zbar_image_write\x00"))
+                    .as_ptr(),
+                filename,
+                strerror(rc),
+            );
         }
     } else {
         hdr.magic = 0x676d697a as libc::c_int as uint32_t;
@@ -1089,23 +1135,31 @@ pub unsafe extern "C" fn zbar_image_write(mut img: *const zbar_image_t,
         hdr.width = (*img).width as uint16_t;
         hdr.height = (*img).height as uint16_t;
         hdr.size = (*img).datalen as uint32_t;
-        if fwrite(&mut hdr as *mut zimg_hdr_t as *const libc::c_void,
-                  ::std::mem::size_of::<zimg_hdr_t>() as libc::c_ulong,
-                  1 as libc::c_int as size_t, f) !=
-               1 as libc::c_int as libc::c_ulong ||
-               fwrite((*img).data, 1 as libc::c_int as size_t, (*img).datalen,
-                      f) != (*img).datalen {
+        if fwrite(
+            &mut hdr as *mut zimg_hdr_t as *const libc::c_void,
+            ::std::mem::size_of::<zimg_hdr_t>() as libc::c_ulong,
+            1 as libc::c_int as size_t,
+            f,
+        ) != 1 as libc::c_int as libc::c_ulong
+            || fwrite((*img).data, 1 as libc::c_int as size_t, (*img).datalen, f) != (*img).datalen
+        {
             rc = *__errno_location();
             if _zbar_verbosity >= 1 as libc::c_int {
-                fprintf(stderr,
-                        b"%s: ERROR writing %s: %s\n\x00" as *const u8 as
-                            *const libc::c_char,
-                        (*::std::mem::transmute::<&[u8; 17],
-                                                  &[libc::c_char; 17]>(b"zbar_image_write\x00")).as_ptr(),
-                        filename, strerror(rc));
+                fprintf(
+                    stderr,
+                    b"%s: ERROR writing %s: %s\n\x00" as *const u8 as *const libc::c_char,
+                    (*::std::mem::transmute::<&[u8; 17], &[libc::c_char; 17]>(
+                        b"zbar_image_write\x00",
+                    ))
+                    .as_ptr(),
+                    filename,
+                    strerror(rc),
+                );
             }
             fclose(f);
-        } else { rc = fclose(f) }
+        } else {
+            rc = fclose(f)
+        }
     }
     free(filename as *mut libc::c_void);
     return rc;

@@ -1,25 +1,26 @@
-use ::libc;
 use ::c2rust_bitfields;
-extern "C" {
+use ::libc;
+extern {
     pub type video_state_s;
     pub type _IO_wide_data;
     pub type _IO_codecvt;
     pub type _IO_marker;
     #[no_mangle]
-    fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...)
-     -> libc::c_int;
+    fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
     #[no_mangle]
     fn close(__fd: libc::c_int) -> libc::c_int;
     /* * @internal type unsafe error API (don't use) */
     #[no_mangle]
-    fn _zbar_error_spew(object: *const libc::c_void, verbosity: libc::c_int)
-     -> libc::c_int;
+    fn _zbar_error_spew(object: *const libc::c_void, verbosity: libc::c_int) -> libc::c_int;
     #[no_mangle]
     fn strdup(_: *const libc::c_char) -> *mut libc::c_char;
     #[no_mangle]
-    fn __assert_fail(__assertion: *const libc::c_char,
-                     __file: *const libc::c_char, __line: libc::c_uint,
-                     __function: *const libc::c_char) -> !;
+    fn __assert_fail(
+        __assertion: *const libc::c_char,
+        __file: *const libc::c_char,
+        __line: libc::c_uint,
+        __function: *const libc::c_char,
+    ) -> !;
     #[no_mangle]
     fn free(__ptr: *mut libc::c_void);
     #[no_mangle]
@@ -122,21 +123,21 @@ pub const ZBAR_ORIENT_UNKNOWN: zbar_orientation_e = -1;
 /* *< Code 93. @since 0.11 */
 /* *< Code 128 */
 /* * mask for base symbol type.
-     * @deprecated in 0.11, remove this from existing code
-     */
+ * @deprecated in 0.11, remove this from existing code
+ */
 /* * 2-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
-     * 2-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
+ * 2-digit GS1 add-ons
+ */
 /* * 5-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
-     * 5-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
+ * 5-digit GS1 add-ons
+ */
 /* * add-on flag mask.
-     * @deprecated in 0.11, GS1 add-ons are represented using composite
-     * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
-     * or ::ZBAR_EAN5
-     */
+ * @deprecated in 0.11, GS1 add-ons are represented using composite
+ * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
+ * or ::ZBAR_EAN5
+ */
 /* * decoded symbol coarse orientation.
  * @since 0.11
  */
@@ -229,7 +230,7 @@ pub struct video_controls_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* number of filtered symbols */
 /* first of decoded symbol results */
 /* last of unfiltered symbol results */
@@ -262,7 +263,7 @@ pub struct zbar_symbol_set_s {
     pub head: *mut zbar_symbol_t,
     pub tail: *mut zbar_symbol_t,
 }
-/*@}*/
+/* @} */
 pub type zbar_symbol_t = zbar_symbol_s;
 /*------------------------------------------------------------------------
  *  Copyright 2007-2010 (c) Jeff Brown <spadix@users.sourceforge.net>
@@ -285,7 +286,7 @@ pub type zbar_symbol_t = zbar_symbol_s;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 pub type refcnt_t = libc::c_int;
 pub type point_t = point_s;
 #[derive(Copy, Clone)]
@@ -315,7 +316,7 @@ pub struct point_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* unpack size/location of component */
 /* coarse image format categorization.
  * to limit conversion variations
@@ -342,23 +343,23 @@ pub struct zbar_image_s {
     pub seq: libc::c_uint,
     pub syms: *mut zbar_symbol_set_t,
 }
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Image interface
  * stores image data samples along with associated format and size
  * metadata
  */
-/*@{*/
+/* @{ */
 /* * opaque image object. */
 pub type zbar_image_t = zbar_image_s;
-/*@}*/
-/*------------------------------------------------------------*/
+/* @} */
+/* ------------------------------------------------------------ */
 /* * @name Video interface
  * @anchor c-video
  * mid-level video source abstraction.
  * captures images from a video device
  */
-/*@{*/
+/* @{ */
 /* * opaque video object. */
 pub type zbar_video_t = zbar_video_s;
 /*------------------------------------------------------------------------
@@ -382,7 +383,7 @@ pub type zbar_video_t = zbar_video_s;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* number of images to preallocate */
 /* uninitialized */
 /* v4l protocol version 1 */
@@ -421,27 +422,27 @@ pub struct zbar_video_s {
     pub dq_image: *mut zbar_image_t,
     pub shadow_image: *mut zbar_image_t,
     pub state: *mut video_state_t,
-    pub init: Option<unsafe extern "C" fn(_: *mut zbar_video_t, _: uint32_t)
-                         -> libc::c_int>,
-    pub cleanup: Option<unsafe extern "C" fn(_: *mut zbar_video_t)
-                            -> libc::c_int>,
-    pub start: Option<unsafe extern "C" fn(_: *mut zbar_video_t)
-                          -> libc::c_int>,
-    pub stop: Option<unsafe extern "C" fn(_: *mut zbar_video_t)
-                         -> libc::c_int>,
-    pub nq: Option<unsafe extern "C" fn(_: *mut zbar_video_t,
-                                        _: *mut zbar_image_t) -> libc::c_int>,
-    pub set_control: Option<unsafe extern "C" fn(_: *mut zbar_video_t,
-                                                 _: *const libc::c_char,
-                                                 _: *mut libc::c_void)
-                                -> libc::c_int>,
-    pub get_control: Option<unsafe extern "C" fn(_: *mut zbar_video_t,
-                                                 _: *const libc::c_char,
-                                                 _: *mut libc::c_void)
-                                -> libc::c_int>,
-    pub free: Option<unsafe extern "C" fn(_: *mut zbar_video_t) -> ()>,
-    pub dq: Option<unsafe extern "C" fn(_: *mut zbar_video_t)
-                       -> *mut zbar_image_t>,
+    pub init: Option<unsafe extern fn(_: *mut zbar_video_t, _: uint32_t) -> libc::c_int>,
+    pub cleanup: Option<unsafe extern fn(_: *mut zbar_video_t) -> libc::c_int>,
+    pub start: Option<unsafe extern fn(_: *mut zbar_video_t) -> libc::c_int>,
+    pub stop: Option<unsafe extern fn(_: *mut zbar_video_t) -> libc::c_int>,
+    pub nq: Option<unsafe extern fn(_: *mut zbar_video_t, _: *mut zbar_image_t) -> libc::c_int>,
+    pub set_control: Option<
+        unsafe extern fn(
+            _: *mut zbar_video_t,
+            _: *const libc::c_char,
+            _: *mut libc::c_void,
+        ) -> libc::c_int,
+    >,
+    pub get_control: Option<
+        unsafe extern fn(
+            _: *mut zbar_video_t,
+            _: *const libc::c_char,
+            _: *mut libc::c_void,
+        ) -> libc::c_int,
+    >,
+    pub free: Option<unsafe extern fn(_: *mut zbar_video_t) -> ()>,
+    pub dq: Option<unsafe extern fn(_: *mut zbar_video_t) -> *mut zbar_image_t>,
 }
 pub type video_state_t = video_state_s;
 /*------------------------------------------------------------------------
@@ -465,7 +466,7 @@ pub type video_state_t = video_state_s;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* simple platform mutex abstraction
  */
 pub type zbar_mutex_t = pthread_mutex_t;
@@ -501,7 +502,7 @@ pub const VIDEO_INVALID: video_interface_e = 0;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* "zERR" (LE) */
 /* application must terminate */
 /* might be able to recover and continue */
@@ -547,9 +548,7 @@ pub const ZBAR_MOD_PROCESSOR: errmodule_e = 0;
 /* * cleanup handler callback function.
  * called to free sample data when an image is destroyed.
  */
-pub type zbar_image_cleanup_handler_t
-    =
-    unsafe extern "C" fn(_: *mut zbar_image_t) -> ();
+pub type zbar_image_cleanup_handler_t = unsafe extern fn(_: *mut zbar_image_t) -> ();
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct _IO_FILE {
@@ -586,11 +585,13 @@ pub struct _IO_FILE {
 pub type _IO_lock_t = ();
 pub type FILE = _IO_FILE;
 #[inline]
-unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
-                                 mut sev: errsev_t, mut type_0: zbar_error_t,
-                                 mut func: *const libc::c_char,
-                                 mut detail: *const libc::c_char)
- -> libc::c_int {
+unsafe extern fn err_capture(
+    mut container: *const libc::c_void,
+    mut sev: errsev_t,
+    mut type_0: zbar_error_t,
+    mut func: *const libc::c_char,
+    mut detail: *const libc::c_char,
+) -> libc::c_int {
     let mut err: *mut errinfo_t = container as *mut errinfo_t;
     if (*err).magic == 0x5252457a as libc::c_int as libc::c_uint {
     } else {
@@ -602,8 +603,7 @@ unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
                       (*::std::mem::transmute::<&[u8; 82],
                                                 &[libc::c_char; 82]>(b"int err_capture(const void *, errsev_t, zbar_error_t, const char *, const char *)\x00")).as_ptr());
     }
-    if type_0 as libc::c_uint ==
-           ZBAR_ERR_SYSTEM as libc::c_int as libc::c_uint {
+    if type_0 as libc::c_uint == ZBAR_ERR_SYSTEM as libc::c_int as libc::c_uint {
         (*err).errnum = *__errno_location()
     }
     (*err).sev = sev;
@@ -616,13 +616,14 @@ unsafe extern "C" fn err_capture(mut container: *const libc::c_void,
     return -(1 as libc::c_int);
 }
 #[inline]
-unsafe extern "C" fn err_capture_str(mut container: *const libc::c_void,
-                                     mut sev: errsev_t,
-                                     mut type_0: zbar_error_t,
-                                     mut func: *const libc::c_char,
-                                     mut detail: *const libc::c_char,
-                                     mut arg: *const libc::c_char)
- -> libc::c_int {
+unsafe extern fn err_capture_str(
+    mut container: *const libc::c_void,
+    mut sev: errsev_t,
+    mut type_0: zbar_error_t,
+    mut func: *const libc::c_char,
+    mut detail: *const libc::c_char,
+    mut arg: *const libc::c_char,
+) -> libc::c_int {
     let mut err: *mut errinfo_t = container as *mut errinfo_t;
     if (*err).magic == 0x5252457a as libc::c_int as libc::c_uint {
     } else {
@@ -647,29 +648,34 @@ unsafe extern "C" fn err_capture_str(mut container: *const libc::c_void,
 /* FIXME reclaim image */
 /* PAL interface */
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_video_open(mut vdo: *mut zbar_video_t,
-                                          mut dev: *const libc::c_char)
- -> libc::c_int {
+pub unsafe extern fn _zbar_video_open(
+    mut vdo: *mut zbar_video_t,
+    mut dev: *const libc::c_char,
+) -> libc::c_int {
     (*vdo).fd = open(dev, 0o2 as libc::c_int);
     if (*vdo).fd < 0 as libc::c_int {
-        return err_capture_str(vdo as *const libc::c_void, SEV_ERROR,
-                               ZBAR_ERR_SYSTEM,
-                               (*::std::mem::transmute::<&[u8; 17],
-                                                         &[libc::c_char; 17]>(b"_zbar_video_open\x00")).as_ptr(),
-                               b"opening video device \'%s\'\x00" as *const u8
-                                   as *const libc::c_char, dev)
+        return err_capture_str(
+            vdo as *const libc::c_void,
+            SEV_ERROR,
+            ZBAR_ERR_SYSTEM,
+            (*::std::mem::transmute::<&[u8; 17], &[libc::c_char; 17]>(b"_zbar_video_open\x00"))
+                .as_ptr(),
+            b"opening video device \'%s\'\x00" as *const u8 as *const libc::c_char,
+            dev,
+        );
     }
     if _zbar_verbosity >= 1 as libc::c_int {
-        fprintf(stderr,
-                b"%s: opened camera device %s (fd=%d)\n\x00" as *const u8 as
-                    *const libc::c_char,
-                (*::std::mem::transmute::<&[u8; 17],
-                                          &[libc::c_char; 17]>(b"_zbar_video_open\x00")).as_ptr(),
-                dev, (*vdo).fd);
+        fprintf(
+            stderr,
+            b"%s: opened camera device %s (fd=%d)\n\x00" as *const u8 as *const libc::c_char,
+            (*::std::mem::transmute::<&[u8; 17], &[libc::c_char; 17]>(b"_zbar_video_open\x00"))
+                .as_ptr(),
+            dev,
+            (*vdo).fd,
+        );
     }
     let mut rc: libc::c_int = -(1 as libc::c_int);
-    if (*vdo).intf as libc::c_uint !=
-           VIDEO_V4L1 as libc::c_int as libc::c_uint {
+    if (*vdo).intf as libc::c_uint != VIDEO_V4L1 as libc::c_int as libc::c_uint {
         rc = _zbar_v4l2_probe(vdo)
     }
     if rc != 0 && (*vdo).fd >= 0 as libc::c_int {

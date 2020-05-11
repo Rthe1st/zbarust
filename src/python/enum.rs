@@ -1,5 +1,5 @@
 use ::libc;
-extern "C" {
+extern {
     pub type _IO_wide_data;
     pub type _IO_codecvt;
     pub type _IO_marker;
@@ -26,27 +26,32 @@ extern "C" {
     #[no_mangle]
     fn PyDict_GetItem(mp: *mut PyObject, key: *mut PyObject) -> *mut PyObject;
     #[no_mangle]
-    fn PyDict_SetItem(mp: *mut PyObject, key: *mut PyObject,
-                      item: *mut PyObject) -> libc::c_int;
+    fn PyDict_SetItem(mp: *mut PyObject, key: *mut PyObject, item: *mut PyObject) -> libc::c_int;
     #[no_mangle]
-    fn PyDict_Next(mp: *mut PyObject, pos: *mut Py_ssize_t,
-                   key: *mut *mut PyObject, value: *mut *mut PyObject)
-     -> libc::c_int;
+    fn PyDict_Next(
+        mp: *mut PyObject,
+        pos: *mut Py_ssize_t,
+        key: *mut *mut PyObject,
+        value: *mut *mut PyObject,
+    ) -> libc::c_int;
     /* Invariants for frozensets:
- *     data is immutable.
- *     hash is the hash of the frozenset or -1 if not computed yet.
- * Invariants for sets:
- *     hash is -1
- */
+     *     data is immutable.
+     *     hash is the hash of the frozenset or -1 if not computed yet.
+     * Invariants for sets:
+     *     hash is -1
+     */
     #[no_mangle]
     fn PySet_New(_: *mut PyObject) -> *mut PyObject;
     #[no_mangle]
     fn PySet_Add(set: *mut PyObject, key: *mut PyObject) -> libc::c_int;
     #[no_mangle]
-    fn PyArg_ParseTupleAndKeywords(_: *mut PyObject, _: *mut PyObject,
-                                   _: *const libc::c_char,
-                                   _: *mut *mut libc::c_char, _: ...)
-     -> libc::c_int;
+    fn PyArg_ParseTupleAndKeywords(
+        _: *mut PyObject,
+        _: *mut PyObject,
+        _: *const libc::c_char,
+        _: *mut *mut libc::c_char,
+        _: ...
+    ) -> libc::c_int;
 }
 pub type size_t = libc::c_ulong;
 pub type __off_t = libc::c_long;
@@ -90,7 +95,7 @@ pub type FILE = _IO_FILE;
 pub type ssize_t = __ssize_t;
 /* include for defines */
 /* Some versions of HP-UX & Solaris need inttypes.h for int32_t,
-   INT32_MAX, etc. */
+INT32_MAX, etc. */
 /* *************************************************************************
 Symbols and macros to supply platform-independent interfaces to basic
 C language & library operations whose spellings vary across platforms.
@@ -145,8 +150,8 @@ Used in:  PY_LONG_LONG
  */
 /* Signed variants of the above */
 /* If PYLONG_BITS_IN_DIGIT is not defined then we'll use 30-bit digits if all
-   the necessary integer types are available, and we're on a 64-bit platform
-   (as determined by SIZEOF_VOID_P); otherwise we use 15-bit digits. */
+the necessary integer types are available, and we're on a 64-bit platform
+(as determined by SIZEOF_VOID_P); otherwise we use 15-bit digits. */
 /* uintptr_t is the C9X name for an unsigned integral type such that a
  * legitimate void* can be cast to uintptr_t and then back to void* again
  * without loss of information.  Similarly for intptr_t, wrt a signed
@@ -295,50 +300,38 @@ method blocks.
 /* Py3k buffer interface */
 /* owned reference */
 /* This is Py_ssize_t so it can be
-                             pointed to by strides in simple case.*/
+pointed to by strides in simple case.*/
 /* static store for shape and strides of
-                                  mono-dimensional buffers. */
+mono-dimensional buffers. */
 /* Flags for getting buffers */
-/*  we used to include an E, backwards compatible alias  */
+/* we used to include an E, backwards compatible alias */
 /* end Py3k buffer interface */
 /* For numbers without flag bit Py_TPFLAGS_CHECKTYPES set, all
-       arguments are guaranteed to be of the object's type (modulo
-       coercion hacks -- i.e. if the type's coercion function
-       returns other types, then these are allowed as well).  Numbers that
-       have the Py_TPFLAGS_CHECKTYPES flag bit set should check *both*
-       arguments for proper type and implement the necessary conversions
-       in the slot functions themselves. */
+arguments are guaranteed to be of the object's type (modulo
+coercion hacks -- i.e. if the type's coercion function
+returns other types, then these are allowed as well).  Numbers that
+have the Py_TPFLAGS_CHECKTYPES flag bit set should check *both*
+arguments for proper type and implement the necessary conversions
+in the slot functions themselves. */
 /* Added in release 2.0 */
 /* Added in release 2.2 */
-    /* The following require the Py_TPFLAGS_HAVE_CLASS flag */
+/* The following require the Py_TPFLAGS_HAVE_CLASS flag */
 /* Added in release 2.5 */
 /* Added in release 2.0 */
-pub type destructor = Option<unsafe extern "C" fn(_: *mut PyObject) -> ()>;
+pub type destructor = Option<unsafe extern fn(_: *mut PyObject) -> ()>;
 pub type PyObject = _object;
-pub type inquiry
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> libc::c_int>;
-pub type freefunc = Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>;
-pub type newfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut _typeobject, _: *mut PyObject,
-                                _: *mut PyObject) -> *mut PyObject>;
-pub type allocfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut _typeobject, _: Py_ssize_t)
-               -> *mut PyObject>;
-pub type initproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type descrsetfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type descrgetfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> *mut PyObject>;
+pub type inquiry = Option<unsafe extern fn(_: *mut PyObject) -> libc::c_int>;
+pub type freefunc = Option<unsafe extern fn(_: *mut libc::c_void) -> ()>;
+pub type newfunc = Option<
+    unsafe extern fn(_: *mut _typeobject, _: *mut PyObject, _: *mut PyObject) -> *mut PyObject,
+>;
+pub type allocfunc = Option<unsafe extern fn(_: *mut _typeobject, _: Py_ssize_t) -> *mut PyObject>;
+pub type initproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type descrsetfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type descrgetfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyGetSetDef {
@@ -349,14 +342,10 @@ pub struct PyGetSetDef {
     pub closure: *mut libc::c_void,
 }
 /* Descriptors */
-pub type setter
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut libc::c_void) -> libc::c_int>;
-pub type getter
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut libc::c_void)
-               -> *mut PyObject>;
+pub type setter = Option<
+    unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut libc::c_void) -> libc::c_int,
+>;
+pub type getter = Option<unsafe extern fn(_: *mut PyObject, _: *mut libc::c_void) -> *mut PyObject>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyMethodDef {
@@ -367,30 +356,18 @@ pub struct PyMethodDef {
 }
 /* Method object interface */
 /* This is about the type 'builtin_function_or_method',
-   not Python methods in user-defined classes.  See classobject.h
-   for the latter. */
-pub type PyCFunction
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> *mut PyObject>;
-pub type iternextfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> *mut PyObject>;
-pub type getiterfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> *mut PyObject>;
-pub type richcmpfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: libc::c_int) -> *mut PyObject>;
-pub type traverseproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: visitproc,
-                                _: *mut libc::c_void) -> libc::c_int>;
-pub type visitproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut libc::c_void)
-               -> libc::c_int>;
+not Python methods in user-defined classes.  See classobject.h
+for the latter. */
+pub type PyCFunction =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
+pub type iternextfunc = Option<unsafe extern fn(_: *mut PyObject) -> *mut PyObject>;
+pub type getiterfunc = Option<unsafe extern fn(_: *mut PyObject) -> *mut PyObject>;
+pub type richcmpfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: libc::c_int) -> *mut PyObject>;
+pub type traverseproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: visitproc, _: *mut libc::c_void) -> libc::c_int>;
+pub type visitproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut libc::c_void) -> libc::c_int>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyBufferProcs {
@@ -401,9 +378,7 @@ pub struct PyBufferProcs {
     pub bf_getbuffer: getbufferproc,
     pub bf_releasebuffer: releasebufferproc,
 }
-pub type releasebufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut Py_buffer) -> ()>;
+pub type releasebufferproc = Option<unsafe extern fn(_: *mut PyObject, _: *mut Py_buffer) -> ()>;
 pub type Py_buffer = bufferinfo;
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -421,44 +396,27 @@ pub struct bufferinfo {
     pub smalltable: [Py_ssize_t; 2],
     pub internal: *mut libc::c_void,
 }
-pub type getbufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut Py_buffer,
-                                _: libc::c_int) -> libc::c_int>;
-pub type charbufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: *mut *mut libc::c_char) -> Py_ssize_t>;
-pub type segcountproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut Py_ssize_t)
-               -> Py_ssize_t>;
-pub type writebufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: *mut *mut libc::c_void) -> Py_ssize_t>;
-pub type readbufferproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: *mut *mut libc::c_void) -> Py_ssize_t>;
-pub type setattrofunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type getattrofunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> *mut PyObject>;
-pub type reprfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> *mut PyObject>;
-pub type ternaryfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> *mut PyObject>;
-pub type hashfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> libc::c_long>;
+pub type getbufferproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut Py_buffer, _: libc::c_int) -> libc::c_int>;
+pub type charbufferproc = Option<
+    unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: *mut *mut libc::c_char) -> Py_ssize_t,
+>;
+pub type segcountproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut Py_ssize_t) -> Py_ssize_t>;
+pub type writebufferproc = Option<
+    unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: *mut *mut libc::c_void) -> Py_ssize_t,
+>;
+pub type readbufferproc = Option<
+    unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: *mut *mut libc::c_void) -> Py_ssize_t,
+>;
+pub type setattrofunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type getattrofunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
+pub type reprfunc = Option<unsafe extern fn(_: *mut PyObject) -> *mut PyObject>;
+pub type ternaryfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
+pub type hashfunc = Option<unsafe extern fn(_: *mut PyObject) -> libc::c_long>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyMappingMethods {
@@ -466,17 +424,10 @@ pub struct PyMappingMethods {
     pub mp_subscript: binaryfunc,
     pub mp_ass_subscript: objobjargproc,
 }
-pub type objobjargproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type binaryfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> *mut PyObject>;
-pub type lenfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> Py_ssize_t>;
+pub type objobjargproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type binaryfunc = Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> *mut PyObject>;
+pub type lenfunc = Option<unsafe extern fn(_: *mut PyObject) -> Py_ssize_t>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PySequenceMethods {
@@ -491,27 +442,20 @@ pub struct PySequenceMethods {
     pub sq_inplace_concat: binaryfunc,
     pub sq_inplace_repeat: ssizeargfunc,
 }
-pub type ssizeargfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t)
-               -> *mut PyObject>;
-pub type objobjproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> libc::c_int>;
-pub type ssizessizeobjargproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: Py_ssize_t, _: *mut PyObject)
-               -> libc::c_int>;
-pub type ssizeobjargproc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type ssizessizeargfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: Py_ssize_t,
-                                _: Py_ssize_t) -> *mut PyObject>;
+pub type ssizeargfunc = Option<unsafe extern fn(_: *mut PyObject, _: Py_ssize_t) -> *mut PyObject>;
+pub type objobjproc = Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type ssizessizeobjargproc = Option<
+    unsafe extern fn(
+        _: *mut PyObject,
+        _: Py_ssize_t,
+        _: Py_ssize_t,
+        _: *mut PyObject,
+    ) -> libc::c_int,
+>;
+pub type ssizeobjargproc =
+    Option<unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: *mut PyObject) -> libc::c_int>;
+pub type ssizessizeargfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: Py_ssize_t, _: Py_ssize_t) -> *mut PyObject>;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct PyNumberMethods {
@@ -555,29 +499,17 @@ pub struct PyNumberMethods {
     pub nb_inplace_true_divide: binaryfunc,
     pub nb_index: unaryfunc,
 }
-pub type unaryfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject) -> *mut PyObject>;
-pub type coercion
-    =
-    Option<unsafe extern "C" fn(_: *mut *mut PyObject, _: *mut *mut PyObject)
-               -> libc::c_int>;
-pub type cmpfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut PyObject)
-               -> libc::c_int>;
-pub type setattrfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut libc::c_char,
-                                _: *mut PyObject) -> libc::c_int>;
-pub type getattrfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut libc::c_char)
-               -> *mut PyObject>;
-pub type printfunc
-    =
-    Option<unsafe extern "C" fn(_: *mut PyObject, _: *mut FILE,
-                                _: libc::c_int) -> libc::c_int>;
+pub type unaryfunc = Option<unsafe extern fn(_: *mut PyObject) -> *mut PyObject>;
+pub type coercion =
+    Option<unsafe extern fn(_: *mut *mut PyObject, _: *mut *mut PyObject) -> libc::c_int>;
+pub type cmpfunc = Option<unsafe extern fn(_: *mut PyObject, _: *mut PyObject) -> libc::c_int>;
+pub type setattrfunc = Option<
+    unsafe extern fn(_: *mut PyObject, _: *mut libc::c_char, _: *mut PyObject) -> libc::c_int,
+>;
+pub type getattrfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut libc::c_char) -> *mut PyObject>;
+pub type printfunc =
+    Option<unsafe extern fn(_: *mut PyObject, _: *mut FILE, _: libc::c_int) -> libc::c_int>;
 pub type PyTypeObject = _typeobject;
 /* Integer object interface */
 /*
@@ -634,300 +566,277 @@ pub struct zbarEnum {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
-static mut enumitem_doc: [libc::c_char; 76] =
-    [115, 105, 109, 112, 108, 101, 32, 101, 110, 117, 109, 101, 114, 97, 116,
-     105, 111, 110, 32, 105, 116, 101, 109, 46, 10, 10, 97, 115, 115, 111, 99,
-     105, 97, 116, 101, 115, 32, 97, 110, 32, 105, 110, 116, 32, 118, 97, 108,
-     117, 101, 32, 119, 105, 116, 104, 32, 97, 32, 110, 97, 109, 101, 32, 102,
-     111, 114, 32, 112, 114, 105, 110, 116, 105, 110, 103, 46, 0];
-unsafe extern "C" fn enumitem_new(mut type_0: *mut PyTypeObject,
-                                  mut args: *mut PyObject,
-                                  mut kwds: *mut PyObject)
- -> *mut zbarEnumItem {
+ *------------------------------------------------------------------------ */
+static mut enumitem_doc: [libc::c_char; 76] = [
+    115, 105, 109, 112, 108, 101, 32, 101, 110, 117, 109, 101, 114, 97, 116, 105, 111, 110, 32,
+    105, 116, 101, 109, 46, 10, 10, 97, 115, 115, 111, 99, 105, 97, 116, 101, 115, 32, 97, 110, 32,
+    105, 110, 116, 32, 118, 97, 108, 117, 101, 32, 119, 105, 116, 104, 32, 97, 32, 110, 97, 109,
+    101, 32, 102, 111, 114, 32, 112, 114, 105, 110, 116, 105, 110, 103, 46, 0,
+];
+unsafe extern fn enumitem_new(
+    mut type_0: *mut PyTypeObject,
+    mut args: *mut PyObject,
+    mut kwds: *mut PyObject,
+) -> *mut zbarEnumItem {
     let mut val: libc::c_int = 0 as libc::c_int;
     let mut name: *mut PyObject = 0 as *mut PyObject;
-    static mut kwlist: [*mut libc::c_char; 3] =
-        [b"value\x00" as *const u8 as *const libc::c_char as
-             *mut libc::c_char,
-         b"name\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-         0 as *const libc::c_char as *mut libc::c_char];
-    if PyArg_ParseTupleAndKeywords(args, kwds,
-                                   b"iS\x00" as *const u8 as
-                                       *const libc::c_char,
-                                   kwlist.as_mut_ptr(),
-                                   &mut val as *mut libc::c_int,
-                                   &mut name as *mut *mut PyObject) == 0 {
-        return 0 as *mut zbarEnumItem
+    static mut kwlist: [*mut libc::c_char; 3] = [
+        b"value\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"name\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        0 as *const libc::c_char as *mut libc::c_char,
+    ];
+    if PyArg_ParseTupleAndKeywords(
+        args,
+        kwds,
+        b"iS\x00" as *const u8 as *const libc::c_char,
+        kwlist.as_mut_ptr(),
+        &mut val as *mut libc::c_int,
+        &mut name as *mut *mut PyObject,
+    ) == 0
+    {
+        return 0 as *mut zbarEnumItem;
     }
-    let mut self_0: *mut zbarEnumItem =
-        (*type_0).tp_alloc.expect("non-null function pointer")(type_0,
-                                                               0 as
-                                                                   libc::c_int
-                                                                   as
-                                                                   Py_ssize_t)
-            as *mut zbarEnumItem;
-    if self_0.is_null() { return 0 as *mut zbarEnumItem }
+    let mut self_0: *mut zbarEnumItem = (*type_0).tp_alloc.expect("non-null function pointer")(
+        type_0,
+        0 as libc::c_int as Py_ssize_t,
+    ) as *mut zbarEnumItem;
+    if self_0.is_null() {
+        return 0 as *mut zbarEnumItem;
+    }
     (*self_0).val.ob_ival = val as libc::c_long;
     (*self_0).name = name;
     return self_0;
 }
-unsafe extern "C" fn enumitem_dealloc(mut self_0: *mut zbarEnumItem) {
+unsafe extern fn enumitem_dealloc(mut self_0: *mut zbarEnumItem) {
     if !(*self_0).name.is_null() {
         let mut _py_tmp: *mut PyObject = (*self_0).name;
         (*self_0).name = 0 as *mut PyObject;
         (*_py_tmp).ob_refcnt -= 1;
         if !((*_py_tmp).ob_refcnt != 0 as libc::c_int as libc::c_long) {
-            Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(_py_tmp);
+            Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer"))
+                .expect("non-null function pointer")(_py_tmp);
         }
     }
-    (*(*(self_0 as
-             *mut PyObject)).ob_type).tp_free.expect("non-null function pointer")(self_0
-                                                                                      as
-                                                                                      *mut PyObject
-                                                                                      as
-                                                                                      *mut libc::c_void);
+    (*(*(self_0 as *mut PyObject)).ob_type).tp_free.expect("non-null function pointer")(
+        self_0 as *mut PyObject as *mut libc::c_void,
+    );
 }
-unsafe extern "C" fn enumitem_str(mut self_0: *mut zbarEnumItem)
- -> *mut PyObject {
+unsafe extern fn enumitem_str(mut self_0: *mut zbarEnumItem) -> *mut PyObject {
     (*(*self_0).name).ob_refcnt += 1;
     return (*self_0).name;
 }
-unsafe extern "C" fn enumitem_print(mut self_0: *mut zbarEnumItem,
-                                    mut fp: *mut FILE, mut flags: libc::c_int)
- -> libc::c_int {
-    return (*(*(*self_0).name).ob_type).tp_print.expect("non-null function pointer")((*self_0).name,
-                                                                                     fp,
-                                                                                     flags);
+unsafe extern fn enumitem_print(
+    mut self_0: *mut zbarEnumItem,
+    mut fp: *mut FILE,
+    mut flags: libc::c_int,
+) -> libc::c_int {
+    return (*(*(*self_0).name).ob_type).tp_print.expect("non-null function pointer")(
+        (*self_0).name,
+        fp,
+        flags,
+    );
 }
-unsafe extern "C" fn enumitem_repr(mut self_0: *mut zbarEnumItem)
- -> *mut PyObject {
+unsafe extern fn enumitem_repr(mut self_0: *mut zbarEnumItem) -> *mut PyObject {
     let mut name: *mut PyObject = PyObject_Repr((*self_0).name);
-    if name.is_null() { return 0 as *mut PyObject }
+    if name.is_null() {
+        return 0 as *mut PyObject;
+    }
     let mut namestr: *mut libc::c_char = PyString_AsString(name);
-    let mut repr: *mut PyObject =
-        PyString_FromFormat(b"%s(%ld, %s)\x00" as *const u8 as
-                                *const libc::c_char,
-                            (*(*(self_0 as *mut PyObject)).ob_type).tp_name,
-                            (*self_0).val.ob_ival, namestr);
+    let mut repr: *mut PyObject = PyString_FromFormat(
+        b"%s(%ld, %s)\x00" as *const u8 as *const libc::c_char,
+        (*(*(self_0 as *mut PyObject)).ob_type).tp_name,
+        (*self_0).val.ob_ival,
+        namestr,
+    );
     (*name).ob_refcnt -= 1;
     if !((*name).ob_refcnt != 0 as libc::c_int as libc::c_long) {
-        Some((*(*name).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(name);
+        Some((*(*name).ob_type).tp_dealloc.expect("non-null function pointer"))
+            .expect("non-null function pointer")(name);
     }
     return repr;
 }
 #[no_mangle]
-pub static mut zbarEnumItem_Type: PyTypeObject =
-    unsafe {
-        {
-            let mut init =
-                _typeobject{ob_refcnt: 1 as libc::c_int as Py_ssize_t,
-                            ob_type:
-                                0 as *const _typeobject as *mut _typeobject,
-                            ob_size: 0,
-                            tp_name:
-                                b"zbar.EnumItem\x00" as *const u8 as
-                                    *const libc::c_char,
-                            tp_basicsize:
-                                ::std::mem::size_of::<zbarEnumItem>() as
-                                    libc::c_ulong as Py_ssize_t,
-                            tp_itemsize: 0,
-                            tp_dealloc:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarEnumItem)
-                                                                   -> ()>,
-                                                        destructor>(Some(enumitem_dealloc
-                                                                             as
-                                                                             unsafe extern "C" fn(_:
-                                                                                                      *mut zbarEnumItem)
-                                                                                 ->
-                                                                                     ())),
-                            tp_print:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarEnumItem,
-                                                                                    _:
-                                                                                        *mut FILE,
-                                                                                    _:
-                                                                                        libc::c_int)
-                                                                   ->
-                                                                       libc::c_int>,
-                                                        printfunc>(Some(enumitem_print
-                                                                            as
-                                                                            unsafe extern "C" fn(_:
-                                                                                                     *mut zbarEnumItem,
-                                                                                                 _:
-                                                                                                     *mut FILE,
-                                                                                                 _:
-                                                                                                     libc::c_int)
-                                                                                ->
-                                                                                    libc::c_int)),
-                            tp_getattr: None,
-                            tp_setattr: None,
-                            tp_compare: None,
-                            tp_repr:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarEnumItem)
-                                                                   ->
-                                                                       *mut PyObject>,
-                                                        reprfunc>(Some(enumitem_repr
-                                                                           as
-                                                                           unsafe extern "C" fn(_:
-                                                                                                    *mut zbarEnumItem)
-                                                                               ->
-                                                                                   *mut PyObject)),
-                            tp_as_number:
-                                0 as *const PyNumberMethods as
-                                    *mut PyNumberMethods,
-                            tp_as_sequence:
-                                0 as *const PySequenceMethods as
-                                    *mut PySequenceMethods,
-                            tp_as_mapping:
-                                0 as *const PyMappingMethods as
-                                    *mut PyMappingMethods,
-                            tp_hash: None,
-                            tp_call: None,
-                            tp_str:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarEnumItem)
-                                                                   ->
-                                                                       *mut PyObject>,
-                                                        reprfunc>(Some(enumitem_str
-                                                                           as
-                                                                           unsafe extern "C" fn(_:
-                                                                                                    *mut zbarEnumItem)
-                                                                               ->
-                                                                                   *mut PyObject)),
-                            tp_getattro: None,
-                            tp_setattro: None,
-                            tp_as_buffer:
-                                0 as *const PyBufferProcs as
-                                    *mut PyBufferProcs,
-                            tp_flags:
-                                (1 as libc::c_long) << 0 as libc::c_int |
-                                    (1 as libc::c_long) << 1 as libc::c_int |
-                                    (1 as libc::c_long) << 3 as libc::c_int |
-                                    (1 as libc::c_long) << 5 as libc::c_int |
-                                    (1 as libc::c_long) << 6 as libc::c_int |
-                                    (1 as libc::c_long) << 7 as libc::c_int |
-                                    (1 as libc::c_long) << 8 as libc::c_int |
-                                    0 as libc::c_int as libc::c_long |
-                                    (1 as libc::c_long) << 17 as libc::c_int |
-                                    0 as libc::c_int as libc::c_long |
-                                    (1 as libc::c_long) << 10 as libc::c_int,
-                            tp_doc: enumitem_doc.as_ptr() as *mut _,
-                            tp_traverse: None,
-                            tp_clear: None,
-                            tp_richcompare: None,
-                            tp_weaklistoffset: 0,
-                            tp_iter: None,
-                            tp_iternext: None,
-                            tp_methods:
-                                0 as *const PyMethodDef as *mut PyMethodDef,
-                            tp_members:
-                                0 as *const PyMemberDef as *mut PyMemberDef,
-                            tp_getset:
-                                0 as *const PyGetSetDef as *mut PyGetSetDef,
-                            tp_base:
-                                0 as *const _typeobject as *mut _typeobject,
-                            tp_dict: 0 as *const PyObject as *mut PyObject,
-                            tp_descr_get: None,
-                            tp_descr_set: None,
-                            tp_dictoffset: 0,
-                            tp_init: None,
-                            tp_alloc: None,
-                            tp_new:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut PyTypeObject,
-                                                                                    _:
-                                                                                        *mut PyObject,
-                                                                                    _:
-                                                                                        *mut PyObject)
-                                                                   ->
-                                                                       *mut zbarEnumItem>,
-                                                        newfunc>(Some(enumitem_new
-                                                                          as
-                                                                          unsafe extern "C" fn(_:
-                                                                                                   *mut PyTypeObject,
-                                                                                               _:
-                                                                                                   *mut PyObject,
-                                                                                               _:
-                                                                                                   *mut PyObject)
-                                                                              ->
-                                                                                  *mut zbarEnumItem)),
-                            tp_free: None,
-                            tp_is_gc: None,
-                            tp_bases: 0 as *const PyObject as *mut PyObject,
-                            tp_mro: 0 as *const PyObject as *mut PyObject,
-                            tp_cache: 0 as *const PyObject as *mut PyObject,
-                            tp_subclasses:
-                                0 as *const PyObject as *mut PyObject,
-                            tp_weaklist:
-                                0 as *const PyObject as *mut PyObject,
-                            tp_del: None,
-                            tp_version_tag: 0,};
-            init
-        }
-    };
+pub static mut zbarEnumItem_Type: PyTypeObject = unsafe {
+    {
+        let mut init = _typeobject {
+            ob_refcnt: 1 as libc::c_int as Py_ssize_t,
+            ob_type: 0 as *const _typeobject as *mut _typeobject,
+            ob_size: 0,
+            tp_name: b"zbar.EnumItem\x00" as *const u8 as *const libc::c_char,
+            tp_basicsize: ::std::mem::size_of::<zbarEnumItem>() as libc::c_ulong as Py_ssize_t,
+            tp_itemsize: 0,
+            tp_dealloc: ::std::mem::transmute::<
+                Option<unsafe extern fn(_: *mut zbarEnumItem) -> ()>,
+                destructor,
+            >(Some(
+                enumitem_dealloc as unsafe extern fn(_: *mut zbarEnumItem) -> (),
+            )),
+            tp_print: ::std::mem::transmute::<
+                Option<
+                    unsafe extern fn(
+                        _: *mut zbarEnumItem,
+                        _: *mut FILE,
+                        _: libc::c_int,
+                    ) -> libc::c_int,
+                >,
+                printfunc,
+            >(Some(
+                enumitem_print
+                    as unsafe extern fn(
+                        _: *mut zbarEnumItem,
+                        _: *mut FILE,
+                        _: libc::c_int,
+                    ) -> libc::c_int,
+            )),
+            tp_getattr: None,
+            tp_setattr: None,
+            tp_compare: None,
+            tp_repr: ::std::mem::transmute::<
+                Option<unsafe extern fn(_: *mut zbarEnumItem) -> *mut PyObject>,
+                reprfunc,
+            >(Some(
+                enumitem_repr as unsafe extern fn(_: *mut zbarEnumItem) -> *mut PyObject,
+            )),
+            tp_as_number: 0 as *const PyNumberMethods as *mut PyNumberMethods,
+            tp_as_sequence: 0 as *const PySequenceMethods as *mut PySequenceMethods,
+            tp_as_mapping: 0 as *const PyMappingMethods as *mut PyMappingMethods,
+            tp_hash: None,
+            tp_call: None,
+            tp_str: ::std::mem::transmute::<
+                Option<unsafe extern fn(_: *mut zbarEnumItem) -> *mut PyObject>,
+                reprfunc,
+            >(Some(
+                enumitem_str as unsafe extern fn(_: *mut zbarEnumItem) -> *mut PyObject,
+            )),
+            tp_getattro: None,
+            tp_setattro: None,
+            tp_as_buffer: 0 as *const PyBufferProcs as *mut PyBufferProcs,
+            tp_flags: (1 as libc::c_long) << 0 as libc::c_int
+                | (1 as libc::c_long) << 1 as libc::c_int
+                | (1 as libc::c_long) << 3 as libc::c_int
+                | (1 as libc::c_long) << 5 as libc::c_int
+                | (1 as libc::c_long) << 6 as libc::c_int
+                | (1 as libc::c_long) << 7 as libc::c_int
+                | (1 as libc::c_long) << 8 as libc::c_int
+                | 0 as libc::c_int as libc::c_long
+                | (1 as libc::c_long) << 17 as libc::c_int
+                | 0 as libc::c_int as libc::c_long
+                | (1 as libc::c_long) << 10 as libc::c_int,
+            tp_doc: enumitem_doc.as_ptr() as *mut _,
+            tp_traverse: None,
+            tp_clear: None,
+            tp_richcompare: None,
+            tp_weaklistoffset: 0,
+            tp_iter: None,
+            tp_iternext: None,
+            tp_methods: 0 as *const PyMethodDef as *mut PyMethodDef,
+            tp_members: 0 as *const PyMemberDef as *mut PyMemberDef,
+            tp_getset: 0 as *const PyGetSetDef as *mut PyGetSetDef,
+            tp_base: 0 as *const _typeobject as *mut _typeobject,
+            tp_dict: 0 as *const PyObject as *mut PyObject,
+            tp_descr_get: None,
+            tp_descr_set: None,
+            tp_dictoffset: 0,
+            tp_init: None,
+            tp_alloc: None,
+            tp_new: ::std::mem::transmute::<
+                Option<
+                    unsafe extern fn(
+                        _: *mut PyTypeObject,
+                        _: *mut PyObject,
+                        _: *mut PyObject,
+                    ) -> *mut zbarEnumItem,
+                >,
+                newfunc,
+            >(Some(
+                enumitem_new
+                    as unsafe extern fn(
+                        _: *mut PyTypeObject,
+                        _: *mut PyObject,
+                        _: *mut PyObject,
+                    ) -> *mut zbarEnumItem,
+            )),
+            tp_free: None,
+            tp_is_gc: None,
+            tp_bases: 0 as *const PyObject as *mut PyObject,
+            tp_mro: 0 as *const PyObject as *mut PyObject,
+            tp_cache: 0 as *const PyObject as *mut PyObject,
+            tp_subclasses: 0 as *const PyObject as *mut PyObject,
+            tp_weaklist: 0 as *const PyObject as *mut PyObject,
+            tp_del: None,
+            tp_version_tag: 0,
+        };
+        init
+    }
+};
 #[no_mangle]
-pub unsafe extern "C" fn zbarEnumItem_New(mut byname: *mut PyObject,
-                                          mut byvalue: *mut PyObject,
-                                          mut val: libc::c_int,
-                                          mut name: *const libc::c_char)
- -> *mut zbarEnumItem {
-    let mut self_0: *mut zbarEnumItem =
-        _PyObject_New(&mut zbarEnumItem_Type) as *mut zbarEnumItem;
-    if self_0.is_null() { return 0 as *mut zbarEnumItem }
+pub unsafe extern fn zbarEnumItem_New(
+    mut byname: *mut PyObject,
+    mut byvalue: *mut PyObject,
+    mut val: libc::c_int,
+    mut name: *const libc::c_char,
+) -> *mut zbarEnumItem {
+    let mut self_0: *mut zbarEnumItem = _PyObject_New(&mut zbarEnumItem_Type) as *mut zbarEnumItem;
+    if self_0.is_null() {
+        return 0 as *mut zbarEnumItem;
+    }
     (*self_0).val.ob_ival = val as libc::c_long;
     (*self_0).name = PyString_FromString(name);
-    if (*self_0).name.is_null() ||
-           !byname.is_null() &&
-               PyDict_SetItem(byname, (*self_0).name, self_0 as *mut PyObject)
-                   != 0 ||
-           !byvalue.is_null() &&
-               PyDict_SetItem(byvalue, self_0 as *mut PyObject,
-                              self_0 as *mut PyObject) != 0 {
+    if (*self_0).name.is_null()
+        || !byname.is_null() && PyDict_SetItem(byname, (*self_0).name, self_0 as *mut PyObject) != 0
+        || !byvalue.is_null()
+            && PyDict_SetItem(byvalue, self_0 as *mut PyObject, self_0 as *mut PyObject) != 0
+    {
         let ref mut fresh0 = (*(self_0 as *mut PyObject)).ob_refcnt;
         *fresh0 -= 1;
         if !(*fresh0 != 0 as libc::c_int as libc::c_long) {
-            Some((*(*(self_0 as
-                          *mut PyObject)).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(self_0
-                                                                                                                                           as
-                                                                                                                                           *mut PyObject);
+            Some(
+                (*(*(self_0 as *mut PyObject)).ob_type)
+                    .tp_dealloc
+                    .expect("non-null function pointer"),
+            )
+            .expect("non-null function pointer")(self_0 as *mut PyObject);
         }
-        return 0 as *mut zbarEnumItem
+        return 0 as *mut zbarEnumItem;
     }
     return self_0;
 }
-static mut enum_doc: [libc::c_char; 76] =
-    [101, 110, 117, 109, 101, 114, 97, 116, 105, 111, 110, 32, 99, 111, 110,
-     116, 97, 105, 110, 101, 114, 32, 102, 111, 114, 32, 69, 110, 117, 109,
-     73, 116, 101, 109, 115, 46, 10, 10, 101, 120, 112, 111, 115, 101, 115,
-     32, 105, 116, 101, 109, 115, 32, 97, 115, 32, 114, 101, 97, 100, 45, 111,
-     110, 108, 121, 32, 97, 116, 116, 114, 105, 98, 117, 116, 101, 115, 0];
+static mut enum_doc: [libc::c_char; 76] = [
+    101, 110, 117, 109, 101, 114, 97, 116, 105, 111, 110, 32, 99, 111, 110, 116, 97, 105, 110, 101,
+    114, 32, 102, 111, 114, 32, 69, 110, 117, 109, 73, 116, 101, 109, 115, 46, 10, 10, 101, 120,
+    112, 111, 115, 101, 115, 32, 105, 116, 101, 109, 115, 32, 97, 115, 32, 114, 101, 97, 100, 45,
+    111, 110, 108, 121, 32, 97, 116, 116, 114, 105, 98, 117, 116, 101, 115, 0,
+];
 /* FIXME add iteration */
-unsafe extern "C" fn enum_traverse(mut self_0: *mut zbarEnum,
-                                   mut visit: visitproc,
-                                   mut arg: *mut libc::c_void)
- -> libc::c_int {
+unsafe extern fn enum_traverse(
+    mut self_0: *mut zbarEnum,
+    mut visit: visitproc,
+    mut arg: *mut libc::c_void,
+) -> libc::c_int {
     if !(*self_0).byname.is_null() {
         let mut vret: libc::c_int =
             visit.expect("non-null function pointer")((*self_0).byname, arg);
-        if vret != 0 { return vret }
+        if vret != 0 {
+            return vret;
+        }
     }
     if !(*self_0).byvalue.is_null() {
         let mut vret_0: libc::c_int =
             visit.expect("non-null function pointer")((*self_0).byvalue, arg);
-        if vret_0 != 0 { return vret_0 }
+        if vret_0 != 0 {
+            return vret_0;
+        }
     }
     return 0 as libc::c_int;
 }
-unsafe extern "C" fn enum_clear(mut self_0: *mut zbarEnum) -> libc::c_int {
+unsafe extern fn enum_clear(mut self_0: *mut zbarEnum) -> libc::c_int {
     if !(*self_0).byname.is_null() {
         let mut _py_tmp: *mut PyObject = (*self_0).byname;
         (*self_0).byname = 0 as *mut PyObject;
         (*_py_tmp).ob_refcnt -= 1;
         if !((*_py_tmp).ob_refcnt != 0 as libc::c_int as libc::c_long) {
-            Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(_py_tmp);
+            Some((*(*_py_tmp).ob_type).tp_dealloc.expect("non-null function pointer"))
+                .expect("non-null function pointer")(_py_tmp);
         }
     }
     if !(*self_0).byvalue.is_null() {
@@ -935,188 +844,164 @@ unsafe extern "C" fn enum_clear(mut self_0: *mut zbarEnum) -> libc::c_int {
         (*self_0).byvalue = 0 as *mut PyObject;
         (*_py_tmp_0).ob_refcnt -= 1;
         if !((*_py_tmp_0).ob_refcnt != 0 as libc::c_int as libc::c_long) {
-            Some((*(*_py_tmp_0).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(_py_tmp_0);
+            Some((*(*_py_tmp_0).ob_type).tp_dealloc.expect("non-null function pointer"))
+                .expect("non-null function pointer")(_py_tmp_0);
         }
     }
     return 0 as libc::c_int;
 }
-unsafe extern "C" fn enum_dealloc(mut self_0: *mut zbarEnum) {
+unsafe extern fn enum_dealloc(mut self_0: *mut zbarEnum) {
     enum_clear(self_0);
-    (*(*(self_0 as
-             *mut PyObject)).ob_type).tp_free.expect("non-null function pointer")(self_0
-                                                                                      as
-                                                                                      *mut PyObject
-                                                                                      as
-                                                                                      *mut libc::c_void);
+    (*(*(self_0 as *mut PyObject)).ob_type).tp_free.expect("non-null function pointer")(
+        self_0 as *mut PyObject as *mut libc::c_void,
+    );
 }
 #[no_mangle]
-pub static mut zbarEnum_Type: PyTypeObject =
-    unsafe {
-        {
-            let mut init =
-                _typeobject{ob_refcnt: 1 as libc::c_int as Py_ssize_t,
-                            ob_type:
-                                0 as *const _typeobject as *mut _typeobject,
-                            ob_size: 0,
-                            tp_name:
-                                b"zbar.Enum\x00" as *const u8 as
-                                    *const libc::c_char,
-                            tp_basicsize:
-                                ::std::mem::size_of::<zbarEnum>() as
-                                    libc::c_ulong as Py_ssize_t,
-                            tp_itemsize: 0,
-                            tp_dealloc:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarEnum)
-                                                                   -> ()>,
-                                                        destructor>(Some(enum_dealloc
-                                                                             as
-                                                                             unsafe extern "C" fn(_:
-                                                                                                      *mut zbarEnum)
-                                                                                 ->
-                                                                                     ())),
-                            tp_print: None,
-                            tp_getattr: None,
-                            tp_setattr: None,
-                            tp_compare: None,
-                            tp_repr: None,
-                            tp_as_number:
-                                0 as *const PyNumberMethods as
-                                    *mut PyNumberMethods,
-                            tp_as_sequence:
-                                0 as *const PySequenceMethods as
-                                    *mut PySequenceMethods,
-                            tp_as_mapping:
-                                0 as *const PyMappingMethods as
-                                    *mut PyMappingMethods,
-                            tp_hash: None,
-                            tp_call: None,
-                            tp_str: None,
-                            tp_getattro: None,
-                            tp_setattro: None,
-                            tp_as_buffer:
-                                0 as *const PyBufferProcs as
-                                    *mut PyBufferProcs,
-                            tp_flags:
-                                (1 as libc::c_long) << 0 as libc::c_int |
-                                    (1 as libc::c_long) << 1 as libc::c_int |
-                                    (1 as libc::c_long) << 3 as libc::c_int |
-                                    (1 as libc::c_long) << 5 as libc::c_int |
-                                    (1 as libc::c_long) << 6 as libc::c_int |
-                                    (1 as libc::c_long) << 7 as libc::c_int |
-                                    (1 as libc::c_long) << 8 as libc::c_int |
-                                    0 as libc::c_int as libc::c_long |
-                                    (1 as libc::c_long) << 17 as libc::c_int |
-                                    0 as libc::c_int as libc::c_long |
-                                    (1 as libc::c_long) << 10 as libc::c_int |
-                                    (1 as libc::c_long) << 14 as libc::c_int,
-                            tp_doc: enum_doc.as_ptr() as *mut _,
-                            tp_traverse:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarEnum,
-                                                                                    _:
-                                                                                        visitproc,
-                                                                                    _:
-                                                                                        *mut libc::c_void)
-                                                                   ->
-                                                                       libc::c_int>,
-                                                        traverseproc>(Some(enum_traverse
-                                                                               as
-                                                                               unsafe extern "C" fn(_:
-                                                                                                        *mut zbarEnum,
-                                                                                                    _:
-                                                                                                        visitproc,
-                                                                                                    _:
-                                                                                                        *mut libc::c_void)
-                                                                                   ->
-                                                                                       libc::c_int)),
-                            tp_clear:
-                                ::std::mem::transmute::<Option<unsafe extern "C" fn(_:
-                                                                                        *mut zbarEnum)
-                                                                   ->
-                                                                       libc::c_int>,
-                                                        inquiry>(Some(enum_clear
-                                                                          as
-                                                                          unsafe extern "C" fn(_:
-                                                                                                   *mut zbarEnum)
-                                                                              ->
-                                                                                  libc::c_int)),
-                            tp_richcompare: None,
-                            tp_weaklistoffset: 0,
-                            tp_iter: None,
-                            tp_iternext: None,
-                            tp_methods:
-                                0 as *const PyMethodDef as *mut PyMethodDef,
-                            tp_members:
-                                0 as *const PyMemberDef as *mut PyMemberDef,
-                            tp_getset:
-                                0 as *const PyGetSetDef as *mut PyGetSetDef,
-                            tp_base:
-                                0 as *const _typeobject as *mut _typeobject,
-                            tp_dict: 0 as *const PyObject as *mut PyObject,
-                            tp_descr_get: None,
-                            tp_descr_set: None,
-                            tp_dictoffset: 16 as libc::c_ulong as Py_ssize_t,
-                            tp_init: None,
-                            tp_alloc: None,
-                            tp_new: None,
-                            tp_free: None,
-                            tp_is_gc: None,
-                            tp_bases: 0 as *const PyObject as *mut PyObject,
-                            tp_mro: 0 as *const PyObject as *mut PyObject,
-                            tp_cache: 0 as *const PyObject as *mut PyObject,
-                            tp_subclasses:
-                                0 as *const PyObject as *mut PyObject,
-                            tp_weaklist:
-                                0 as *const PyObject as *mut PyObject,
-                            tp_del: None,
-                            tp_version_tag: 0,};
-            init
-        }
-    };
+pub static mut zbarEnum_Type: PyTypeObject = unsafe {
+    {
+        let mut init = _typeobject {
+            ob_refcnt: 1 as libc::c_int as Py_ssize_t,
+            ob_type: 0 as *const _typeobject as *mut _typeobject,
+            ob_size: 0,
+            tp_name: b"zbar.Enum\x00" as *const u8 as *const libc::c_char,
+            tp_basicsize: ::std::mem::size_of::<zbarEnum>() as libc::c_ulong as Py_ssize_t,
+            tp_itemsize: 0,
+            tp_dealloc: ::std::mem::transmute::<
+                Option<unsafe extern fn(_: *mut zbarEnum) -> ()>,
+                destructor,
+            >(Some(
+                enum_dealloc as unsafe extern fn(_: *mut zbarEnum) -> (),
+            )),
+            tp_print: None,
+            tp_getattr: None,
+            tp_setattr: None,
+            tp_compare: None,
+            tp_repr: None,
+            tp_as_number: 0 as *const PyNumberMethods as *mut PyNumberMethods,
+            tp_as_sequence: 0 as *const PySequenceMethods as *mut PySequenceMethods,
+            tp_as_mapping: 0 as *const PyMappingMethods as *mut PyMappingMethods,
+            tp_hash: None,
+            tp_call: None,
+            tp_str: None,
+            tp_getattro: None,
+            tp_setattro: None,
+            tp_as_buffer: 0 as *const PyBufferProcs as *mut PyBufferProcs,
+            tp_flags: (1 as libc::c_long) << 0 as libc::c_int
+                | (1 as libc::c_long) << 1 as libc::c_int
+                | (1 as libc::c_long) << 3 as libc::c_int
+                | (1 as libc::c_long) << 5 as libc::c_int
+                | (1 as libc::c_long) << 6 as libc::c_int
+                | (1 as libc::c_long) << 7 as libc::c_int
+                | (1 as libc::c_long) << 8 as libc::c_int
+                | 0 as libc::c_int as libc::c_long
+                | (1 as libc::c_long) << 17 as libc::c_int
+                | 0 as libc::c_int as libc::c_long
+                | (1 as libc::c_long) << 10 as libc::c_int
+                | (1 as libc::c_long) << 14 as libc::c_int,
+            tp_doc: enum_doc.as_ptr() as *mut _,
+            tp_traverse: ::std::mem::transmute::<
+                Option<
+                    unsafe extern fn(
+                        _: *mut zbarEnum,
+                        _: visitproc,
+                        _: *mut libc::c_void,
+                    ) -> libc::c_int,
+                >,
+                traverseproc,
+            >(Some(
+                enum_traverse
+                    as unsafe extern fn(
+                        _: *mut zbarEnum,
+                        _: visitproc,
+                        _: *mut libc::c_void,
+                    ) -> libc::c_int,
+            )),
+            tp_clear: ::std::mem::transmute::<
+                Option<unsafe extern fn(_: *mut zbarEnum) -> libc::c_int>,
+                inquiry,
+            >(Some(
+                enum_clear as unsafe extern fn(_: *mut zbarEnum) -> libc::c_int,
+            )),
+            tp_richcompare: None,
+            tp_weaklistoffset: 0,
+            tp_iter: None,
+            tp_iternext: None,
+            tp_methods: 0 as *const PyMethodDef as *mut PyMethodDef,
+            tp_members: 0 as *const PyMemberDef as *mut PyMemberDef,
+            tp_getset: 0 as *const PyGetSetDef as *mut PyGetSetDef,
+            tp_base: 0 as *const _typeobject as *mut _typeobject,
+            tp_dict: 0 as *const PyObject as *mut PyObject,
+            tp_descr_get: None,
+            tp_descr_set: None,
+            tp_dictoffset: 16 as libc::c_ulong as Py_ssize_t,
+            tp_init: None,
+            tp_alloc: None,
+            tp_new: None,
+            tp_free: None,
+            tp_is_gc: None,
+            tp_bases: 0 as *const PyObject as *mut PyObject,
+            tp_mro: 0 as *const PyObject as *mut PyObject,
+            tp_cache: 0 as *const PyObject as *mut PyObject,
+            tp_subclasses: 0 as *const PyObject as *mut PyObject,
+            tp_weaklist: 0 as *const PyObject as *mut PyObject,
+            tp_del: None,
+            tp_version_tag: 0,
+        };
+        init
+    }
+};
 #[no_mangle]
-pub unsafe extern "C" fn zbarEnum_New() -> *mut zbarEnum {
-    let mut self_0: *mut zbarEnum =
-        _PyObject_GC_New(&mut zbarEnum_Type) as *mut zbarEnum;
-    if self_0.is_null() { return 0 as *mut zbarEnum }
+pub unsafe extern fn zbarEnum_New() -> *mut zbarEnum {
+    let mut self_0: *mut zbarEnum = _PyObject_GC_New(&mut zbarEnum_Type) as *mut zbarEnum;
+    if self_0.is_null() {
+        return 0 as *mut zbarEnum;
+    }
     (*self_0).byname = PyDict_New();
     (*self_0).byvalue = PyDict_New();
     if (*self_0).byname.is_null() || (*self_0).byvalue.is_null() {
         let ref mut fresh1 = (*(self_0 as *mut PyObject)).ob_refcnt;
         *fresh1 -= 1;
         if !(*fresh1 != 0 as libc::c_int as libc::c_long) {
-            Some((*(*(self_0 as
-                          *mut PyObject)).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(self_0
-                                                                                                                                           as
-                                                                                                                                           *mut PyObject);
+            Some(
+                (*(*(self_0 as *mut PyObject)).ob_type)
+                    .tp_dealloc
+                    .expect("non-null function pointer"),
+            )
+            .expect("non-null function pointer")(self_0 as *mut PyObject);
         }
-        return 0 as *mut zbarEnum
+        return 0 as *mut zbarEnum;
     }
     return self_0;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbarEnum_Add(mut self_0: *mut zbarEnum,
-                                      mut val: libc::c_int,
-                                      mut name: *const libc::c_char)
- -> libc::c_int {
+pub unsafe extern fn zbarEnum_Add(
+    mut self_0: *mut zbarEnum,
+    mut val: libc::c_int,
+    mut name: *const libc::c_char,
+) -> libc::c_int {
     let mut item: *mut zbarEnumItem = 0 as *mut zbarEnumItem;
     item = zbarEnumItem_New((*self_0).byname, (*self_0).byvalue, val, name);
-    if item.is_null() { return -(1 as libc::c_int) }
+    if item.is_null() {
+        return -(1 as libc::c_int);
+    }
     return 0 as libc::c_int;
 }
 #[no_mangle]
-pub unsafe extern "C" fn zbarEnum_LookupValue(mut self_0: *mut zbarEnum,
-                                              mut val: libc::c_int)
- -> *mut zbarEnumItem {
+pub unsafe extern fn zbarEnum_LookupValue(
+    mut self_0: *mut zbarEnum,
+    mut val: libc::c_int,
+) -> *mut zbarEnumItem {
     let mut key: *mut PyObject = PyInt_FromLong(val as libc::c_long);
-    let mut e: *mut zbarEnumItem =
-        PyDict_GetItem((*self_0).byvalue, key) as *mut zbarEnumItem;
-    if e.is_null() { return key as *mut zbarEnumItem }
+    let mut e: *mut zbarEnumItem = PyDict_GetItem((*self_0).byvalue, key) as *mut zbarEnumItem;
+    if e.is_null() {
+        return key as *mut zbarEnumItem;
+    }
     let ref mut fresh2 = (*(e as *mut PyObject)).ob_refcnt;
     *fresh2 += 1;
     (*key).ob_refcnt -= 1;
     if !((*key).ob_refcnt != 0 as libc::c_int as libc::c_long) {
-        Some((*(*key).ob_type).tp_dealloc.expect("non-null function pointer")).expect("non-null function pointer")(key);
+        Some((*(*key).ob_type).tp_dealloc.expect("non-null function pointer"))
+            .expect("non-null function pointer")(key);
     }
     return e;
 }
@@ -1141,25 +1026,26 @@ pub unsafe extern "C" fn zbarEnum_LookupValue(mut self_0: *mut zbarEnum,
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* integer value is super type */
 /* associated string name */
 /* zbarEnumItem content dictionaries */
 #[no_mangle]
-pub unsafe extern "C" fn zbarEnum_SetFromMask(mut self_0: *mut zbarEnum,
-                                              mut mask: libc::c_uint)
- -> *mut PyObject {
+pub unsafe extern fn zbarEnum_SetFromMask(
+    mut self_0: *mut zbarEnum,
+    mut mask: libc::c_uint,
+) -> *mut PyObject {
     let mut result: *mut PyObject = PySet_New(0 as *mut PyObject);
     let mut key: *mut PyObject = 0 as *mut PyObject;
     let mut item: *mut PyObject = 0 as *mut PyObject;
     let mut i: Py_ssize_t = 0 as libc::c_int as Py_ssize_t;
     while PyDict_Next((*self_0).byvalue, &mut i, &mut key, &mut item) != 0 {
         let mut val: libc::c_int = PyInt_AsLong(item) as libc::c_int;
-        if (val as libc::c_ulong) <
-               (::std::mem::size_of::<libc::c_uint>() as
-                    libc::c_ulong).wrapping_mul(8 as libc::c_int as
-                                                    libc::c_ulong) &&
-               mask >> val & 1 as libc::c_int as libc::c_uint != 0 {
+        if (val as libc::c_ulong)
+            < (::std::mem::size_of::<libc::c_uint>() as libc::c_ulong)
+                .wrapping_mul(8 as libc::c_int as libc::c_ulong)
+            && mask >> val & 1 as libc::c_int as libc::c_uint != 0
+        {
             PySet_Add(result, item);
         }
     }

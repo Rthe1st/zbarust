@@ -1,5 +1,5 @@
-use ::libc;
 use ::c2rust_bitfields;
+use ::libc;
 pub type zbar_color_e = libc::c_uint;
 pub const ZBAR_BAR: zbar_color_e = 1;
 pub const ZBAR_SPACE: zbar_color_e = 0;
@@ -51,21 +51,21 @@ pub type zbar_symbol_type_t = zbar_symbol_type_e;
 /* *< Code 93. @since 0.11 */
 /* *< Code 128 */
 /* * mask for base symbol type.
-     * @deprecated in 0.11, remove this from existing code
-     */
+ * @deprecated in 0.11, remove this from existing code
+ */
 /* * 2-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
-     * 2-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN2 component is used for
+ * 2-digit GS1 add-ons
+ */
 /* * 5-digit add-on flag.
-     * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
-     * 5-digit GS1 add-ons
-     */
+ * @deprecated in 0.11, a ::ZBAR_EAN5 component is used for
+ * 5-digit GS1 add-ons
+ */
 /* * add-on flag mask.
-     * @deprecated in 0.11, GS1 add-ons are represented using composite
-     * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
-     * or ::ZBAR_EAN5
-     */
+ * @deprecated in 0.11, GS1 add-ons are represented using composite
+ * symbols of type ::ZBAR_COMPOSITE; add-on components use ::ZBAR_EAN2
+ * or ::ZBAR_EAN5
+ */
 /*------------------------------------------------------------------------
  *  Copyright 2007-2010 (c) Jeff Brown <spadix@users.sourceforge.net>
  *
@@ -87,7 +87,7 @@ pub type zbar_symbol_type_t = zbar_symbol_type_e;
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* realloc */
 /* size of bar width history (implementation assumes power of two) */
 /* initial data buffer allocation */
@@ -132,21 +132,21 @@ pub struct qr_finder_s {
 /* finder pattern width */
 /* position info needed by decoder */
 /*The number of bits of subpel precision to store image coordinates in.
-  This helps when estimating positions in low-resolution images, which may have
-   a module pitch only a pixel or two wide, making rounding errors matter a
-   great deal.*/
+This helps when estimating positions in low-resolution images, which may have
+ a module pitch only a pixel or two wide, making rounding errors matter a
+ great deal.*/
 /*A line crossing a finder pattern.
-  Whether the line is horizontal or vertical is determined by context.
-  The offsts to various parts of the finder pattern are as follows:
-    |*****|     |*****|*****|*****|     |*****|
-    |*****|     |*****|*****|*****|     |*****|
-       ^        ^                 ^        ^
-       |        |                 |        |
-       |        |                 |       pos[v]+len+eoffs
-       |        |                pos[v]+len
-       |       pos[v]
-      pos[v]-boffs
-  Here v is 0 for horizontal and 1 for vertical lines.*/
+Whether the line is horizontal or vertical is determined by context.
+The offsts to various parts of the finder pattern are as follows:
+  |*****|     |*****|*****|*****|     |*****|
+  |*****|     |*****|*****|*****|     |*****|
+     ^        ^                 ^        ^
+     |        |                 |        |
+     |        |                 |       pos[v]+len+eoffs
+     |        |                pos[v]+len
+     |       pos[v]
+    pos[v]-boffs
+Here v is 0 for horizontal and 1 for vertical lines.*/
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct qr_finder_line {
@@ -177,7 +177,7 @@ pub type qr_point = [libc::c_int; 2];
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* Code 128 specific decode state */
 pub type code128_decoder_t = code128_decoder_s;
 #[derive(Copy, Clone, BitfieldStruct)]
@@ -221,7 +221,7 @@ pub struct code128_decoder_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* Code 93 specific decode state */
 pub type code93_decoder_t = code93_decoder_s;
 #[derive(Copy, Clone, BitfieldStruct)]
@@ -265,7 +265,7 @@ pub struct code93_decoder_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* Code 39 specific decode state */
 pub type code39_decoder_t = code39_decoder_s;
 #[derive(Copy, Clone, BitfieldStruct)]
@@ -309,7 +309,7 @@ pub struct code39_decoder_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* Codabar specific decode state */
 pub type codabar_decoder_t = codabar_decoder_s;
 #[derive(Copy, Clone, BitfieldStruct)]
@@ -355,7 +355,7 @@ pub struct codabar_decoder_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* active DataBar (partial) segment entry */
 /* finder pattern */
 /* DataBar expanded finder */
@@ -424,7 +424,7 @@ pub struct databar_segment_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* interleaved 2 of 5 specific decode state */
 pub type i25_decoder_t = i25_decoder_s;
 #[derive(Copy, Clone, BitfieldStruct)]
@@ -470,12 +470,12 @@ pub struct i25_decoder_s {
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* state of each parallel decode attempt */
 /* module position of w[idx] in symbol */
-/*   scan direction reversed */
-/*   scanning add-on */
-/*   element offset into symbol */
+/* scan direction reversed */
+/* scanning add-on */
+/* element offset into symbol */
 /* width of last character */
 /* decode in process */
 /* EAN/UPC specific decode state */
@@ -508,52 +508,48 @@ pub struct ean_pass_s {
     pub width: libc::c_uint,
     pub raw: [libc::c_uchar; 7],
 }
-pub type zbar_decoder_handler_t
-    =
-    unsafe extern "C" fn(_: *mut zbar_decoder_t) -> ();
+pub type zbar_decoder_handler_t = unsafe extern fn(_: *mut zbar_decoder_t) -> ();
 pub type zbar_decoder_t = zbar_decoder_s;
 #[inline]
-unsafe extern "C" fn get_color(mut dcode: *const zbar_decoder_t)
- -> libc::c_char {
+unsafe extern fn get_color(mut dcode: *const zbar_decoder_t) -> libc::c_char {
     return ((*dcode).idx as libc::c_int & 1 as libc::c_int) as libc::c_char;
 }
 #[inline]
-unsafe extern "C" fn decode_e(mut e: libc::c_uint, mut s: libc::c_uint,
-                              mut n: libc::c_uint) -> libc::c_int {
+unsafe extern fn decode_e(
+    mut e: libc::c_uint,
+    mut s: libc::c_uint,
+    mut n: libc::c_uint,
+) -> libc::c_int {
     let mut E: libc::c_uchar =
-        e.wrapping_mul(n).wrapping_mul(2 as libc::c_int as
-                                           libc::c_uint).wrapping_add(1 as
-                                                                          libc::c_int
-                                                                          as
-                                                                          libc::c_uint).wrapping_div(s).wrapping_sub(3
-                                                                                                                         as
-                                                                                                                         libc::c_int
-                                                                                                                         as
-                                                                                                                         libc::c_uint).wrapping_div(2
-                                                                                                                                                        as
-                                                                                                                                                        libc::c_int
-                                                                                                                                                        as
-                                                                                                                                                        libc::c_uint)
-            as libc::c_uchar;
-    return if E as libc::c_uint >=
-                  n.wrapping_sub(3 as libc::c_int as libc::c_uint) {
-               -(1 as libc::c_int)
-           } else { E as libc::c_int };
+        e.wrapping_mul(n)
+            .wrapping_mul(2 as libc::c_int as libc::c_uint)
+            .wrapping_add(1 as libc::c_int as libc::c_uint)
+            .wrapping_div(s)
+            .wrapping_sub(3 as libc::c_int as libc::c_uint)
+            .wrapping_div(2 as libc::c_int as libc::c_uint) as libc::c_uchar;
+    return if E as libc::c_uint >= n.wrapping_sub(3 as libc::c_int as libc::c_uint) {
+        -(1 as libc::c_int)
+    } else {
+        E as libc::c_int
+    };
 }
 #[inline]
-unsafe extern "C" fn pair_width(mut dcode: *const zbar_decoder_t,
-                                mut offset: libc::c_uchar) -> libc::c_uint {
-    return get_width(dcode,
-                     offset).wrapping_add(get_width(dcode,
-                                                    (offset as libc::c_int +
-                                                         1 as libc::c_int) as
-                                                        libc::c_uchar));
+unsafe extern fn pair_width(
+    mut dcode: *const zbar_decoder_t,
+    mut offset: libc::c_uchar,
+) -> libc::c_uint {
+    return get_width(dcode, offset).wrapping_add(get_width(
+        dcode,
+        (offset as libc::c_int + 1 as libc::c_int) as libc::c_uchar,
+    ));
 }
 #[inline]
-unsafe extern "C" fn get_width(mut dcode: *const zbar_decoder_t,
-                               mut offset: libc::c_uchar) -> libc::c_uint {
-    return (*dcode).w[((*dcode).idx as libc::c_int - offset as libc::c_int &
-                           16 as libc::c_int - 1 as libc::c_int) as usize];
+unsafe extern fn get_width(
+    mut dcode: *const zbar_decoder_t,
+    mut offset: libc::c_uchar,
+) -> libc::c_uint {
+    return (*dcode).w[((*dcode).idx as libc::c_int - offset as libc::c_int
+        & 16 as libc::c_int - 1 as libc::c_int) as usize];
 }
 /* state of each parallel decode attempt */
 /* current holding buffer contents */
@@ -581,109 +577,90 @@ unsafe extern "C" fn get_width(mut dcode: *const zbar_decoder_t,
  *  Boston, MA  02110-1301  USA
  *
  *  http://sourceforge.net/projects/zbar
- *------------------------------------------------------------------------*/
+ *------------------------------------------------------------------------ */
 /* at this point lengths are all decode unit offsets from the decode edge
  * NB owned by finder
  */
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_decoder_get_qr_finder_line(mut dcode:
-                                                              *mut zbar_decoder_t)
- -> *mut qr_finder_line {
+pub unsafe extern fn _zbar_decoder_get_qr_finder_line(
+    mut dcode: *mut zbar_decoder_t,
+) -> *mut qr_finder_line {
     return &mut (*dcode).qrf.line;
 }
 /* reset QR finder specific state */
 /* find QR Code symbols */
 #[no_mangle]
-pub unsafe extern "C" fn _zbar_find_qr(mut dcode: *mut zbar_decoder_t)
- -> zbar_symbol_type_t {
+pub unsafe extern fn _zbar_find_qr(mut dcode: *mut zbar_decoder_t) -> zbar_symbol_type_t {
     let mut qrf: *mut qr_finder_t = &mut (*dcode).qrf;
     let mut s: libc::c_uint = 0;
     let mut qz: libc::c_uint = 0;
     let mut w: libc::c_uint = 0;
     let mut ei: libc::c_int = 0;
     /* update latest finder pattern width */
-    (*qrf).s5 =
-        (*qrf).s5.wrapping_sub(get_width(dcode,
-                                         6 as libc::c_int as libc::c_uchar));
-    (*qrf).s5 =
-        (*qrf).s5.wrapping_add(get_width(dcode,
-                                         1 as libc::c_int as libc::c_uchar));
+    (*qrf).s5 = (*qrf).s5.wrapping_sub(get_width(dcode, 6 as libc::c_int as libc::c_uchar));
+    (*qrf).s5 = (*qrf).s5.wrapping_add(get_width(dcode, 1 as libc::c_int as libc::c_uchar));
     s = (*qrf).s5;
     /*TODO: The 2005 standard allows reflectance-reversed codes (light on dark
-       instead of dark on light).
-      If we find finder patterns with the opposite polarity, we should invert
-       the final binarized image and use them to search for QR codes in that.*/
-    if get_color(dcode) as libc::c_int != ZBAR_SPACE as libc::c_int ||
-           s < 7 as libc::c_int as libc::c_uint {
-        return ZBAR_NONE
+     instead of dark on light).
+    If we find finder patterns with the opposite polarity, we should invert
+     the final binarized image and use them to search for QR codes in that.*/
+    if get_color(dcode) as libc::c_int != ZBAR_SPACE as libc::c_int
+        || s < 7 as libc::c_int as libc::c_uint
+    {
+        return ZBAR_NONE;
     }
-    ei =
-        decode_e(pair_width(dcode, 1 as libc::c_int as libc::c_uchar), s,
-                 7 as libc::c_int as libc::c_uint);
+    ei = decode_e(
+        pair_width(dcode, 1 as libc::c_int as libc::c_uchar),
+        s,
+        7 as libc::c_int as libc::c_uint,
+    );
     if !(ei != 0) {
-        ei =
-            decode_e(pair_width(dcode, 2 as libc::c_int as libc::c_uchar), s,
-                     7 as libc::c_int as libc::c_uint);
+        ei = decode_e(
+            pair_width(dcode, 2 as libc::c_int as libc::c_uchar),
+            s,
+            7 as libc::c_int as libc::c_uint,
+        );
         if !(ei != 2 as libc::c_int) {
-            ei =
-                decode_e(pair_width(dcode, 3 as libc::c_int as libc::c_uchar),
-                         s, 7 as libc::c_int as libc::c_uint);
+            ei = decode_e(
+                pair_width(dcode, 3 as libc::c_int as libc::c_uchar),
+                s,
+                7 as libc::c_int as libc::c_uint,
+            );
             if !(ei != 2 as libc::c_int) {
-                ei =
-                    decode_e(pair_width(dcode,
-                                        4 as libc::c_int as libc::c_uchar), s,
-                             7 as libc::c_int as libc::c_uint);
+                ei = decode_e(
+                    pair_width(dcode, 4 as libc::c_int as libc::c_uchar),
+                    s,
+                    7 as libc::c_int as libc::c_uint,
+                );
                 if !(ei != 0) {
                     /* valid QR finder symbol
-     * mark positions needed by decoder
-     */
+                     * mark positions needed by decoder
+                     */
                     qz = get_width(dcode, 0 as libc::c_int as libc::c_uchar);
                     w = get_width(dcode, 1 as libc::c_int as libc::c_uchar);
-                    (*qrf).line.eoffs =
-                        qz.wrapping_add(w.wrapping_add(1 as libc::c_int as
-                                                           libc::c_uint).wrapping_div(2
-                                                                                          as
-                                                                                          libc::c_int
-                                                                                          as
-                                                                                          libc::c_uint))
-                            as libc::c_int;
-                    (*qrf).line.len =
-                        qz.wrapping_add(w).wrapping_add(get_width(dcode,
-                                                                  2 as
-                                                                      libc::c_int
-                                                                      as
-                                                                      libc::c_uchar))
-                            as libc::c_int;
-                    (*qrf).line.pos[0 as libc::c_int as usize] =
-                        ((*qrf).line.len as
-                             libc::c_uint).wrapping_add(get_width(dcode,
-                                                                  3 as
-                                                                      libc::c_int
-                                                                      as
-                                                                      libc::c_uchar))
-                            as libc::c_int;
+                    (*qrf).line.eoffs = qz.wrapping_add(
+                        w.wrapping_add(1 as libc::c_int as libc::c_uint)
+                            .wrapping_div(2 as libc::c_int as libc::c_uint),
+                    ) as libc::c_int;
+                    (*qrf).line.len = qz
+                        .wrapping_add(w)
+                        .wrapping_add(get_width(dcode, 2 as libc::c_int as libc::c_uchar))
+                        as libc::c_int;
+                    (*qrf).line.pos[0 as libc::c_int as usize] = ((*qrf).line.len as libc::c_uint)
+                        .wrapping_add(get_width(dcode, 3 as libc::c_int as libc::c_uchar))
+                        as libc::c_int;
                     (*qrf).line.pos[1 as libc::c_int as usize] =
                         (*qrf).line.pos[0 as libc::c_int as usize];
                     w = get_width(dcode, 5 as libc::c_int as libc::c_uchar);
-                    (*qrf).line.boffs =
-                        ((*qrf).line.pos[0 as libc::c_int as usize] as
-                             libc::c_uint).wrapping_add(get_width(dcode,
-                                                                  4 as
-                                                                      libc::c_int
-                                                                      as
-                                                                      libc::c_uchar)).wrapping_add(w.wrapping_add(1
-                                                                                                                      as
-                                                                                                                      libc::c_int
-                                                                                                                      as
-                                                                                                                      libc::c_uint).wrapping_div(2
-                                                                                                                                                     as
-                                                                                                                                                     libc::c_int
-                                                                                                                                                     as
-                                                                                                                                                     libc::c_uint))
-                            as libc::c_int;
+                    (*qrf).line.boffs = ((*qrf).line.pos[0 as libc::c_int as usize] as libc::c_uint)
+                        .wrapping_add(get_width(dcode, 4 as libc::c_int as libc::c_uchar))
+                        .wrapping_add(
+                            w.wrapping_add(1 as libc::c_int as libc::c_uint)
+                                .wrapping_div(2 as libc::c_int as libc::c_uint),
+                        ) as libc::c_int;
                     (*dcode).direction = 0 as libc::c_int;
                     (*dcode).buflen = 0 as libc::c_int as libc::c_uint;
-                    return ZBAR_QRCODE
+                    return ZBAR_QRCODE;
                 }
             }
         }
