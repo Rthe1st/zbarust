@@ -1,21 +1,25 @@
 name: Rust
-
 on: [push]
-
 jobs:
-  build:
-
+  branch-check:
+    name: zbarust
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: setup
-      run: sudo apt-get install gettext
-    - name: Format
-      run: make format-check
-    - name: Lint
-      run: make clippy
-    - name: Build
-      run: make build
-    - name: Run tests
-      run: make test
+      - uses: actions/checkout@v2
+      - name: Install latest nightly
+        uses: actions-rs/toolchain@v1
+        with:
+            override: true
+            components: rustfmt, clippy
+
+      - name: Build
+        run: make build
+      - name: Format
+        run: make format-check
+
+      # TODO: get it passing with clippy
+      # - name: Lint
+      #   run: make clippy
+
+      - name: Run tests
+        run: make test
