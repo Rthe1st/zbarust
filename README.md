@@ -10,6 +10,12 @@ This whole thing is revenge for the fact that I spent several dozen hours of my 
 
 ## Compilation
 
+```
+export RUSTFLAGS='-Z force-overflow-checks=no'
+```
+This is needed because the generated rust code triggers an overflow error.
+Not sure if a bug in the C or intentional - but library is function either way.
+
 `cargo build` will compile and link to version of ZBar included in this repo using `build.rs`. This depends on Autotools being installed, iconv being available and probably other stuff.
 
 ## Examples

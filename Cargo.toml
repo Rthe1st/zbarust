@@ -9,14 +9,12 @@ categories = ["external-ffi-bindings", "encoding"]
 description= "High-level and low-level ZBar binding for the Rust language."
 readme = "README.md"
 license = "LGPL-2.1"
+publish = false
 
 [dependencies]
+c2rust-bitfields = "0.3"
 libc = "0.2.43"
 
 [dev-dependencies]
 qrcode-generator = "1.0.2"
 image = "0.20"
-
-[build-dependencies]
-autotools = "0.2"
-pkg-config = "0.3.14"
